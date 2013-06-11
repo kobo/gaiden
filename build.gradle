@@ -9,3 +9,7 @@ dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.1.4'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
 }
+
+task wrap(type:Wrapper, description:"create a gradlew") {
+    gradleVersion = '1.6'
+}
