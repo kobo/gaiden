@@ -16,13 +16,52 @@
 
 package gaiden
 
+import gaiden.util.FileUtils
+
 /**
- * A source collector collect {@link PageSource}, and build {@link DocumentSource}.
+ * A source collector collects {@link PageSource} and builds {@link DocumentSource}.
  *
  * @author Kazuki YAMAMOTO
+ * @author Hideki IGARASHI
  */
 class SourceCollector {
 
-    DocumentSource collect() {
+    private static final PAGE_SOURCE_EXTENSIONS = ['md', 'markdown']
+
+    private File pagesDirectory
+
+    SourceCollector(String directory) {
+        pagesDirectory = new File(directory)
     }
+
+    /**
+     * Collect {@link PageSource} and then returns {@link DocumentSource}.
+     *
+     * @return {@link DocumentSource}'s instance
+     */
+    DocumentSource collect() {
+        new DocumentSource(pageSources: collectPageSources())
+    }
+
+    private List<PageSource> collectPageSources() {
+        def pageSources = []
+        pagesDirectory.eachFileRecurse { file ->
+            if (isPageSourceFile(file)) {
+                pageSources << createPageSource(file)
+            }
+        }
+        pageSources
+    }
+
+    private boolean isPageSourceFile(File file) {
+        file.name ==~ /.*\.(?:${PAGE_SOURCE_EXTENSIONS.join('|')})/
+    }
+
+    private PageSource createPageSource(File file) {
+        new PageSource(
+            path: FileUtils.getRelativePath(pagesDirectory, file),
+            content: file.text,
+        )
+    }
+
 }

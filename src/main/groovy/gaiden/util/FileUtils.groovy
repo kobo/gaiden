@@ -14,13 +14,27 @@
  * limitations under the License.
  */
 
-package gaiden
+package gaiden.util
 
 /**
- * A document source is aggregate of page sources.
+ * File manipulation utilities.
  *
  * @author Hideki IGARASHI
+ * @author Kazuki YAMAMOTO
  */
-class DocumentSource {
-    List<PageSource> pageSources
+class FileUtils {
+
+    /**
+     * Get the relative path of the target file from the base directory.
+     *
+     * @param base the base directory
+     * @param target the target file
+     * @return the relative path
+     */
+    static String getRelativePath(File base, File target) {
+        assert target.canonicalPath.startsWith(base.canonicalPath)
+
+        target.canonicalPath.replaceFirst(base.canonicalPath + File.separator, '')
+    }
+
 }
