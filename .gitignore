@@ -1,0 +1,19 @@
+# Gradle
+
+build/
+
+# IntelliJ
+
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Eclipse
+
+.project
+.metadata
+bin/
+.classpath
+.settings/
+
