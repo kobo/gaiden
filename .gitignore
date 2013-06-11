@@ -8,7 +8,8 @@ build/
 *.iml
 *.ipr
 *.iws
-.idea/
+.idea/*
+!.idea/copyright/
 
 # Eclipse
 
@@ -17,4 +18,3 @@ build/
 bin/
 .classpath
 .settings/
-
