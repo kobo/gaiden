@@ -17,17 +17,11 @@
 package gaiden
 
 /**
- * A holder for a content of source and the meta information.
+ * A document is aggregate of pages.
  *
- * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
+ * @author Hideki IGARASHI
  */
-class PageSource {
-
-    /** A relative path from the pages directory */
-    String path
-
-    /** A content of source */
-    String content
-
+class Document {
+    List<Page> pages
 }

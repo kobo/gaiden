@@ -17,17 +17,26 @@
 package gaiden
 
 /**
- * A holder for a content of source and the meta information.
+ * A document builder builds from a document source to a document.
  *
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class PageSource {
+class DocumentBuilder {
 
-    /** A relative path from the pages directory */
-    String path
+    private DocumentSource documentSource
 
-    /** A content of source */
-    String content
+    /**
+     * Build from a document source to a document.
+     *
+     * @return {@link Document}'s instance
+     */
+    Document build() {
+        def document = new Document()
+
+        document.pages = documentSource.pageSources.collect { new MarkdownPageBuilder(pageSource: it).build() }
+
+        document
+    }
 
 }
