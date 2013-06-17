@@ -17,17 +17,17 @@
 package gaiden
 
 /**
- * A holder for a content of source and the meta information.
+ * A holder for a content and the meta information.
  *
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class PageSource {
+class Page {
 
-    /** A relative path from the pages directory */
+    /** A relative path from the output directory */
     String path
 
-    /** A content of source */
+    /** A output content */
     String content
 
 }

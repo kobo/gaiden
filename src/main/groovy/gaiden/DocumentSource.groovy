@@ -20,6 +20,7 @@ package gaiden
  * A document source is aggregate of page sources.
  *
  * @author Hideki IGARASHI
+ * @author Kazuki YAMAMOTO
  */
 class DocumentSource {
     List<PageSource> pageSources

@@ -28,4 +28,9 @@ class FileUtilsSpec extends Specification {
         thrown(AssertionError)
     }
 
+    def "'replaceExtension' should replace extension of target filename"() {
+        expect:
+        FileUtils.replaceExtension("/path/to/target.md", "html") == "/path/to/target.html"
+    }
+
 }

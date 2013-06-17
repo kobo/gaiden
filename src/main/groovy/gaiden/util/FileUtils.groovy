@@ -37,4 +37,8 @@ class FileUtils {
         target.canonicalPath.replaceFirst(base.canonicalPath + File.separator, '')
     }
 
+    static String replaceExtension(String filename, String extension) {
+        filename.replaceAll(/\.[^.]+$/, ".${extension}")
+    }
+
 }
