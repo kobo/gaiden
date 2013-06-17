@@ -20,13 +20,53 @@ import spock.lang.Specification
 
 class SourceCollectorSpec extends Specification {
 
-    SourceCollector collector = new SourceCollector()
+    def "'collect' should return a document source"() {
+        setup:
+        def collector = new SourceCollector('src/test/resources/flat-pages')
 
-    def "dummy"() {
         when:
-        collector.collect()
+        def documentSource = collector.collect()
 
         then:
-        true
+        documentSource.pageSources.size() == 2
+
+        and:
+        documentSource.pageSources*.path as Set == ['flat-1.md', 'flat-2.md'] as Set
+
+        and:
+        documentSource.pageSources.collect { it.content.trim() } as Set == ['# Flat 1', '# Flat 2'] as Set
     }
+
+    def "'collect' should return markdown files of valid filename"() {
+        setup:
+        def collector = new SourceCollector('src/test/resources/including-invalid-filename-pages')
+
+        when:
+        def documentSource = collector.collect()
+
+        then:
+        documentSource.pageSources.size() == 2
+
+        and:
+        documentSource.pageSources*.path as Set == ['short-extension.md', 'long-extension.markdown'] as Set
+    }
+
+    def "'collect' should be return markdown files recursively"() {
+        setup:
+        def collector = new SourceCollector('src/test/resources/recursive-pages')
+
+        when:
+        def documentSource = collector.collect()
+
+        then:
+        documentSource.pageSources.size() == 7
+
+        and:
+        documentSource.pageSources*.path as Set == [
+            "first-1.md", "first-2.md",
+            "second/second-1.md", "second/second-2.md", "second/second-3.md",
+            "second/third/third-1.md", "second/third/third-2.md",
+        ] as Set
+    }
+
 }
