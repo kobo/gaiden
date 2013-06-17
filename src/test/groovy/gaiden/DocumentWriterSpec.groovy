@@ -36,10 +36,10 @@ class DocumentWriterSpec extends Specification {
 
         and:
         def document = new Document(pages: [page1, page2, page3])
-        def documentWriter = new DocumentWriter(outputDirectory: outputDirectory, document: document)
+        def documentWriter = new DocumentWriter(outputDirectory: outputDirectory)
 
         when:
-        documentWriter.write()
+        documentWriter.write(document)
 
         then:
         new File("build/gaiden-test-doc/document1.html").text == page1.content
@@ -53,11 +53,11 @@ class DocumentWriterSpec extends Specification {
         def document = new Document(pages: [page])
 
         and:
-        def documentWriter = new DocumentWriter(outputDirectory: outputDirectory, document: document)
-        documentWriter.write()
+        def documentWriter = new DocumentWriter(outputDirectory: outputDirectory)
+        documentWriter.write(document)
 
         when:
-        documentWriter.write()
+        documentWriter.write(document)
 
         then:
         new File("build/gaiden-test-doc/document1.html").text == page.content

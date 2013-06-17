@@ -22,7 +22,7 @@ class SourceCollectorSpec extends Specification {
 
     def "'collect' should return a document source"() {
         setup:
-        def collector = new SourceCollector('src/test/resources/flat-pages')
+        def collector = new SourceCollector(pagesDirectory: new File('src/test/resources/flat-pages'))
 
         when:
         def documentSource = collector.collect()
@@ -39,7 +39,7 @@ class SourceCollectorSpec extends Specification {
 
     def "'collect' should return markdown files of valid filename"() {
         setup:
-        def collector = new SourceCollector('src/test/resources/including-invalid-filename-pages')
+        def collector = new SourceCollector(pagesDirectory: new File('src/test/resources/including-invalid-filename-pages'))
 
         when:
         def documentSource = collector.collect()
@@ -53,7 +53,7 @@ class SourceCollectorSpec extends Specification {
 
     def "'collect' should be return markdown files recursively"() {
         setup:
-        def collector = new SourceCollector('src/test/resources/recursive-pages')
+        def collector = new SourceCollector(pagesDirectory: new File('src/test/resources/recursive-pages'))
 
         when:
         def documentSource = collector.collect()

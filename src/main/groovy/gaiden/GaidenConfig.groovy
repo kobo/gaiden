@@ -17,25 +17,23 @@
 package gaiden
 
 /**
- * A document builder builds from a document source to a document.
+ * The Gaiden configuration.
  *
- * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
+ * @author Hideki IGARASHI
  */
-class DocumentBuilder {
+class GaidenConfig {
 
-    /**
-     * Builds a document from a document source.
-     *
-     * @param documentSource the document source to be built
-     * @return {@link Document}'s instance
-     */
-    Document build(DocumentSource documentSource) {
-        def document = new Document()
-        def builder = new MarkdownPageBuilder()
+    /** The base title of page */
+    String title
 
-        document.pages = documentSource.pageSources.collect { builder.build(it) }
+    /** The path of template file */
+    String templatePath
 
-        document
-    }
+    /** The directory of page source files */
+    String pagesDirectory
+
+    /** The directory to be outputted a document */
+    String outputDirectory
+
 }
