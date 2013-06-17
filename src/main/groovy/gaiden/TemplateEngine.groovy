@@ -16,37 +16,27 @@
 
 package gaiden
 
+import groovy.text.SimpleTemplateEngine
+
 /**
- * A document writer writes a {@link Document} to files.
+ * Substitutes variables in a template source text.
  *
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class DocumentWriter {
+class TemplateEngine {
 
-    private File outputDirectory
-
-    DocumentWriter() {
-        outputDirectory = new File(GaidenConfig.instance.outputDirectory)
-    }
+    private String template
 
     /**
-     * Writes a {@link Document} to file.
+     * Produces a result from a template.
      *
-     * @param document the document to be written
+     * @param binding variables of placeholder
+     * @return a result produced
      */
-    void write(Document document) {
-        document.pages.each { Page page ->
-            writePage(page)
-        }
-    }
-
-    private void writePage(Page page) {
-        def pageFile = new File(outputDirectory, page.path)
-        if (!pageFile.parentFile.exists()) {
-            assert pageFile.parentFile.mkdirs()
-        }
-        pageFile.write(page.content)
+    String make(Map binding) {
+        def template = new SimpleTemplateEngine().createTemplate(template)
+        template.make(binding)
     }
 
 }

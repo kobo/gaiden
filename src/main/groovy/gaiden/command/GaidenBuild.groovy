@@ -20,9 +20,7 @@ import gaiden.Document
 import gaiden.DocumentBuilder
 import gaiden.DocumentSource
 import gaiden.DocumentWriter
-import gaiden.GaidenConfig
 import gaiden.SourceCollector
-
 /**
  * The 'build' command.
  *
@@ -35,10 +33,10 @@ class GaidenBuild {
     DocumentBuilder documentBuilder
     DocumentWriter documentWriter
 
-    GaidenBuild(GaidenConfig gaidenConfig) {
-        this.sourceCollector = new SourceCollector(pagesDirectory: new File(gaidenConfig.pagesDirectory))
+    GaidenBuild() {
+        this.sourceCollector = new SourceCollector()
         this.documentBuilder = new DocumentBuilder()
-        this.documentWriter = new DocumentWriter(outputDirectory: new File(gaidenConfig.outputDirectory))
+        this.documentWriter = new DocumentWriter()
     }
 
     /**

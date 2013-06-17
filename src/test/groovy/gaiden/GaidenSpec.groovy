@@ -16,25 +16,18 @@
 
 package gaiden
 
-/**
- * The Gaiden configuration.
- *
- * @author Kazuki YAMAMOTO
- * @author Hideki IGARASHI
- */
-@Singleton
-class GaidenConfig {
+import spock.lang.Specification
 
-    /** The base title of page */
-    String title
+class GaidenSpec extends Specification {
 
-    /** The path of template file */
-    String templatePath
-
-    /** The directory of page source files */
-    String pagesDirectory
-
-    /** The directory to be outputted a document */
-    String outputDirectory
+    def setup() {
+        def config = GaidenConfig.instance
+        config.with {
+            title = "Gaiden"
+            templatePath = "src/test/resources/templates/simple-template.html"
+            pagesDirectory = "src/test/resources/flat-pages"
+            outputDirectory = "build/gaiden-test-doc"
+        }
+    }
 
 }

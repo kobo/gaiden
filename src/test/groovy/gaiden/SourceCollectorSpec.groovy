@@ -22,7 +22,8 @@ class SourceCollectorSpec extends Specification {
 
     def "'collect' should return a document source"() {
         setup:
-        def collector = new SourceCollector(pagesDirectory: new File('src/test/resources/flat-pages'))
+        pagesDirectory = "src/test/resources/flat-pages"
+        def collector = new SourceCollector()
 
         when:
         def documentSource = collector.collect()
@@ -39,7 +40,8 @@ class SourceCollectorSpec extends Specification {
 
     def "'collect' should return markdown files of valid filename"() {
         setup:
-        def collector = new SourceCollector(pagesDirectory: new File('src/test/resources/including-invalid-filename-pages'))
+        pagesDirectory = "src/test/resources/including-invalid-filename-pages"
+        def collector = new SourceCollector()
 
         when:
         def documentSource = collector.collect()
@@ -53,7 +55,8 @@ class SourceCollectorSpec extends Specification {
 
     def "'collect' should be return markdown files recursively"() {
         setup:
-        def collector = new SourceCollector(pagesDirectory: new File('src/test/resources/recursive-pages'))
+        pagesDirectory = "src/test/resources/recursive-pages"
+        def collector = new SourceCollector()
 
         when:
         def documentSource = collector.collect()
@@ -67,6 +70,10 @@ class SourceCollectorSpec extends Specification {
             "second/second-1.md", "second/second-2.md", "second/second-3.md",
             "second/third/third-1.md", "second/third/third-2.md",
         ] as Set
+    }
+
+    private setPagesDirectory(String pagesDirectory) {
+        GaidenConfig.instance.pagesDirectory = pagesDirectory
     }
 
 }

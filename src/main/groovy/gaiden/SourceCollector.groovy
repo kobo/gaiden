@@ -30,6 +30,10 @@ class SourceCollector {
 
     private File pagesDirectory
 
+    SourceCollector() {
+        pagesDirectory = new File(GaidenConfig.instance.pagesDirectory)
+    }
+
     /**
      * Collect {@link PageSource} and then returns {@link DocumentSource}.
      *
