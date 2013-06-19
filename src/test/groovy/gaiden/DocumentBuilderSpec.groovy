@@ -16,9 +16,7 @@
 
 package gaiden
 
-import spock.lang.Specification
-
-class DocumentBuilderSpec extends Specification {
+class DocumentBuilderSpec extends GaidenSpec {
 
     def "'build' should builds document"() {
         setup:
@@ -41,26 +39,25 @@ class DocumentBuilderSpec extends Specification {
         document.pages*.path as Set == ["source1.html", "source2.html"] as Set
 
         and:
-        document.pages*.content as Set == ["""
-            |<html>
-            |<head>
-            |<title>Gaiden</title>
-            |</head>
-            |<body>
-            |<h1>markdown1</h1>
-            |</body>
-            |</html>
-            |""".stripMargin(),
-            """
-            |<html>
-            |<head>
-            |<title>Gaiden</title>
-            |</head>
-            |<body>
-            |<h1>markdown2</h1>
-            |</body>
-            |</html>
-            |""".stripMargin(),
+        document.pages*.content as Set == [
+            """<html>
+              |<head>
+              |    <title>Gaiden</title>
+              |</head>
+              |<body>
+              |<h1>markdown1</h1>
+              |</body>
+              |</html>
+              |""".stripMargin(),
+            """<html>
+              |<head>
+              |    <title>Gaiden</title>
+              |</head>
+              |<body>
+              |<h1>markdown2</h1>
+              |</body>
+              |</html>
+              |""".stripMargin(),
         ] as Set
     }
 

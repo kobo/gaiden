@@ -22,6 +22,7 @@ package gaiden
  * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
  */
+@Singleton
 class GaidenConfig {
 
     /** The base title of page */
@@ -33,7 +34,30 @@ class GaidenConfig {
     /** The directory of page source files */
     String pagesDirectory
 
+    /** The directory of static files */
+    String staticDirectory
+
     /** The directory to be outputted a document */
     String outputDirectory
+
+    /** Gets the {@link #templatePath} as {@link File} */
+    File getTemplatePathFile() {
+        new File(templatePath)
+    }
+
+    /** Gets the {@link #pagesDirectory} as {@link File} */
+    File getPagesDirectoryFile() {
+        new File(pagesDirectory)
+    }
+
+    /** Gets the {@link #staticDirectory} as {@link File} */
+    File getStaticDirectoryFile() {
+        new File(staticDirectory)
+    }
+
+    /** Gets the {@link #outputDirectory} as {@link File} */
+    File getOutputDirectoryFile() {
+        new File(outputDirectory)
+    }
 
 }

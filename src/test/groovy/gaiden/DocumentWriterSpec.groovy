@@ -16,16 +16,10 @@
 
 package gaiden
 
-import spock.lang.Shared
-import spock.lang.Specification
-
-class DocumentWriterSpec extends Specification {
-
-    @Shared
-    def outputDirectory = new File("build/gaiden-test-doc")
+class DocumentWriterSpec extends GaidenSpec {
 
     def setup() {
-        outputDirectory.deleteDir()
+        new File(GaidenConfig.instance.outputDirectory).deleteDir()
     }
 
     def "'write' should write a document to files"() {
@@ -36,7 +30,7 @@ class DocumentWriterSpec extends Specification {
 
         and:
         def document = new Document(pages: [page1, page2, page3])
-        def documentWriter = new DocumentWriter(outputDirectory: outputDirectory)
+        def documentWriter = new DocumentWriter()
 
         when:
         documentWriter.write(document)
@@ -53,7 +47,7 @@ class DocumentWriterSpec extends Specification {
         def document = new Document(pages: [page])
 
         and:
-        def documentWriter = new DocumentWriter(outputDirectory: outputDirectory)
+        def documentWriter = new DocumentWriter()
         documentWriter.write(document)
 
         when:

@@ -17,28 +17,23 @@
 package gaiden
 
 import gaiden.util.FileUtils
-import groovy.text.SimpleTemplateEngine
 import org.pegdown.PegDownProcessor
-
 /**
  * A markdown page builder builds from a markdown to a HTML.
  *
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class MarkdownPageBuilder {
+class PageBuilder {
 
     private static final String OUTPUT_EXTENSION = "html"
-    private static final String TEMPLATE = '''
-        |<html>
-        |<head>
-        |<title>Gaiden</title>
-        |</head>
-        |<body>
-        |$content
-        |</body>
-        |</html>
-        |'''.stripMargin()
+
+    private TemplateEngine templateEngine
+    private PegDownProcessor pegDownProcessor
+
+    PageBuilder() {
+        pegDownProcessor = new PegDownProcessor()
+    }
 
     /**
      * Build from a page source to a page.
@@ -47,17 +42,15 @@ class MarkdownPageBuilder {
      * @return {@link Page}'s instance
      */
     Page build(PageSource pageSource) {
-        new Page(path: FileUtils.replaceExtension(pageSource.path, OUTPUT_EXTENSION), content: buildPage(buildPageContent(pageSource)))
+        new Page(
+            path: FileUtils.replaceExtension(pageSource.path, OUTPUT_EXTENSION),
+            content: buildPage(pageSource),
+        )
     }
 
-    private String buildPageContent(PageSource pageSource) {
-        def processor = new PegDownProcessor()
-        processor.markdownToHtml(pageSource.content)
-    }
-
-    private String buildPage(String content) {
-        def engine = new SimpleTemplateEngine()
-        engine.createTemplate(TEMPLATE).make(content: content)
+    private String buildPage(PageSource pageSource) {
+        def content = pegDownProcessor.markdownToHtml(pageSource.content)
+        templateEngine.make(content: content)
     }
 
 }

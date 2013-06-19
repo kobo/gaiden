@@ -24,11 +24,15 @@ package gaiden
  */
 class DocumentWriter {
 
-    File outputDirectory
+    private File outputDirectory
+
+    DocumentWriter() {
+        outputDirectory = new File(GaidenConfig.instance.outputDirectory)
+    }
 
     /**
      * Writes a {@link Document} to file.
-     * 
+     *
      * @param document the document to be written
      */
     void write(Document document) {
