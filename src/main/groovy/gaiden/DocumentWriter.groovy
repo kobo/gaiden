@@ -26,12 +26,12 @@ class DocumentWriter {
 
     File outputDirectory
 
-    Document document
-
     /**
      * Writes a {@link Document} to file.
+     * 
+     * @param document the document to be written
      */
-    void write() {
+    void write(Document document) {
         document.pages.each { Page page ->
             writePage(page)
         }

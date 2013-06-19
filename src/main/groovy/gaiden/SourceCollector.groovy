@@ -30,10 +30,6 @@ class SourceCollector {
 
     private File pagesDirectory
 
-    SourceCollector(String directory) {
-        pagesDirectory = new File(directory)
-    }
-
     /**
      * Collect {@link PageSource} and then returns {@link DocumentSource}.
      *

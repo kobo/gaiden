@@ -29,10 +29,10 @@ class DocumentBuilderSpec extends Specification {
         ]
 
         and:
-        def builder = new DocumentBuilder(documentSource: documentSource)
+        def builder = new DocumentBuilder()
 
         when:
-        def document = builder.build()
+        def document = builder.build(documentSource)
 
         then:
         document.pages.size() == 2

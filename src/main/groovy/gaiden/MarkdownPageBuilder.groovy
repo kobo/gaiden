@@ -28,8 +28,6 @@ import org.pegdown.PegDownProcessor
  */
 class MarkdownPageBuilder {
 
-    PageSource pageSource
-
     private static final String OUTPUT_EXTENSION = "html"
     private static final String TEMPLATE = '''
         |<html>
@@ -45,13 +43,14 @@ class MarkdownPageBuilder {
     /**
      * Build from a page source to a page.
      *
+     * @param pageSource the page source to be built
      * @return {@link Page}'s instance
      */
-    Page build() {
-        new Page(path: FileUtils.replaceExtension(pageSource.path, OUTPUT_EXTENSION), content: buildPage(buildPageContent()))
+    Page build(PageSource pageSource) {
+        new Page(path: FileUtils.replaceExtension(pageSource.path, OUTPUT_EXTENSION), content: buildPage(buildPageContent(pageSource)))
     }
 
-    private String buildPageContent() {
+    private String buildPageContent(PageSource pageSource) {
         def processor = new PegDownProcessor()
         processor.markdownToHtml(pageSource.content)
     }
