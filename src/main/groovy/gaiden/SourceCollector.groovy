@@ -30,8 +30,8 @@ class SourceCollector {
 
     private File pagesDirectory
 
-    SourceCollector() {
-        pagesDirectory = new File(GaidenConfig.instance.pagesDirectory)
+    SourceCollector(File pagesDirectory = GaidenConfig.instance.pagesDirectoryFile) {
+        this.pagesDirectory = pagesDirectory
     }
 
     /**
@@ -54,7 +54,7 @@ class SourceCollector {
     }
 
     private boolean isPageSourceFile(File file) {
-        file.name ==~ /.*\.(?:${PAGE_SOURCE_EXTENSIONS.join('|')})/
+        file.name==~/.*\.(?:${PAGE_SOURCE_EXTENSIONS.join('|')})/
     }
 
     private PageSource createPageSource(File file) {

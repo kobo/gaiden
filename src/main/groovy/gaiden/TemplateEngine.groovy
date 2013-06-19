@@ -17,6 +17,7 @@
 package gaiden
 
 import groovy.text.SimpleTemplateEngine
+import groovy.text.Template
 
 /**
  * Substitutes variables in a template source text.
@@ -26,17 +27,28 @@ import groovy.text.SimpleTemplateEngine
  */
 class TemplateEngine {
 
-    private String template
+    private Template template
+    private Map baseBinding
+
+    /**
+     * Creates a new {@link TemplateEngine} instance by the given template text and the base binding variables.
+     *
+     * @param templateText a template text
+     * @param baseBinding base binding variables
+     */
+    TemplateEngine(String templateText, Map baseBinding) {
+        template = new SimpleTemplateEngine().createTemplate(templateText)
+        this.baseBinding = baseBinding
+    }
 
     /**
      * Produces a result from a template.
      *
-     * @param binding variables of placeholder
+     * @param binding variables of placeholder, this variables overwrite a base binding variables
      * @return a result produced
      */
     String make(Map binding) {
-        def template = new SimpleTemplateEngine().createTemplate(template)
-        template.make(binding)
+        template.make(baseBinding + binding)
     }
 
 }

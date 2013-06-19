@@ -22,11 +22,9 @@ class TemplateEngineSpec extends Specification {
 
     def "'make' should make a page with a template"() {
         setup:
-        def templateEngine = new TemplateEngine(
-            template: new File("src/test/resources/templates/simple-template.html").text
-        )
+        def templateText = new File("src/test/resources/templates/simple-template.html").text
+        def templateEngine = new TemplateEngine(templateText, [title: "Gaiden"])
         def binding = [
-            title: "Gaiden",
             content: "<h1>Hello</h1>"
         ]
 

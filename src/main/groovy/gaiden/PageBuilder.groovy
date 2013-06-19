@@ -24,14 +24,14 @@ import org.pegdown.PegDownProcessor
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class MarkdownPageBuilder {
+class PageBuilder {
 
     private static final String OUTPUT_EXTENSION = "html"
 
     private TemplateEngine templateEngine
     private PegDownProcessor pegDownProcessor
 
-    MarkdownPageBuilder() {
+    PageBuilder() {
         pegDownProcessor = new PegDownProcessor()
     }
 
@@ -41,20 +41,16 @@ class MarkdownPageBuilder {
      * @param pageSource the page source to be built
      * @return {@link Page}'s instance
      */
-    Page build(PageSource pageSource, Map binding) {
+    Page build(PageSource pageSource) {
         new Page(
             path: FileUtils.replaceExtension(pageSource.path, OUTPUT_EXTENSION),
-            content: buildPage(buildPageContent(pageSource), binding),
+            content: buildPage(pageSource),
         )
     }
 
-    private String buildPageContent(PageSource pageSource) {
-        pegDownProcessor.markdownToHtml(pageSource.content)
-    }
-
-    private String buildPage(String content, Map binding) {
-        binding.content = content
-        templateEngine.make(binding)
+    private String buildPage(PageSource pageSource) {
+        def content = pegDownProcessor.markdownToHtml(pageSource.content)
+        templateEngine.make(content: content)
     }
 
 }

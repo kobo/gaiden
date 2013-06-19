@@ -31,26 +31,25 @@ class DocumentBuilder {
      * @return {@link Document}'s instance
      */
     Document build(DocumentSource documentSource) {
-        def templateEngine = createTemplateEngine()
-        def builder = new MarkdownPageBuilder(templateEngine: templateEngine)
-        def pages = buildPages(documentSource, builder)
-
-        new Document(pages: pages)
+        new Document(pages: buildPages(documentSource))
     }
 
-    private List<Page> buildPages(DocumentSource documentSource, builder) {
+    private List<Page> buildPages(DocumentSource documentSource) {
+        def builder = new PageBuilder(templateEngine: createTemplateEngine())
+
         documentSource.pageSources.collect { pageSource ->
-            def binding = createBindingMap()
-            builder.build(pageSource, binding)
+            builder.build(pageSource)
         }
     }
 
     private TemplateEngine createTemplateEngine() {
         def templateFile = new File(GaidenConfig.instance.templatePath)
-        new TemplateEngine(template: templateFile.text)
+        def baseBinding = createBaseBinding()
+
+        new TemplateEngine(templateFile.text, baseBinding)
     }
 
-    private Map createBindingMap() {
+    private Map createBaseBinding() {
         def config = GaidenConfig.instance
         [
             title: config.title,
