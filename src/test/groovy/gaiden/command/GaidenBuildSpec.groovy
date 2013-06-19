@@ -18,10 +18,10 @@ package gaiden.command
 
 import gaiden.DocumentBuilder
 import gaiden.DocumentWriter
-import gaiden.GaidenSpec
 import gaiden.SourceCollector
+import spock.lang.Specification
 
-class GaidenBuildSpec extends GaidenSpec {
+class GaidenBuildSpec extends Specification {
 
     def "'execute' should build a document"() {
         setup:
@@ -30,10 +30,7 @@ class GaidenBuildSpec extends GaidenSpec {
         def documentWriter = Mock(DocumentWriter)
 
         and:
-        def command = new GaidenBuild()
-        command.sourceCollector = sourceCollector
-        command.documentBuilder = documentBuilder
-        command.documentWriter = documentWriter
+        def command = new GaidenBuild(sourceCollector, documentBuilder, documentWriter)
 
         when:
         command.execute()

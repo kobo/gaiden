@@ -16,6 +16,9 @@
 
 package gaiden
 
+import org.apache.commons.io.FileUtils
+
+
 /**
  * A document writer writes a {@link Document} to files.
  *
@@ -24,10 +27,12 @@ package gaiden
  */
 class DocumentWriter {
 
-    private File outputDirectory
+    File outputDirectory
+    File staticDirectory
 
-    DocumentWriter() {
-        outputDirectory = new File(GaidenConfig.instance.outputDirectory)
+    DocumentWriter(staticDirectory = GaidenConfig.instance.staticDirectoryFile, outputDirectory = GaidenConfig.instance.outputDirectoryFile) {
+        this.staticDirectory = staticDirectory
+        this.outputDirectory = outputDirectory
     }
 
     /**
@@ -36,9 +41,15 @@ class DocumentWriter {
      * @param document the document to be written
      */
     void write(Document document) {
+        if (!outputDirectory.exists()) {
+            assert outputDirectory.mkdirs()
+        }
+
         document.pages.each { Page page ->
             writePage(page)
         }
+
+        FileUtils.copyDirectory(staticDirectory, outputDirectory)
     }
 
     private void writePage(Page page) {

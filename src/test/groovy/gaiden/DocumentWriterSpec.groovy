@@ -16,10 +16,16 @@
 
 package gaiden
 
-class DocumentWriterSpec extends GaidenSpec {
+import gaiden.util.FileUtils
+import groovy.io.FileType
+import spock.lang.Specification
+
+class DocumentWriterSpec extends Specification {
+
+    def outputDirectory = new File("build/gaiden-test-doc")
 
     def setup() {
-        new File(GaidenConfig.instance.outputDirectory).deleteDir()
+        outputDirectory.deleteDir()
     }
 
     def "'write' should write a document to files"() {
@@ -30,14 +36,24 @@ class DocumentWriterSpec extends GaidenSpec {
 
         and:
         def document = new Document(pages: [page1, page2, page3])
-        def documentWriter = new DocumentWriter()
+        def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory)
 
         when:
         documentWriter.write(document)
 
         then:
-        new File("build/gaiden-test-doc/document1.html").text == page1.content
+        getFiles(outputDirectory) == [
+            "document1.html",
+            "document2.html",
+            "sub/document3.html",
+            "images/dummy.png",
+            "css/main.css",
+            "js/test.js",
+        ] as Set
+
+        and:
         new File("build/gaiden-test-doc/document2.html").text == page2.content
+        new File("build/gaiden-test-doc/document1.html").text == page1.content
         new File("build/gaiden-test-doc/sub/document3.html").text == page3.content
     }
 
@@ -47,7 +63,7 @@ class DocumentWriterSpec extends GaidenSpec {
         def document = new Document(pages: [page])
 
         and:
-        def documentWriter = new DocumentWriter()
+        def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory)
         documentWriter.write(document)
 
         when:
@@ -61,4 +77,11 @@ class DocumentWriterSpec extends GaidenSpec {
         new Page(path: path, content: "<title>Document</title><p>${path} content</p>")
     }
 
+    private Set getFiles(File file) {
+        def files = []
+        file.eachFileRecurse(FileType.FILES) {
+            files << FileUtils.getRelativePath(file, it)
+        }
+        files
+    }
 }
