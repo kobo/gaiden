@@ -29,14 +29,18 @@ import gaiden.SourceCollector
  */
 class GaidenBuild {
 
-    SourceCollector sourceCollector
-    DocumentBuilder documentBuilder
-    DocumentWriter documentWriter
+    private SourceCollector sourceCollector
+    private DocumentBuilder documentBuilder
+    private DocumentWriter documentWriter
 
-    GaidenBuild() {
-        this.sourceCollector = new SourceCollector()
-        this.documentBuilder = new DocumentBuilder()
-        this.documentWriter = new DocumentWriter()
+    GaidenBuild(
+        SourceCollector sourceCollector = new SourceCollector(),
+        DocumentBuilder documentBuilder = new DocumentBuilder(),
+        DocumentWriter documentWriter = new DocumentWriter()
+    ) {
+        this.sourceCollector = sourceCollector
+        this.documentBuilder = documentBuilder
+        this.documentWriter = documentWriter
     }
 
     /**

@@ -24,6 +24,18 @@ package gaiden
  */
 class DocumentBuilder {
 
+    private File templateFile
+    private Map baseBinding
+
+    DocumentBuilder() {
+        this(GaidenConfig.instance.templatePathFile, [title: GaidenConfig.instance.title])
+    }
+
+    DocumentBuilder(File templateFile, Map baseBinding) {
+        this.templateFile = templateFile
+        this.baseBinding = baseBinding
+    }
+
     /**
      * Builds a document from a document source.
      *
@@ -43,17 +55,7 @@ class DocumentBuilder {
     }
 
     private TemplateEngine createTemplateEngine() {
-        def templateFile = new File(GaidenConfig.instance.templatePath)
-        def baseBinding = createBaseBinding()
-
         new TemplateEngine(templateFile.text, baseBinding)
-    }
-
-    private Map createBaseBinding() {
-        def config = GaidenConfig.instance
-        [
-            title: config.title,
-        ]
     }
 
 }

@@ -16,7 +16,9 @@
 
 package gaiden
 
-class DocumentBuilderSpec extends GaidenSpec {
+import spock.lang.Specification
+
+class DocumentBuilderSpec extends Specification {
 
     def "'build' should builds document"() {
         setup:
@@ -27,7 +29,10 @@ class DocumentBuilderSpec extends GaidenSpec {
         ]
 
         and:
-        def builder = new DocumentBuilder()
+        def builder = new DocumentBuilder(
+            new File("src/test/resources/templates/simple-template.html"),
+            [title: "Gaiden"]
+        )
 
         when:
         def document = builder.build(documentSource)

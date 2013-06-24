@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-package gaiden
-
-import spock.lang.Specification
-
-class GaidenSpec extends Specification {
-
-    def setup() {
-        def config = GaidenConfig.instance
-        config.with {
-            title = "Gaiden"
-            templatePath = "src/test/resources/templates/simple-template.html"
-            pagesDirectory = "src/test/resources/flat-pages"
-            outputDirectory = "build/gaiden-test-doc"
-        }
-    }
-
+body {
+    background: black;
 }

@@ -16,6 +16,7 @@
 
 package gaiden.util
 
+import groovy.io.FileType
 import spock.lang.Specification
 
 class FileUtilsSpec extends Specification {
@@ -46,7 +47,13 @@ class FileUtilsSpec extends Specification {
 
     def "'replaceExtension' should replace extension of target filename"() {
         expect:
-        FileUtils.replaceExtension("/path/to/target.md", "html") == "/path/to/target.html"
+        FileUtils.replaceExtension(filename, extension) == replaced
+
+        where:
+        filename                  | extension | replaced
+        "/path/to/target.md"      | "html"    | "/path/to/target.html"
+        "/path/to/target.html.md" | "html"    | "/path/to/target.html.html"
+        "/path/to/target"         | "html"    | "/path/to/target"
     }
 
 }
