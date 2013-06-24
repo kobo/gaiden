@@ -15,7 +15,13 @@
  */
 
 apply plugin: 'groovy'
+apply plugin:'application'
+
 apply plugin: 'idea'
+
+
+version = '0.1'
+mainClassName = 'gaiden.GaidenMain'
 
 repositories {
     mavenCentral()
@@ -35,4 +41,18 @@ dependencies {
 
 task wrap(type: Wrapper, description: "create a gradlew") {
     gradleVersion = '1.6'
+}
+
+task distribution(dependsOn: 'distZip') << {
+    println "We build the zip with version=$version"
+}
+
+task release(dependsOn: 'distribution') << {
+    println 'We release now'
+}
+
+gradle.taskGraph.whenReady {taskGraph ->
+    if (!taskGraph.hasTask(release)) {
+        version = "$version-SNAPSHOT"
+    }
 }
