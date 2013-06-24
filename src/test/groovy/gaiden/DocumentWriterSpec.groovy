@@ -52,8 +52,8 @@ class DocumentWriterSpec extends Specification {
         ] as Set
 
         and:
-        new File("build/gaiden-test-doc/document2.html").text == page2.content
         new File("build/gaiden-test-doc/document1.html").text == page1.content
+        new File("build/gaiden-test-doc/document2.html").text == page2.content
         new File("build/gaiden-test-doc/sub/document3.html").text == page3.content
     }
 
@@ -84,4 +84,5 @@ class DocumentWriterSpec extends Specification {
         }
         files
     }
+
 }

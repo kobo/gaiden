@@ -47,15 +47,13 @@ class FileUtilsSpec extends Specification {
 
     def "'replaceExtension' should replace extension of target filename"() {
         expect:
-        FileUtils.replaceExtension("/path/to/target.md", "html") == "/path/to/target.html"
-    }
+        FileUtils.replaceExtension(filename, extension) == replaced
 
-    private Set getFiles(File file) {
-        def files = []
-        file.eachFileRecurse(FileType.FILES) {
-            files << FileUtils.getRelativePath(file, it)
-        }
-        files
+        where:
+        filename                  | extension | replaced
+        "/path/to/target.md"      | "html"    | "/path/to/target.html"
+        "/path/to/target.html.md" | "html"    | "/path/to/target.html.html"
+        "/path/to/target"         | "html"    | "/path/to/target"
     }
 
 }

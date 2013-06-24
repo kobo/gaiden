@@ -29,10 +29,10 @@ class DocumentBuilderSpec extends Specification {
         ]
 
         and:
-        def builder = new DocumentBuilder([
-            title: "Gaiden",
-            templatePathFile: new File("src/test/resources/templates/simple-template.html")
-        ])
+        def builder = new DocumentBuilder(
+            new File("src/test/resources/templates/simple-template.html"),
+            [title: "Gaiden"]
+        )
 
         when:
         def document = builder.build(documentSource)
