@@ -25,14 +25,16 @@ package gaiden
 class DocumentBuilder {
 
     private File templateFile
+    private File tocFile
     private Map baseBinding
 
     DocumentBuilder() {
-        this(GaidenConfig.instance.templatePathFile, [title: GaidenConfig.instance.title])
+        this(GaidenConfig.instance.templatePathFile, GaidenConfig.instance.tocPathFile, [title: GaidenConfig.instance.title])
     }
 
-    DocumentBuilder(File templateFile, Map baseBinding) {
+    DocumentBuilder(File templateFile, File tocFile, Map baseBinding) {
         this.templateFile = templateFile
+        this.tocFile = tocFile
         this.baseBinding = baseBinding
     }
 
@@ -43,7 +45,11 @@ class DocumentBuilder {
      * @return {@link Document}'s instance
      */
     Document build(DocumentSource documentSource) {
-        new Document(pages: buildPages(documentSource))
+        new Document(toc: buildToc(), pages: buildPages(documentSource))
+    }
+
+    private Toc buildToc() {
+        new TocBuilder(templateEngine: createTemplateEngine(), tocFile: tocFile).build()
     }
 
     private List<Page> buildPages(DocumentSource documentSource) {

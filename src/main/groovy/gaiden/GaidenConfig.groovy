@@ -31,6 +31,9 @@ class GaidenConfig {
     /** The path of template file */
     String templatePath
 
+    /** The path of TOC file */
+    String tocPath
+
     /** The directory of page source files */
     String pagesDirectory
 
@@ -43,6 +46,11 @@ class GaidenConfig {
     /** Gets the {@link #templatePath} as {@link File} */
     File getTemplatePathFile() {
         new File(templatePath)
+    }
+
+    /** Gets the {@link #tocPath} as {@link File} */
+    File getTocPathFile() {
+        new File(tocPath)
     }
 
     /** Gets the {@link #pagesDirectory} as {@link File} */

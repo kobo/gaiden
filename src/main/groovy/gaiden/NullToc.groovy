@@ -17,12 +17,16 @@
 package gaiden
 
 /**
- * A document is aggregate of pages.
+ * A Null Object of {@link Toc}.
  *
- * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
+ * @author Kazuki YAMAMOTO
  */
-class Document {
-    List<Page> pages
-    Toc toc
+class NullToc extends Toc {
+
+    @Override
+    void writeTo(File outputDirectory) {
+        // do nothing
+    }
+
 }

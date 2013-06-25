@@ -45,19 +45,24 @@ class DocumentWriter {
             assert outputDirectory.mkdirs()
         }
 
-        document.pages.each { Page page ->
-            writePage(page)
-        }
+        writePages(document.pages)
+        writeToc(document.toc)
 
-        FileUtils.copyDirectory(staticDirectory, outputDirectory)
+        copyStaticFiles()
     }
 
-    private void writePage(Page page) {
-        def pageFile = new File(outputDirectory, page.path)
-        if (!pageFile.parentFile.exists()) {
-            assert pageFile.parentFile.mkdirs()
+    private void writePages(List<Page> pages) {
+        pages.each { Page page ->
+            page.writeTo(outputDirectory)
         }
-        pageFile.write(page.content)
+    }
+
+    private void writeToc(Toc toc) {
+        toc.writeTo(outputDirectory)
+    }
+
+    private void copyStaticFiles() {
+        FileUtils.copyDirectory(staticDirectory, outputDirectory)
     }
 
 }

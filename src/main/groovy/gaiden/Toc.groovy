@@ -17,12 +17,14 @@
 package gaiden
 
 /**
- * A document is aggregate of pages.
+ * A table of contents.
  *
- * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
+ * @author Kazuki YAMAMOTO
  */
-class Document {
-    List<Page> pages
-    Toc toc
+class Toc extends Page {
+
+    /** A root node of TOC */
+    Node node
+
 }

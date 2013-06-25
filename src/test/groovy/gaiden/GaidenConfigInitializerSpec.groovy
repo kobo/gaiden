@@ -75,7 +75,7 @@ class GaidenConfigInitializerSpec extends Specification {
         def config = GaidenConfig.instance
 
         config.properties.each { String key, value ->
-            if (key in ['class', 'instance', 'pagesDirectoryFile', 'outputDirectoryFile', 'staticDirectoryFile', 'templatePathFile']) {
+            if (key in ['class', 'instance', 'pagesDirectoryFile', 'outputDirectoryFile', 'staticDirectoryFile', 'templatePathFile', 'tocPathFile']) {
                 return
             }
 

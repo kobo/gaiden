@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package gaiden
+"first-1"(title: "First 1")
+"first-2"(title: "First 2")
 
-/**
- * A document is aggregate of pages.
- *
- * @author Kazuki YAMAMOTO
- * @author Hideki IGARASHI
- */
-class Document {
-    List<Page> pages
-    Toc toc
+second(title: "Second") {
+    "second-1"(title: "Second 1")
+    "second-2"(title: "Second 2")
+    "second-3"(title: "Second 3")
+
+    third(title: "Third") {
+        "third-1"(title: "Third 1")
+        "third-2"(title: "Third 2")
+    }
 }
+

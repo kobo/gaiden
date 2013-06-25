@@ -19,6 +19,7 @@
 
 title = "Gaiden"
 templatePath = "templates/layout.html"
+tocPath = "toc.groovy"
 pagesDirectory = "pages"
 staticDirectory = "static"
 outputDirectory = "build/html"
