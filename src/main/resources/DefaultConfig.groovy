@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-
-
-
 title = "Gaiden"
 templatePath = "templates/layout.html"
 tocPath = "toc.groovy"
+tocOutputPath = "toc.html"
 pagesDirectory = "pages"
 staticDirectory = "static"
 outputDirectory = "build/html"

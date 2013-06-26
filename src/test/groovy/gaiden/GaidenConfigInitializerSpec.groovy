@@ -31,6 +31,8 @@ class GaidenConfigInitializerSpec extends Specification {
         with(GaidenConfig.instance) {
             title == "Test Title"
             templatePath == "test/templates/layout.html"
+            tocPath == "test/toc.groovy"
+            tocOutputPath == "test/toc.html"
             pagesDirectory == "test/pages"
             staticDirectory == "test/static"
             outputDirectory == "test/build/html"
@@ -48,6 +50,8 @@ class GaidenConfigInitializerSpec extends Specification {
         with(GaidenConfig.instance) {
             title == "Gaiden"
             templatePath == "templates/layout.html"
+            tocPath == "toc.groovy"
+            tocOutputPath == "toc.html"
             pagesDirectory == "pages"
             staticDirectory == "static"
             outputDirectory == "build/html"
@@ -65,6 +69,8 @@ class GaidenConfigInitializerSpec extends Specification {
         with(GaidenConfig.instance) {
             title == "Test Title"
             templatePath == "templates/layout.html"
+            tocPath == "toc.groovy"
+            tocOutputPath == "toc.html"
             pagesDirectory == "pages"
             staticDirectory == "static"
             outputDirectory == "build/html"

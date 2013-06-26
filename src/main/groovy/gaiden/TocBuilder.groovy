@@ -27,11 +27,21 @@ import groovy.xml.MarkupBuilder
 class TocBuilder {
 
     private static final String WHITESPACE = " "
-    private static final String TOC_PATH = "toc.html"
     private static final String TOC_HEADING = "Table of contents"
 
     private TemplateEngine templateEngine
     private File tocFile
+    private String tocOutputPath
+
+    TocBuilder(TemplateEngine templateEngine) {
+        this(templateEngine, GaidenConfig.instance.tocPathFile, GaidenConfig.instance.tocOutputPath)
+    }
+
+    TocBuilder(TemplateEngine templateEngine, File tocFile, String tocOutputPath) {
+        this.templateEngine = templateEngine
+        this.tocFile = tocFile
+        this.tocOutputPath = tocOutputPath
+    }
 
     /**
      * Builds a TOC from a TOC file.
@@ -46,7 +56,7 @@ class TocBuilder {
         Node tocNode = parseTocFile()
         def content = templateEngine.make(content: buildContent(tocNode))
 
-        new Toc(path: TOC_PATH, content: content, node: tocNode)
+        new Toc(path: tocOutputPath, content: content, node: tocNode)
     }
 
     private Node parseTocFile() {
@@ -72,7 +82,7 @@ class TocBuilder {
         def printer = new IndentPrinter(writer, WHITESPACE * 4)
         def builder = new MarkupBuilder(printer)
 
-        builder.doubleQuotes = true // surrounds a attribute with double quotes
+        builder.doubleQuotes = true // surrounds an attribute with double quotes
 
         builder.h1(TOC_HEADING)
 

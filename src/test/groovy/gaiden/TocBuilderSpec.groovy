@@ -23,18 +23,21 @@ class TocBuilderSpec extends Specification {
 
     def "'build' should return a toc"() {
         setup:
-        def tocFile = GroovyMock(File)
-        tocFile.text >> """
+        def tocInputFile = GroovyMock(File)
+        tocInputFile.text >> """
             "first.html"(title: 'first title')
             "second.html"(title: 'second title')
         """
-        tocFile.exists() >> true
+        tocInputFile.exists() >> true
+
+        and:
+        def tocOutputPath = "toc.html"
 
         and:
         def templateEngine = new TemplateEngine(new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden"])
 
         when:
-        Toc toc = new TocBuilder(tocFile: tocFile, templateEngine: templateEngine).build()
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath).build()
 
         then:
         toc.path == "toc.html"
@@ -64,20 +67,23 @@ class TocBuilderSpec extends Specification {
 
     def "'build' should return a hierarchy toc"() {
         setup:
-        def tocFile = GroovyMock(File)
-        tocFile.text >> """
+        def tocInputFile = GroovyMock(File)
+        tocInputFile.text >> """
             "first.html"(title: 'first title')
             "second/"(title: 'second title') {
                 "second/second1.html"(title: 'second 1 title')
             }
         """
-        tocFile.exists() >> true
+        tocInputFile.exists() >> true
+
+        and:
+        def tocOutputPath = "toc.html"
 
         and:
         def templateEngine = new TemplateEngine(new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden"])
 
         when:
-        Toc toc = new TocBuilder(tocFile: tocFile, templateEngine: templateEngine).build()
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath).build()
 
         then:
         toc.path == "toc.html"
@@ -118,7 +124,7 @@ class TocBuilderSpec extends Specification {
         tocFile.exists() >> false
 
         when:
-        def toc = new TocBuilder(tocFile: tocFile).build()
+        def toc = new TocBuilder(null, tocFile, null).build()
 
         then:
         toc instanceof NullToc

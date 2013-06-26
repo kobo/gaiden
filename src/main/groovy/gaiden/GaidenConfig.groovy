@@ -34,6 +34,9 @@ class GaidenConfig {
     /** The path of TOC file */
     String tocPath
 
+    /** The path of TOC output file */
+    String tocOutputPath
+
     /** The directory of page source files */
     String pagesDirectory
 

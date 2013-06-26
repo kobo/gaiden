@@ -29,9 +29,14 @@ class DocumentBuilderSpec extends Specification {
         ]
 
         and:
+        def pageBuilder = Mock(PageBuilder)
+        def tocBuilder = Mock(TocBuilder)
+
+        and:
         def builder = new DocumentBuilder(
             new File("src/test/resources/templates/simple-template.html"),
-            new File("src/test/resources/toc/test-toc.groovy"),
+            pageBuilder,
+            tocBuilder,
             [title: "Gaiden"]
         )
 
@@ -39,76 +44,11 @@ class DocumentBuilderSpec extends Specification {
         def document = builder.build(documentSource)
 
         then:
-        document.pages.size() == 2
+        2 * pageBuilder.build(_)
+        1 * tocBuilder.build()
 
         and:
-        document.pages*.path as Set == ["source1.html", "source2.html"] as Set
-
-        and:
-        document.pages*.content as Set == [
-            """<html>
-              |<head>
-              |    <title>Gaiden</title>
-              |</head>
-              |<body>
-              |<h1>markdown1</h1>
-              |</body>
-              |</html>
-              |""".stripMargin(),
-            """<html>
-              |<head>
-              |    <title>Gaiden</title>
-              |</head>
-              |<body>
-              |<h1>markdown2</h1>
-              |</body>
-              |</html>
-              |""".stripMargin(),
-        ] as Set
-
-        and:
-        document.toc.content == """<html>
-                                  |<head>
-                                  |    <title>Gaiden</title>
-                                  |</head>
-                                  |<body>
-                                  |<h1>Table of contents</h1>
-                                  |<ul>
-                                  |    <li>
-                                  |        <a href="first-1">First 1</a>
-                                  |    </li>
-                                  |    <li>
-                                  |        <a href="first-2">First 2</a>
-                                  |    </li>
-                                  |    <li>
-                                  |        <a href="second">Second</a>
-                                  |        <ul>
-                                  |            <li>
-                                  |                <a href="second-1">Second 1</a>
-                                  |            </li>
-                                  |            <li>
-                                  |                <a href="second-2">Second 2</a>
-                                  |            </li>
-                                  |            <li>
-                                  |                <a href="second-3">Second 3</a>
-                                  |            </li>
-                                  |            <li>
-                                  |                <a href="third">Third</a>
-                                  |                <ul>
-                                  |                    <li>
-                                  |                        <a href="third-1">Third 1</a>
-                                  |                    </li>
-                                  |                    <li>
-                                  |                        <a href="third-2">Third 2</a>
-                                  |                    </li>
-                                  |                </ul>
-                                  |            </li>
-                                  |        </ul>
-                                  |    </li>
-                                  |</ul>
-                                  |</body>
-                                  |</html>
-                                  |""".stripMargin()
+        document
     }
 
 }
