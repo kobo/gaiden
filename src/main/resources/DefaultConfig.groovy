@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package gaiden.config
+
 
 
 title = "Gaiden"

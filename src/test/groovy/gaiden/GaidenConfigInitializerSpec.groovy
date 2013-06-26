@@ -18,50 +18,53 @@ package gaiden
 
 import spock.lang.Specification
 
-class ConfigLoaderSpec extends Specification {
+class GaidenConfigInitializerSpec extends Specification {
 
-    def "'load' should load a configuration file"() {
-        def loader = new ConfigLoader(new File("src/test/resources/config/ValidConfig.groovy"))
+    def "'initialize' should initialize a configuration file"() {
+        setup:
+        def initializer = new GaidenConfigInitializer()
 
         when:
-        loader.load()
+        initializer.initialize(new File("src/test/resources/config/ValidConfig.groovy"))
 
         then:
         with(GaidenConfig.instance) {
             title == "Test Title"
-            templatePath == "test/templates"
+            templatePath == "test/templates/layout.html"
             pagesDirectory == "test/pages"
             staticDirectory == "test/static"
             outputDirectory == "test/build/html"
         }
     }
 
-    def "'load' should load the default configuration file"() {
-        def loader = new ConfigLoader(new File("src/test/resources/config/NotFoundConfig.groovy"))
+    def "'initialize' should initialize the default configuration file"() {
+        setup:
+        def initializer = new GaidenConfigInitializer()
 
         when:
-        loader.load()
+        initializer.initialize(new File("src/test/resources/config/NotFoundConfig.groovy"))
 
         then:
         with(GaidenConfig.instance) {
             title == "Gaiden"
-            templatePath == "templates"
+            templatePath == "templates/layout.html"
             pagesDirectory == "pages"
             staticDirectory == "static"
             outputDirectory == "build/html"
         }
     }
 
-    def "'load' should load the defaults configuration other than values set"() {
-        def loader = new ConfigLoader(new File("src/test/resources/config/OnlyTitleConfig.groovy"))
+    def "'initialize' should initialize the defaults configuration other than values set"() {
+        setup:
+        def initializer = new GaidenConfigInitializer()
 
         when:
-        loader.load()
+        initializer.initialize(new File("src/test/resources/config/OnlyTitleConfig.groovy"))
 
         then:
         with(GaidenConfig.instance) {
             title == "Test Title"
-            templatePath == "templates"
+            templatePath == "templates/layout.html"
             pagesDirectory == "pages"
             staticDirectory == "static"
             outputDirectory == "build/html"

@@ -15,7 +15,7 @@
  */
 
 title = "Test Title"
-templatePath = "test/templates"
+templatePath = "test/templates/layout.html"
 pagesDirectory = "test/pages"
 staticDirectory = "test/static"
 outputDirectory = "test/build/html"

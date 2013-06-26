@@ -26,13 +26,15 @@ import gaiden.command.GaidenBuild
  */
 class GaidenMain {
 
+    private static final String CONFIG_PATH = "Config.groovy"
+
     /**
      * A main command line interface.
      *
      * @param args all command line args
      */
     static void main(String... args) {
-        new ConfigLoader(new File("Config.groovy")).load()
+        new GaidenConfigInitializer().initialize(new File(CONFIG_PATH))
         new GaidenBuild().execute()
     }
 

@@ -15,7 +15,7 @@
  */
 
 apply plugin: 'groovy'
-apply plugin:'application'
+apply plugin: 'application'
 
 apply plugin: 'idea'
 
@@ -43,15 +43,11 @@ task wrap(type: Wrapper, description: "create a gradlew") {
     gradleVersion = '1.6'
 }
 
-task distribution(dependsOn: 'distZip') << {
-    println "We build the zip with version=$version"
-}
+task distribution(dependsOn: 'distZip')
 
-task release(dependsOn: 'distribution') << {
-    println 'We release now'
-}
+task release(dependsOn: 'distribution')
 
-gradle.taskGraph.whenReady {taskGraph ->
+gradle.taskGraph.whenReady { taskGraph ->
     if (!taskGraph.hasTask(release)) {
         version = "$version-SNAPSHOT"
     }
