@@ -35,7 +35,10 @@ class DocumentWriterSpec extends Specification {
         def page3 = createPage("sub/document3.html")
 
         and:
-        def document = new Document(pages: [page1, page2, page3])
+        def toc = new Toc(path: "toc.html", content: "<h1>table of contents</h1>")
+
+        and:
+        def document = new Document(pages: [page1, page2, page3], toc: toc)
         def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory)
 
         when:
@@ -49,18 +52,23 @@ class DocumentWriterSpec extends Specification {
             "images/dummy.png",
             "css/main.css",
             "js/test.js",
+            "toc.html",
         ] as Set
 
         and:
         new File("build/gaiden-test-doc/document1.html").text == page1.content
         new File("build/gaiden-test-doc/document2.html").text == page2.content
         new File("build/gaiden-test-doc/sub/document3.html").text == page3.content
+
+        and:
+        new File("build/gaiden-test-doc/toc.html").text == toc.content
     }
 
     def "'write' should overwrite when file already exists"() {
         setup:
         def page = createPage("document1.html")
-        def document = new Document(pages: [page])
+        def toc = new Toc(path: "toc.html", content: "<h1>table of contents</h1>")
+        def document = new Document(pages: [page], toc: toc)
 
         and:
         def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory)
@@ -71,6 +79,7 @@ class DocumentWriterSpec extends Specification {
 
         then:
         new File("build/gaiden-test-doc/document1.html").text == page.content
+        new File("build/gaiden-test-doc/toc.html").text == toc.content
     }
 
     private Page createPage(String path) {

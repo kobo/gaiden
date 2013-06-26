@@ -24,4 +24,5 @@ package gaiden
  */
 class Document {
     List<Page> pages
+    Toc toc
 }

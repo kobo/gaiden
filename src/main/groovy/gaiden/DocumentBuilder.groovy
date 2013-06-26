@@ -27,12 +27,22 @@ class DocumentBuilder {
     private File templateFile
     private Map baseBinding
 
+    private PageBuilder pageBuilder
+    private TocBuilder tocBuilder
+
     DocumentBuilder() {
-        this(GaidenConfig.instance.templatePathFile, [title: GaidenConfig.instance.title])
+        this.templateFile = GaidenConfig.instance.templatePathFile
+        this.baseBinding = [title: GaidenConfig.instance.title]
+
+        def templateEngine = createTemplateEngine()
+        this.pageBuilder = new PageBuilder(templateEngine: templateEngine)
+        this.tocBuilder = new TocBuilder(templateEngine)
     }
 
-    DocumentBuilder(File templateFile, Map baseBinding) {
+    DocumentBuilder(File templateFile, PageBuilder pageBuilder, TocBuilder tocBuilder, Map baseBinding) {
         this.templateFile = templateFile
+        this.pageBuilder = pageBuilder
+        this.tocBuilder = tocBuilder
         this.baseBinding = baseBinding
     }
 
@@ -43,14 +53,16 @@ class DocumentBuilder {
      * @return {@link Document}'s instance
      */
     Document build(DocumentSource documentSource) {
-        new Document(pages: buildPages(documentSource))
+        new Document(toc: buildToc(), pages: buildPages(documentSource))
+    }
+
+    private Toc buildToc() {
+        tocBuilder.build()
     }
 
     private List<Page> buildPages(DocumentSource documentSource) {
-        def builder = new PageBuilder(templateEngine: createTemplateEngine())
-
         documentSource.pageSources.collect { pageSource ->
-            builder.build(pageSource)
+            pageBuilder.build(pageSource)
         }
     }
 

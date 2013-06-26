@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-title = "Gaiden"
-templatePath = "templates/layout.html"
-tocPath = "toc.groovy"
-tocOutputPath = "toc.html"
-pagesDirectory = "pages"
-staticDirectory = "static"
-outputDirectory = "build/html"
+package gaiden
+
+/**
+ * A table of contents.
+ *
+ * @author Hideki IGARASHI
+ * @author Kazuki YAMAMOTO
+ */
+class Toc extends Page {
+
+    /** A root node of TOC */
+    Node node
+
+}

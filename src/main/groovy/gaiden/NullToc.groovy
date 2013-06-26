@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-title = "Gaiden"
-templatePath = "templates/layout.html"
-tocPath = "toc.groovy"
-tocOutputPath = "toc.html"
-pagesDirectory = "pages"
-staticDirectory = "static"
-outputDirectory = "build/html"
+package gaiden
+
+/**
+ * A Null Object of {@link Toc}.
+ *
+ * @author Hideki IGARASHI
+ * @author Kazuki YAMAMOTO
+ */
+class NullToc extends Toc {
+
+    @Override
+    void writeTo(File outputDirectory) {
+        // do nothing
+    }
+
+}

@@ -29,8 +29,14 @@ class DocumentBuilderSpec extends Specification {
         ]
 
         and:
+        def pageBuilder = Mock(PageBuilder)
+        def tocBuilder = Mock(TocBuilder)
+
+        and:
         def builder = new DocumentBuilder(
             new File("src/test/resources/templates/simple-template.html"),
+            pageBuilder,
+            tocBuilder,
             [title: "Gaiden"]
         )
 
@@ -38,32 +44,11 @@ class DocumentBuilderSpec extends Specification {
         def document = builder.build(documentSource)
 
         then:
-        document.pages.size() == 2
+        2 * pageBuilder.build(_)
+        1 * tocBuilder.build()
 
         and:
-        document.pages*.path as Set == ["source1.html", "source2.html"] as Set
-
-        and:
-        document.pages*.content as Set == [
-            """<html>
-              |<head>
-              |    <title>Gaiden</title>
-              |</head>
-              |<body>
-              |<h1>markdown1</h1>
-              |</body>
-              |</html>
-              |""".stripMargin(),
-            """<html>
-              |<head>
-              |    <title>Gaiden</title>
-              |</head>
-              |<body>
-              |<h1>markdown2</h1>
-              |</body>
-              |</html>
-              |""".stripMargin(),
-        ] as Set
+        document
     }
 
 }

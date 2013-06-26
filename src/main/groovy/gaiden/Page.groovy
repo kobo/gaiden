@@ -30,4 +30,17 @@ class Page {
     /** A output content */
     String content
 
+    /**
+     * Writes a page to a file.
+     *
+     * @param outputDirectory the output directory to which to write the page
+     */
+    public void writeTo(File outputDirectory) {
+        def file = new File(outputDirectory, path)
+        if (!file.parentFile.exists()) {
+            assert file.parentFile.mkdirs()
+        }
+        file.write(content)
+    }
+
 }
