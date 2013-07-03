@@ -24,12 +24,19 @@ package gaiden.util
  */
 class FileUtils {
 
+    /**
+     * Replaces the extension of filename.
+     *
+     * @param filename the filename
+     * @param extension the new extension
+     * @return the replaced filename
+     */
     static String replaceExtension(String filename, String extension) {
         filename.replaceAll(/\.[^.]+$/, ".${extension}")
     }
 
     /**
-     * Get the relative path of the base file from the target file.
+     * Gets the relative path of the base file from the target file.
      *
      * @param from the base file
      * @param to the target file
@@ -40,7 +47,7 @@ class FileUtils {
     }
 
     /**
-     * Get the relative path of the base directory from the target file.
+     * Gets the relative path of the base directory from the target file.
      *
      * @param from the base directory
      * @param to the target file
