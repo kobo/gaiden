@@ -23,7 +23,7 @@ class TemplateEngineSpec extends Specification {
     def "'make' should make a page with a template"() {
         setup:
         def templateText = new File("src/test/resources/templates/simple-template.html").text
-        def templateEngine = new TemplateEngine(templateText, [title: "Gaiden"])
+        def templateEngine = new TemplateEngine(null, templateText, [title: "Gaiden"])
         def binding = [
             content: "<h1>Hello</h1>"
         ]
@@ -41,6 +41,25 @@ class TemplateEngineSpec extends Specification {
                      |</body>
                      |</html>
                      |'''.stripMargin()
+    }
+
+    def "'make' should evaluate the 'link'"() {
+        setup:
+        def templateText = "\${link('${resourcePath}')}"
+        def templateEngine = new TemplateEngine(new File("/output"), templateText, [title: "Gaiden"])
+        def binding = [outputPath: outputPath]
+
+        when:
+        def content = templateEngine.make(binding)
+
+        then:
+        content == expected
+
+        where:
+        resourcePath   | outputPath     | expected
+        "/aaa/bbb.txt" | "ccc/ddd.html" | "../aaa/bbb.txt"
+        "aaa/bbb.txt"  | "ccc/ddd.html" | "aaa/bbb.txt"
+        ""             | "ccc/ddd.html" | ""
     }
 
 }

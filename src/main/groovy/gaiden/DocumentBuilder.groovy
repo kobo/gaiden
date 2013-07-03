@@ -30,19 +30,23 @@ class DocumentBuilder {
     private PageBuilder pageBuilder
     private TocBuilder tocBuilder
 
+    private File outputDirectoryFile
+
     DocumentBuilder() {
         this.templateFile = GaidenConfig.instance.templatePathFile
         this.baseBinding = [title: GaidenConfig.instance.title]
+        this.outputDirectoryFile = GaidenConfig.instance.outputDirectoryFile
 
         def templateEngine = createTemplateEngine()
         this.pageBuilder = new PageBuilder(templateEngine: templateEngine)
         this.tocBuilder = new TocBuilder(templateEngine)
     }
 
-    DocumentBuilder(File templateFile, PageBuilder pageBuilder, TocBuilder tocBuilder, Map baseBinding) {
+    DocumentBuilder(File templateFile, PageBuilder pageBuilder, TocBuilder tocBuilder, File outputDirectoryFile, Map baseBinding) {
         this.templateFile = templateFile
         this.pageBuilder = pageBuilder
         this.tocBuilder = tocBuilder
+        this.outputDirectoryFile = outputDirectoryFile
         this.baseBinding = baseBinding
     }
 
@@ -67,7 +71,7 @@ class DocumentBuilder {
     }
 
     private TemplateEngine createTemplateEngine() {
-        new TemplateEngine(templateFile.text, baseBinding)
+        new TemplateEngine(outputDirectoryFile, templateFile.text, baseBinding)
     }
 
 }
