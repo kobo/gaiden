@@ -59,7 +59,7 @@ class SourceCollector {
 
     private PageSource createPageSource(File file) {
         new PageSource(
-            path: FileUtils.getRelativePath(pagesDirectory, file),
+            path: FileUtils.getRelativePathForDirectoryToFile(pagesDirectory, file),
             content: file.text,
         )
     }

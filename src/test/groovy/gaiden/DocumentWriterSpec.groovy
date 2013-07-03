@@ -86,10 +86,10 @@ class DocumentWriterSpec extends Specification {
         new Page(path: path, content: "<title>Document</title><p>${path} content</p>")
     }
 
-    private Set getFiles(File file) {
+    private Set getFiles(File directory) {
         def files = []
-        file.eachFileRecurse(FileType.FILES) {
-            files << FileUtils.getRelativePath(file, it)
+        directory.eachFileRecurse(FileType.FILES) {
+            files << FileUtils.getRelativePathForDirectoryToFile(directory, it)
         }
         files
     }
