@@ -16,7 +16,7 @@
 
 title = "Gaiden"
 templatePath = "templates/layout.html"
-tocPath = "toc.groovy"
+tocPath = "pages/toc.groovy"
 tocOutputPath = "toc.html"
 pagesDirectory = "pages"
 staticDirectory = "static"
