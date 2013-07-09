@@ -51,9 +51,12 @@ class TemplateEngine {
      * @return a result produced
      */
     String make(Map binding) {
-        binding.link = createLinkTag(binding.outputPath)
+        def mergedBinding = baseBinding + binding
 
-        template.make(baseBinding + binding)
+        mergedBinding.link = createLinkTag(mergedBinding.outputPath)
+        mergedBinding.tocLink = createTocLinkTag(mergedBinding.outputPath, mergedBinding.tocPath)
+
+        template.make(mergedBinding)
     }
 
     private Closure createLinkTag(String outputPath) {
@@ -67,6 +70,13 @@ class TemplateEngine {
 
             FileUtils.getRelativePathForFileToFile(outputFile, resourceFile)
         }
+    }
+
+    private String createTocLinkTag(String outputPath, String tocPath) {
+        def outputFile = new File(outputDirectoryFile, outputPath)
+        def tocFile = new File(outputDirectoryFile, tocPath)
+
+        FileUtils.getRelativePathForFileToFile(outputFile, tocFile)
     }
 
 }

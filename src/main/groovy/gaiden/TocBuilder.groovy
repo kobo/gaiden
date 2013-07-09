@@ -54,7 +54,7 @@ class TocBuilder {
         }
 
         Node tocNode = parseTocFile()
-        def content = templateEngine.make(content: buildContent(tocNode))
+        def content = templateEngine.make(content: buildContent(tocNode), outputPath: tocOutputPath)
 
         new Toc(path: tocOutputPath, content: content, node: tocNode)
     }

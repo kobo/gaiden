@@ -34,7 +34,10 @@ class DocumentBuilder {
 
     DocumentBuilder() {
         this.templateFile = GaidenConfig.instance.templatePathFile
-        this.baseBinding = [title: GaidenConfig.instance.title]
+        this.baseBinding = [
+            title: GaidenConfig.instance.title,
+            tocPath: GaidenConfig.instance.tocOutputPath,
+        ]
         this.outputDirectoryFile = GaidenConfig.instance.outputDirectoryFile
 
         def templateEngine = createTemplateEngine()

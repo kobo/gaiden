@@ -34,7 +34,8 @@ class TocBuilderSpec extends Specification {
         def tocOutputPath = "toc.html"
 
         and:
-        def templateEngine = new TemplateEngine(null, new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden"])
+        def templateEngine = new TemplateEngine(new File("/output"),
+            new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
 
         when:
         Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath).build()
@@ -80,7 +81,8 @@ class TocBuilderSpec extends Specification {
         def tocOutputPath = "toc.html"
 
         and:
-        def templateEngine = new TemplateEngine(null, new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden"])
+        def templateEngine = new TemplateEngine(new File("/output"),
+            new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
 
         when:
         Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath).build()
