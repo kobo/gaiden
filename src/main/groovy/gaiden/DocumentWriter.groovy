@@ -49,6 +49,8 @@ class DocumentWriter {
         writeToc(document.toc)
 
         copyStaticFiles()
+
+        println "Built document at ${outputDirectory.canonicalPath}"
     }
 
     private void writePages(List<Page> pages) {
