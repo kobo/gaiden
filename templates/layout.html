@@ -1,8 +1,37 @@
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>$title</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=0.5,user-scalable=yes,initial-scale=1.0">
+    <link rel="stylesheet" href="${link('/css/bootstrap.css')}">
+    <link rel="stylesheet" href="${link('/css/responsive.css')}">
+    <link rel="stylesheet" href="${link('/font/elusive-icons/css/elusive-webfont.min.css')}">
+    <link rel="stylesheet" href="${link('/css/style.css')}">
 </head>
 <body>
-$content
+    <nav class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <button type="button" class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse"><i class="icon-list"></i></button>
+                <a href="$tocLink" title="GreenMind | Bootstrap" class="brand"><i class="icon-book"></i> Gaiden</a>
+            </div>
+        </div>
+    </nav>
+    <div class="page-container">
+        <section class="page-content">
+            $content
+        </section>
+    </div>
+    <footer id="footer" class="footer">
+        <p>Powered by Gaiden</p>
+    </footer>
+
+    <script src="${link('/js/jquery-1.10.2.min.js')}"></script>
+    <script src="${link('/js/bootstrap.js')}"></script>
+    <script src="${link('/js/prettify.js')}"></script>
+    <script src="${link('/js/application.js')}"></script>
 </body>
 </html>
