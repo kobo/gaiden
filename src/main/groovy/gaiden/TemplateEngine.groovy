@@ -16,6 +16,7 @@
 
 package gaiden
 
+import gaiden.util.FileUtils
 import groovy.text.SimpleTemplateEngine
 import groovy.text.Template
 
@@ -29,6 +30,7 @@ class TemplateEngine {
 
     private Template template
     private Map baseBinding
+    private File outputDirectoryFile
 
     /**
      * Creates a new {@link TemplateEngine} instance by the given template text and the base binding variables.
@@ -36,7 +38,8 @@ class TemplateEngine {
      * @param templateText a template text
      * @param baseBinding base binding variables
      */
-    TemplateEngine(String templateText, Map baseBinding) {
+    TemplateEngine(File outputDirectoryFile, String templateText, Map baseBinding) {
+        this.outputDirectoryFile = outputDirectoryFile
         template = new SimpleTemplateEngine().createTemplate(templateText)
         this.baseBinding = baseBinding
     }
@@ -48,7 +51,22 @@ class TemplateEngine {
      * @return a result produced
      */
     String make(Map binding) {
+        binding.link = createLinkTag(binding.outputPath)
+
         template.make(baseBinding + binding)
+    }
+
+    private Closure createLinkTag(String outputPath) {
+        return { String resourcePath ->
+            if (!new File(resourcePath).absolute) {
+                return resourcePath
+            }
+
+            def outputFile = new File(outputDirectoryFile, outputPath)
+            def resourceFile = new File(outputDirectoryFile, resourcePath)
+
+            FileUtils.getRelativePathForFileToFile(outputFile, resourceFile)
+        }
     }
 
 }

@@ -37,6 +37,7 @@ class DocumentBuilderSpec extends Specification {
             new File("src/test/resources/templates/simple-template.html"),
             pageBuilder,
             tocBuilder,
+            null,
             [title: "Gaiden"]
         )
 

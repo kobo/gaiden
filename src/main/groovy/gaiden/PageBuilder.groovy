@@ -44,15 +44,17 @@ class PageBuilder {
      * @return {@link Page}'s instance
      */
     Page build(PageSource pageSource) {
+        def outputPath = FileUtils.replaceExtension(pageSource.path, OUTPUT_EXTENSION)
         new Page(
-            path: FileUtils.replaceExtension(pageSource.path, OUTPUT_EXTENSION),
-            content: buildPage(pageSource),
+            path: outputPath,
+            content: buildPage(pageSource, outputPath),
         )
     }
 
-    private String buildPage(PageSource pageSource) {
+
+    private String buildPage(PageSource pageSource, String outputPath) {
         def content = pegDownProcessor.markdownToHtml(pageSource.content)
-        templateEngine.make(content: content)
+        templateEngine.make(content: content, outputPath: outputPath)
     }
 
 }
