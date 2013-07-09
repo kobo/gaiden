@@ -28,11 +28,8 @@ class TemplateEngineSpec extends Specification {
             content: "<h1>Hello</h1>"
         ]
 
-        when:
-        def content = templateEngine.make(binding)
-
-        then:
-        content == '''<html>
+        expect:
+        templateEngine.make(binding) == '''<html>
                      |<head>
                      |    <title>Gaiden</title>
                      |</head>
@@ -45,15 +42,12 @@ class TemplateEngineSpec extends Specification {
 
     def "'make' should evaluate the 'link'"() {
         setup:
-        def templateText = "\${link('${resourcePath}')}"
+        def templateText = '${link("' + resourcePath + '")}'
         def templateEngine = new TemplateEngine(new File("/output"), templateText, [title: "Gaiden"])
         def binding = [outputPath: outputPath]
 
-        when:
-        def content = templateEngine.make(binding)
-
-        then:
-        content == expected
+        expect:
+        templateEngine.make(binding) == expected
 
         where:
         resourcePath   | outputPath     | expected
