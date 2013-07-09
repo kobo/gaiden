@@ -32,7 +32,7 @@ class FileUtils {
      * @return the replaced filename
      */
     static String replaceExtension(String filename, String extension) {
-        filename.replaceAll(/\.[^.]+$/, ".${extension}")
+        filename.replaceFirst(/\.[^.]+$/, ".${extension}")
     }
 
     /**
@@ -66,13 +66,11 @@ class FileUtils {
     }
 
     private static String getRelativePath(String from, String to) {
-        def (optimizedFrom, optimizedTo) = optimizeCommonBaseDirectory(from, to)
-        getBaseDirectory(optimizedFrom).replaceAll("[^${File.separator}]+${File.separator}", "..${File.separator}") + optimizedTo
-    }
-
-    private static List<String> optimizeCommonBaseDirectory(String from, String to) {
         def commonBaseDir = getCommonBaseDirectory(from, to)
-        [from, to].collect { it.replaceFirst(commonBaseDir, '') }
+        def replacedFrom = from.replaceFirst(commonBaseDir, '')
+        def replacedTo = to.replaceFirst(commonBaseDir, '')
+        def baseDirectory = getBaseDirectory(replacedFrom)
+        baseDirectory.replaceAll("[^${File.separator}]+${File.separator}", "..${File.separator}") + replacedTo
     }
 
     private static String getCommonBaseDirectory(String from, String to) {
@@ -88,7 +86,7 @@ class FileUtils {
         result.join(File.separator)
     }
 
-    private static String getBaseDirectory(path) {
+    private static String getBaseDirectory(String path) {
         path.replaceFirst("[^${File.separator}]*\$", '')
     }
 

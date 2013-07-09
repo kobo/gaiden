@@ -33,6 +33,9 @@ class FileUtilsSpec extends Specification {
         "/aaa/bbb/from.txt"     | "/ddd/ccc/to.txt"     | "../../ddd/ccc/to.txt"
         "/aaa/bbb/ccc.txt"      | "/aaa/bbb/ccc.txt"    | "ccc.txt"
         "/aaa/bbb/ccc/from.txt" | "/aaa/xxx/ccc/to.txt" | "../../xxx/ccc/to.txt"
+        "../aaa/bbb/from.txt"   | "../aaa/ccc/to.txt"   | "../ccc/to.txt"
+        "/aaa/bbb/"             | "/aaa/bbb/to.txt"     | "bbb/to.txt"  // When give a directory as 'fromFile', like this.
+        "/aaa/bbb/from.txt"     | "/aaa/bbb/"           | "../bbb"      // When give a directory as 'toFile', like this.
 
         fromFile = new File(from)
         toFile = new File(to)
@@ -43,14 +46,17 @@ class FileUtilsSpec extends Specification {
         FileUtils.getRelativePathForDirectoryToFile(fromFile, toFile) == expected
 
         where:
-        from            | to                    | expected
-        "/aaa/bbb/"     | "/aaa/bbb/to.txt"     | "to.txt"
-        "/aaa/bbb/"     | "/aaa/to.txt"         | "../to.txt"
-        "/aaa/bbb/"     | "/aaa/bbb/ccc/to.txt" | "ccc/to.txt"
-        "/aaa/bbb/"     | "/aaa/ccc/to.txt"     | "../ccc/to.txt"
-        "/aaa/bbb/"     | "/ddd/ccc/to.txt"     | "../../ddd/ccc/to.txt"
-        "/aaa/bbb/"     | "/aaa/bbb/ccc.txt"    | "ccc.txt"
-        "/aaa/bbb/ccc/" | "/aaa/xxx/ccc/to.txt" | "../../xxx/ccc/to.txt"
+        from                | to                    | expected
+        "/aaa/bbb/"         | "/aaa/bbb/to.txt"     | "to.txt"
+        "/aaa/bbb/"         | "/aaa/to.txt"         | "../to.txt"
+        "/aaa/bbb/"         | "/aaa/bbb/ccc/to.txt" | "ccc/to.txt"
+        "/aaa/bbb/"         | "/aaa/ccc/to.txt"     | "../ccc/to.txt"
+        "/aaa/bbb/"         | "/ddd/ccc/to.txt"     | "../../ddd/ccc/to.txt"
+        "/aaa/bbb/"         | "/aaa/bbb/ccc.txt"    | "ccc.txt"
+        "/aaa/bbb/ccc/"     | "/aaa/xxx/ccc/to.txt" | "../../xxx/ccc/to.txt"
+        "./bbb/ccc/"        | "./bbb/ccc/to.txt"    | "to.txt"
+        "/aaa/bbb/from.txt" | "/aaa/bbb/to.txt"     | "../to.txt"  // When give a file as 'fromFile', like this.
+        "/aaa/bbb/"         | "/aaa/bbb/"           | "../bbb"     // When give a directory as 'toFile', like this.
 
         fromFile = new File(from)
         toFile = new File(to)
