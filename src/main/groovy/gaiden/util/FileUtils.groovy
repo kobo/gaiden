@@ -25,20 +25,69 @@ package gaiden.util
 class FileUtils {
 
     /**
-     * Get the relative path of the target file from the base directory.
+     * Replaces the extension of filename.
      *
-     * @param base the base directory
-     * @param target the target file
-     * @return the relative path
+     * @param filename the filename
+     * @param extension the new extension
+     * @return the replaced filename
      */
-    static String getRelativePath(File base, File target) {
-        assert target.canonicalPath.startsWith(base.canonicalPath)
-
-        target.canonicalPath.replaceFirst(base.canonicalPath + File.separator, '')
+    static String replaceExtension(String filename, String extension) {
+        filename.replaceFirst(/\.[^.]+$/, ".${extension}")
     }
 
-    static String replaceExtension(String filename, String extension) {
-        filename.replaceAll(/\.[^.]+$/, ".${extension}")
+    /**
+     * Gets the relative path of the base file from the target file.
+     *
+     * @param from the base file
+     * @param to the target file
+     * @return the relative path
+     */
+    static String getRelativePathForFileToFile(File from, File to) {
+        getRelativePath(getFilePath(from), getFilePath(to))
+    }
+
+    /**
+     * Gets the relative path of the base directory from the target file.
+     *
+     * @param from the base directory
+     * @param to the target file
+     * @return the relative path
+     */
+    static String getRelativePathForDirectoryToFile(File from, File to) {
+        getRelativePath(getDirectoryPath(from), getFilePath(to))
+    }
+
+    private static String getFilePath(File file) {
+        file.canonicalPath
+    }
+
+    private static String getDirectoryPath(File directory) {
+        directory.canonicalPath + File.separator
+    }
+
+    private static String getRelativePath(String from, String to) {
+        def commonBaseDir = getCommonBaseDirectory(from, to)
+        def replacedFrom = from.replaceFirst(commonBaseDir, '')
+        def replacedTo = to.replaceFirst(commonBaseDir, '')
+        def baseDirectory = getBaseDirectory(replacedFrom)
+        baseDirectory.replaceAll("[^${File.separator}]+${File.separator}", "..${File.separator}") + replacedTo
+    }
+
+    private static String getCommonBaseDirectory(String from, String to) {
+        def result = []
+        def splitPathToken = { getBaseDirectory(it).split(File.separator) }
+        def fromTokens = splitPathToken(from)
+        def toTokens = splitPathToken(to)
+        for (int i : 0..<[fromTokens, toTokens]*.size().min()) {
+            if (fromTokens[i] != toTokens[i]) break
+            result << fromTokens[i]
+        }
+        result << ''
+        result.join(File.separator)
+    }
+
+    private static String getBaseDirectory(String path) {
+        path.replaceFirst("[^${File.separator}]*\$", '')
     }
 
 }

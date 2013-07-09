@@ -16,33 +16,50 @@
 
 package gaiden.util
 
-import groovy.io.FileType
 import spock.lang.Specification
 
 class FileUtilsSpec extends Specification {
 
-    def "'getRelativePath' should return a relative path"() {
+    def "'getRelativePathForFileToFile' should return a relative path"() {
         expect:
-        FileUtils.getRelativePath(baseFile, targetFile) == expected
+        FileUtils.getRelativePathForFileToFile(fromFile, toFile) == expected
 
         where:
-        base        | target                       | expected
-        '/path/to'  | '/path/to/target.txt'        | 'target.txt'
-        '/path/to/' | '/path/to/target.txt'        | 'target.txt'
-        '/path/to'  | '/path/to/sub/target.txt'    | 'sub/target.txt'
-        '/path/to'  | '/path/to/sub/../target.txt' | 'target.txt'
-        './dir'     | './dir/target.txt'           | 'target.txt'
+        from                    | to                    | expected
+        "/aaa/bbb/from.txt"     | "/aaa/bbb/to.txt"     | "to.txt"
+        "/aaa/bbb/from.txt"     | "/aaa/to.txt"         | "../to.txt"
+        "/aaa/bbb/from.txt"     | "/aaa/bbb/ccc/to.txt" | "ccc/to.txt"
+        "/aaa/bbb/from.txt"     | "/aaa/ccc/to.txt"     | "../ccc/to.txt"
+        "/aaa/bbb/from.txt"     | "/ddd/ccc/to.txt"     | "../../ddd/ccc/to.txt"
+        "/aaa/bbb/ccc.txt"      | "/aaa/bbb/ccc.txt"    | "ccc.txt"
+        "/aaa/bbb/ccc/from.txt" | "/aaa/xxx/ccc/to.txt" | "../../xxx/ccc/to.txt"
+        "../aaa/bbb/from.txt"   | "../aaa/ccc/to.txt"   | "../ccc/to.txt"
+        "/aaa/bbb/"             | "/aaa/bbb/to.txt"     | "bbb/to.txt"  // When give a directory as 'fromFile', like this.
+        "/aaa/bbb/from.txt"     | "/aaa/bbb/"           | "../bbb"      // When give a directory as 'toFile', like this.
 
-        baseFile = new File(base)
-        targetFile = new File(target)
+        fromFile = new File(from)
+        toFile = new File(to)
     }
 
-    def "'getRelativePath' should cause assertion error when target isn't into base"() {
-        when:
-        FileUtils.getRelativePath(new File('/path/to'), new File('/other/target.txt'))
+    def "'getRelativePathForDirectoryToFile' should return a relative path"() {
+        expect:
+        FileUtils.getRelativePathForDirectoryToFile(fromFile, toFile) == expected
 
-        then:
-        thrown(AssertionError)
+        where:
+        from                | to                    | expected
+        "/aaa/bbb/"         | "/aaa/bbb/to.txt"     | "to.txt"
+        "/aaa/bbb/"         | "/aaa/to.txt"         | "../to.txt"
+        "/aaa/bbb/"         | "/aaa/bbb/ccc/to.txt" | "ccc/to.txt"
+        "/aaa/bbb/"         | "/aaa/ccc/to.txt"     | "../ccc/to.txt"
+        "/aaa/bbb/"         | "/ddd/ccc/to.txt"     | "../../ddd/ccc/to.txt"
+        "/aaa/bbb/"         | "/aaa/bbb/ccc.txt"    | "ccc.txt"
+        "/aaa/bbb/ccc/"     | "/aaa/xxx/ccc/to.txt" | "../../xxx/ccc/to.txt"
+        "./bbb/ccc/"        | "./bbb/ccc/to.txt"    | "to.txt"
+        "/aaa/bbb/from.txt" | "/aaa/bbb/to.txt"     | "../to.txt"  // When give a file as 'fromFile', like this.
+        "/aaa/bbb/"         | "/aaa/bbb/"           | "../bbb"     // When give a directory as 'toFile', like this.
+
+        fromFile = new File(from)
+        toFile = new File(to)
     }
 
     def "'replaceExtension' should replace extension of target filename"() {
