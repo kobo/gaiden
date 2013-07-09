@@ -17,6 +17,7 @@
 package gaiden
 
 import gaiden.command.GaidenBuild
+import gaiden.command.GaidenClean
 
 /**
  * A command line to execute Gaiden.
@@ -27,6 +28,13 @@ import gaiden.command.GaidenBuild
 class GaidenMain {
 
     private static final String CONFIG_PATH = "Config.groovy"
+    private static final String USAGE_MESSAGE = """\
+Usage: gaiden <command>
+
+   commands:
+       build  Build pages from source pages
+       clean  Clean the build directory
+"""
 
     /**
      * A main command line interface.
@@ -34,8 +42,32 @@ class GaidenMain {
      * @param args all command line args
      */
     static void main(String... args) {
+        new GaidenMain().run(args)
+    }
+
+    void run(String... args) {
+        if (!args) {
+            usage()
+            return
+        }
+
         new GaidenConfigInitializer().initialize(new File(CONFIG_PATH))
-        new GaidenBuild().execute()
+
+        switch (args.first()) {
+            case "build":
+                new GaidenBuild().execute()
+                break
+            case "clean":
+                new GaidenClean().execute()
+                break
+            default:
+                usage()
+                return
+        }
+    }
+
+    private void usage() {
+        println USAGE_MESSAGE
     }
 
 }
