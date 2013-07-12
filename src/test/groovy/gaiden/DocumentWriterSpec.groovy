@@ -41,6 +41,11 @@ class DocumentWriterSpec extends Specification {
         def document = new Document(pages: [page1, page2, page3], toc: toc)
         def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory)
 
+        and:
+        def saved = System.out
+        def printStream = Mock(PrintStream)
+        System.out = printStream
+
         when:
         documentWriter.write(document)
 
@@ -62,6 +67,12 @@ class DocumentWriterSpec extends Specification {
 
         and:
         new File("build/gaiden-test-doc/toc.html").text == toc.content
+
+        and:
+        1 * printStream.println("Built document at ${outputDirectory.canonicalPath}")
+
+        cleanup:
+        System.out = saved
     }
 
     def "'write' should overwrite when file already exists"() {
