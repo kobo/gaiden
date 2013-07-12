@@ -23,9 +23,10 @@ class TemplateEngineSpec extends Specification {
     def "'make' should make a page with a template"() {
         setup:
         def templateText = new File("src/test/resources/templates/simple-template.html").text
-        def templateEngine = new TemplateEngine(null, templateText, [title: "Gaiden"])
+        def templateEngine = new TemplateEngine(new File("/output"), templateText, [title: "Gaiden", tocPath: "toc.html"])
         def binding = [
-            content: "<h1>Hello</h1>"
+            content: "<h1>Hello</h1>",
+            outputPath: "aaa.html"
         ]
 
         expect:
@@ -43,7 +44,7 @@ class TemplateEngineSpec extends Specification {
     def "'make' should evaluate the 'link'"() {
         setup:
         def templateText = '${link("' + resourcePath + '")}'
-        def templateEngine = new TemplateEngine(new File("/output"), templateText, [title: "Gaiden"])
+        def templateEngine = new TemplateEngine(new File("/output"), templateText, [title: "Gaiden", tocPath: "toc.html"])
         def binding = [outputPath: outputPath]
 
         expect:
@@ -54,6 +55,21 @@ class TemplateEngineSpec extends Specification {
         "/aaa/bbb.txt" | "ccc/ddd.html" | "../aaa/bbb.txt"
         "aaa/bbb.txt"  | "ccc/ddd.html" | "aaa/bbb.txt"
         ""             | "ccc/ddd.html" | ""
+    }
+
+    def "'make' should evaluate the 'tocLink'"() {
+        setup:
+        def templateText = '${tocLink}'
+        def templateEngine = new TemplateEngine(new File("/output"), templateText, [title: "Gaiden", tocPath: "toc.html"])
+        def binding = [outputPath: outputPath]
+
+        expect:
+        templateEngine.make(binding) == expected
+
+        where:
+        outputPath     | expected
+        "ddd.html"     | "toc.html"
+        "ccc/ddd.html" | "../toc.html"
     }
 
 }
