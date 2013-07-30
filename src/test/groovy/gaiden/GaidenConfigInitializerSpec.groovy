@@ -54,7 +54,7 @@ class GaidenConfigInitializerSpec extends Specification {
             tocOutputPath == "toc.html"
             pagesDirectory == "pages"
             staticDirectory == "static"
-            outputDirectory == "build/html"
+            outputDirectory == "build"
         }
     }
 
@@ -73,7 +73,7 @@ class GaidenConfigInitializerSpec extends Specification {
             tocOutputPath == "toc.html"
             pagesDirectory == "pages"
             staticDirectory == "static"
-            outputDirectory == "build/html"
+            outputDirectory == "build"
         }
     }
 
