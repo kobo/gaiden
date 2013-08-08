@@ -35,7 +35,7 @@ class Page {
      *
      * @param outputDirectory the output directory to which to write the page
      */
-    public void writeTo(File outputDirectory) {
+    void writeTo(File outputDirectory) {
         def file = new File(outputDirectory, path)
         if (!file.parentFile.exists()) {
             assert file.parentFile.mkdirs()
