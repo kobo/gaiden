@@ -10,6 +10,7 @@ build/
 *.iws
 .idea/*
 !.idea/copyright/
+!.idea/inspectionProfiles/
 
 # Eclipse
 
