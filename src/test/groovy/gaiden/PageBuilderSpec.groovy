@@ -33,7 +33,7 @@ class PageBuilderSpec extends Specification {
         def pageSource = new PageSource(path: "test.md", content: "SOURCE_CONTENT")
 
         when:
-        def page = builder.build(pageSource)
+        builder.build(pageSource)
 
         then:
         1 * pegdownProcessor.markdownToHtml("SOURCE_CONTENT") >> "PROCESSED_CONTENT"
