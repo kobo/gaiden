@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package gaiden.command
-
-import gaiden.Holders
+package gaiden
 
 /**
- * The 'clean' command.
+ * The Shared instance holder.
  *
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class GaidenClean {
+class Holders {
 
-    void execute(deleteDirectory = Holders.config.outputDirectory) {
-        new AntBuilder().delete(dir: deleteDirectory)
-    }
+    /** {@link GaidenConfig}'s instance */
+    static GaidenConfig config
 
 }

@@ -34,7 +34,7 @@ class TocBuilder {
     private String tocOutputPath
 
     TocBuilder(TemplateEngine templateEngine) {
-        this(templateEngine, GaidenConfig.instance.tocPathFile, GaidenConfig.instance.tocOutputPath)
+        this(templateEngine, Holders.config.tocPathFile, Holders.config.tocOutputPath)
     }
 
     TocBuilder(TemplateEngine templateEngine, File tocFile, String tocOutputPath) {

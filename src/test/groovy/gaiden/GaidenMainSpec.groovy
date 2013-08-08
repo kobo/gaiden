@@ -32,8 +32,9 @@ Usage: gaiden <command>
 
     def "'run' should run the build command"() {
         setup:
-        GroovyMock(GaidenConfigInitializer, global: true)
-        def gaidenConfigInitializer = Mock(GaidenConfigInitializer)
+        GroovyMock(GaidenConfigLoader, global: true)
+        def gaidenConfigLoader = Mock(GaidenConfigLoader)
+        def gaidenConfig = new GaidenConfig()
 
         and:
         GroovyMock(GaidenBuild, global: true)
@@ -43,8 +44,9 @@ Usage: gaiden <command>
         new GaidenMain().run("build")
 
         then:
-        1 * new GaidenConfigInitializer() >> gaidenConfigInitializer
-        1 * gaidenConfigInitializer.initialize(_)
+        1 * new GaidenConfigLoader() >> gaidenConfigLoader
+        1 * gaidenConfigLoader.load(_) >> gaidenConfig
+        Holders.config == gaidenConfig
 
         and:
         1 * new GaidenBuild() >> gaidenBuild
@@ -53,8 +55,8 @@ Usage: gaiden <command>
 
     def "'run' should run the clean command"() {
         setup:
-        GroovyMock(GaidenConfigInitializer, global: true)
-        def gaidenConfigInitializer = Mock(GaidenConfigInitializer)
+        GroovyMock(GaidenConfigLoader, global: true)
+        def gaidenConfigLoader = Mock(GaidenConfigLoader)
 
         and:
         GroovyMock(GaidenClean, global: true)
@@ -64,8 +66,8 @@ Usage: gaiden <command>
         new GaidenMain().run("clean")
 
         then:
-        1 * new GaidenConfigInitializer() >> gaidenConfigInitializer
-        1 * gaidenConfigInitializer.initialize(_)
+        1 * new GaidenConfigLoader() >> gaidenConfigLoader
+        1 * gaidenConfigLoader.load(_)
 
         and:
         1 * new GaidenClean() >> gaidenClean
@@ -74,8 +76,8 @@ Usage: gaiden <command>
 
     def "'run' should output usage if invalid command"() {
         setup:
-        GroovyMock(GaidenConfigInitializer, global: true)
-        def gaidenConfigInitializer = Mock(GaidenConfigInitializer)
+        GroovyMock(GaidenConfigLoader, global: true)
+        def gaidenConfigLoader = Mock(GaidenConfigLoader)
 
         and:
         def saved = System.out
@@ -86,8 +88,8 @@ Usage: gaiden <command>
         new GaidenMain().run("invalid")
 
         then:
-        1 * new GaidenConfigInitializer() >> gaidenConfigInitializer
-        1 * gaidenConfigInitializer.initialize(_)
+        1 * new GaidenConfigLoader() >> gaidenConfigLoader
+        1 * gaidenConfigLoader.load(_)
 
         and:
         1 * printStream.println(USAGE_MESSAGE)

@@ -22,7 +22,6 @@ package gaiden
  * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
  */
-@Singleton
 class GaidenConfig {
 
     /** The base title of page */

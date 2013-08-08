@@ -22,13 +22,13 @@ class GaidenConfigInitializerSpec extends Specification {
 
     def "'initialize' should initialize a configuration file"() {
         setup:
-        def initializer = new GaidenConfigInitializer()
+        def initializer = new GaidenConfigLoader()
 
         when:
-        initializer.initialize(new File("src/test/resources/config/ValidConfig.groovy"))
+        def config = initializer.load(new File("src/test/resources/config/ValidConfig.groovy"))
 
         then:
-        with(GaidenConfig.instance) {
+        with(config) {
             title == "Test Title"
             templatePath == "test/templates/layout.html"
             tocPath == "test/pages/toc.groovy"
@@ -41,13 +41,13 @@ class GaidenConfigInitializerSpec extends Specification {
 
     def "'initialize' should initialize the default configuration file"() {
         setup:
-        def initializer = new GaidenConfigInitializer()
+        def initializer = new GaidenConfigLoader()
 
         when:
-        initializer.initialize(new File("src/test/resources/config/NotFoundConfig.groovy"))
+        def config =initializer.load(new File("src/test/resources/config/NotFoundConfig.groovy"))
 
         then:
-        with(GaidenConfig.instance) {
+        with(config) {
             title == "Gaiden"
             templatePath == "templates/layout.html"
             tocPath == "pages/toc.groovy"
@@ -60,13 +60,13 @@ class GaidenConfigInitializerSpec extends Specification {
 
     def "'initialize' should initialize the defaults configuration other than values set"() {
         setup:
-        def initializer = new GaidenConfigInitializer()
+        def initializer = new GaidenConfigLoader()
 
         when:
-        initializer.initialize(new File("src/test/resources/config/OnlyTitleConfig.groovy"))
+        def config = initializer.load(new File("src/test/resources/config/OnlyTitleConfig.groovy"))
 
         then:
-        with(GaidenConfig.instance) {
+        with(config) {
             title == "Test Title"
             templatePath == "templates/layout.html"
             tocPath == "pages/toc.groovy"
@@ -74,18 +74,6 @@ class GaidenConfigInitializerSpec extends Specification {
             pagesDirectory == "pages"
             staticDirectory == "static"
             outputDirectory == "build"
-        }
-    }
-
-    def cleanup() {
-        def config = GaidenConfig.instance
-
-        config.properties.each { String key, value ->
-            if (key in ['class', 'instance', 'pagesDirectoryFile', 'outputDirectoryFile', 'staticDirectoryFile', 'templatePathFile', 'tocPathFile']) {
-                return
-            }
-
-            config[key] = null
         }
     }
 

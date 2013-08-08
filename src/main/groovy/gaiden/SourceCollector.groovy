@@ -30,7 +30,7 @@ class SourceCollector {
 
     private File pagesDirectory
 
-    SourceCollector(File pagesDirectory = GaidenConfig.instance.pagesDirectoryFile) {
+    SourceCollector(File pagesDirectory = Holders.config.pagesDirectoryFile) {
         this.pagesDirectory = pagesDirectory
     }
 

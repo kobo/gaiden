@@ -16,28 +16,31 @@
 
 package gaiden
 
-
-class GaidenConfigInitializer {
+/**
+ * Configuration loader of Gaiden.
+ *
+ * @author Hideki IGARASHI
+ * @author Kazuki YAMAMOTO
+ */
+class GaidenConfigLoader {
 
     private static final String DEFAULT_CONFIG_PATH = "/DefaultConfig.groovy"
 
-
-    void initialize(File configFile) {
+    /**
+     * Loads configuration from file.
+     *
+     * @param configFile the configuration file
+     * @return {@link GaidenConfig}'s instance which have the loaded values
+     */
+    GaidenConfig load(File configFile) {
         def config = initializeConfig(configFile)
-        bindConfigurations(config)
-    }
-
-    private void bindConfigurations(ConfigObject config) {
-        def gaidenConfig = GaidenConfig.instance
-        config.each { String key, value ->
-            gaidenConfig[key] = value
-        }
+        new GaidenConfig(config)
     }
 
     private ConfigObject initializeConfig(File configFile) {
         def slurper = new ConfigSlurper()
 
-        def config = slurper.parse(GaidenConfigInitializer.getResource(DEFAULT_CONFIG_PATH))
+        def config = slurper.parse(GaidenConfigLoader.getResource(DEFAULT_CONFIG_PATH))
         if (configFile.exists()) {
             config.merge(slurper.parse(configFile.toURI().toURL()))
         }

@@ -27,7 +27,7 @@ class PageBuilderSpec extends Specification {
         def pegdownProcessor = Mock(PegDownProcessor)
 
         and:
-        def builder = new PageBuilder(templateEngine: templateEngine, pegDownProcessor: pegdownProcessor)
+        def builder = new PageBuilder(templateEngine, pegdownProcessor)
 
         and:
         def pageSource = new PageSource(path: "test.md", content: "SOURCE_CONTENT")

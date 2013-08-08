@@ -21,6 +21,7 @@ import gaiden.DocumentBuilder
 import gaiden.DocumentSource
 import gaiden.DocumentWriter
 import gaiden.SourceCollector
+
 /**
  * The 'build' command.
  *

@@ -30,7 +30,7 @@ class DocumentWriter {
     File outputDirectory
     File staticDirectory
 
-    DocumentWriter(staticDirectory = GaidenConfig.instance.staticDirectoryFile, outputDirectory = GaidenConfig.instance.outputDirectoryFile) {
+    DocumentWriter(staticDirectory = Holders.config.staticDirectoryFile, outputDirectory = Holders.config.outputDirectoryFile) {
         this.staticDirectory = staticDirectory
         this.outputDirectory = outputDirectory
     }

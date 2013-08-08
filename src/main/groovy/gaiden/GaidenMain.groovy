@@ -51,7 +51,7 @@ Usage: gaiden <command>
             return
         }
 
-        new GaidenConfigInitializer().initialize(new File(CONFIG_PATH))
+        Holders.config = new GaidenConfigLoader().load(new File(CONFIG_PATH))
 
         switch (args.first()) {
             case "build":
