@@ -253,7 +253,7 @@ ruleset {
     LoggingSwallowsStacktrace
     MultipleLoggers
     PrintStackTrace
-    Println
+    //Println
     SystemErrPrint
     SystemOutPrint
 
@@ -264,7 +264,7 @@ ruleset {
     //FactoryMethodName
     FieldName
     InterfaceName
-    MethodName
+    //MethodName
     ObjectOverrideMisspelledMethodName
     PackageName
     ParameterName

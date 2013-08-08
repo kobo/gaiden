@@ -126,7 +126,6 @@
     <inspection_tool class="LoggerWithWrongModifiers" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="LoggingSwallowsStacktrace" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="LongLiteralWithLowerCaseL" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="MethodName" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MethodSize" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MissingNewInThrowStatement" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MultipleLoggers" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -140,7 +139,6 @@
     <inspection_tool class="ParameterName" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ParameterReassignment" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PrintStackTrace" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="Println" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PropertyName" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PublicFinalizeMethod" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PublicInstanceField" enabled="true" level="WARNING" enabled_by_default="true" />
