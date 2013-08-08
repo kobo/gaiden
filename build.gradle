@@ -48,10 +48,6 @@ test {
     }
 }
 
-task wrap(type: Wrapper, description: "create a gradlew") {
-    gradleVersion = '1.6'
-}
-
 task distribution(dependsOn: 'distZip')
 
 task release(dependsOn: 'distribution')
