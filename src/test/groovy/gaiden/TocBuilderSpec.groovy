@@ -132,6 +132,57 @@ class TocBuilderSpec extends Specification {
         toc instanceof NullToc
     }
 
+    def "'build' should not link a path with '#'"() {
+        setup:
+        def tocInputFile = GroovyMock(File)
+        tocInputFile.text >> """
+            "#first.html"(title: 'first title')
+            "#second/"(title: 'second title') {
+                "second/second1.html"(title: 'second 1 title')
+            }
+        """
+        tocInputFile.exists() >> true
+
+        and:
+        def tocOutputPath = "toc.html"
+
+        and:
+        def templateEngine = new TemplateEngine(new File("/output"),
+            new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
+
+        when:
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath).build()
+
+        then:
+        toc.path == "toc.html"
+        toc.content == """<html>
+                         |<head>
+                         |    <title>Gaiden</title>
+                         |</head>
+                         |<body>
+                         |<h1>Table of contents</h1>
+                         |<ul>
+                         |    <li>first title</li>
+                         |    <li>second title
+                         |        <ul>
+                         |            <li>
+                         |                <a href="second/second1.html">second 1 title</a>
+                         |            </li>
+                         |        </ul>
+                         |    </li>
+                         |</ul>
+                         |</body>
+                         |</html>
+                         |""".stripMargin()
+
+        toMap(toc.node) == [
+            "#first.html": [title: "first title"],
+            "#second/": [title: "second title", children: [
+                "second/second1.html": [title: "second 1 title"]
+            ]],
+        ]
+    }
+
     private Map toMap(Node node) {
         def processNode = { Node currentNode ->
             def currentNodeValues = [:]
