@@ -34,7 +34,7 @@ class PageBuilder {
     private PegDownProcessor pegDownProcessor
 
     PageBuilder(TemplateEngine templateEngine) {
-        this(templateEngine, new PegDownProcessor(Extensions.ALL))
+        this(templateEngine, new PegDownProcessor(Extensions.ALL - Extensions.HARDWRAPS))
     }
 
     PageBuilder(TemplateEngine templateEngine, PegDownProcessor pegDownProcessor) {
