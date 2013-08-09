@@ -29,9 +29,11 @@ class SourceCollector {
     private static final PAGE_SOURCE_EXTENSIONS = ['md', 'markdown']
 
     private File pagesDirectory
+    private String inputEncoding
 
-    SourceCollector(File pagesDirectory = Holders.config.pagesDirectoryFile) {
+    SourceCollector(File pagesDirectory = Holders.config.pagesDirectoryFile, String inputEncoding = Holders.config.inputEncoding) {
         this.pagesDirectory = pagesDirectory
+        this.inputEncoding = inputEncoding
     }
 
     /**
@@ -60,7 +62,7 @@ class SourceCollector {
     private PageSource createPageSource(File file) {
         new PageSource(
             path: FileUtils.getRelativePathForDirectoryToFile(pagesDirectory, file),
-            content: file.text,
+            content: file.getText(inputEncoding),
         )
     }
 

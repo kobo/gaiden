@@ -45,6 +45,12 @@ class GaidenConfig {
     /** The directory to be outputted a document */
     String outputDirectory
 
+    /** The input encoding of files */
+    String inputEncoding
+
+    /** The output encoding of files */
+    String outputEncoding
+
     /** Gets the {@link #templatePath} as {@link File} */
     File getTemplatePathFile() {
         new File(templatePath)

@@ -24,7 +24,7 @@ class TocBuilderSpec extends Specification {
     def "'build' should return a toc"() {
         setup:
         def tocInputFile = GroovyMock(File)
-        tocInputFile.text >> """
+        tocInputFile.getText("UTF-8") >> """
             "first.html"(title: 'first title')
             "second.html"(title: 'second title')
         """
@@ -38,7 +38,7 @@ class TocBuilderSpec extends Specification {
             new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath).build()
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, "UTF-8").build()
 
         then:
         toc.path == "toc.html"
@@ -69,7 +69,7 @@ class TocBuilderSpec extends Specification {
     def "'build' should return a hierarchy toc"() {
         setup:
         def tocInputFile = GroovyMock(File)
-        tocInputFile.text >> """
+        tocInputFile.getText("UTF-8") >> """
             "first.html"(title: 'first title')
             "second/"(title: 'second title') {
                 "second/second1.html"(title: 'second 1 title')
@@ -85,7 +85,7 @@ class TocBuilderSpec extends Specification {
             new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath).build()
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, "UTF-8").build()
 
         then:
         toc.path == "toc.html"
@@ -126,10 +126,44 @@ class TocBuilderSpec extends Specification {
         tocFile.exists() >> false
 
         when:
-        def toc = new TocBuilder(null, tocFile, null).build()
+        def toc = new TocBuilder(null, tocFile, null, null).build()
 
         then:
         toc instanceof NullToc
+    }
+
+    def "'build' should read a specified encoding"() {
+        setup:
+        def tocInputFile = new File("src/test/resources/toc/shiftjis-toc.groovy")
+
+        and:
+        def tocOutputPath = "toc.html"
+
+        and:
+        def templateEngine = new TemplateEngine(new File("/output"),
+            new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
+
+        when:
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, "Shift_JIS").build()
+
+        then:
+        toc.path == "toc.html"
+        toc.content == """<html>
+                         |<head>
+                         |    <title>Gaiden</title>
+                         |</head>
+                         |<body>
+                         |<h1>Table of contents</h1>
+                         |<ul>
+                         |    <li>
+                         |        <a href="shiftjis">Shift_JISのタイトルです</a>
+                         |    </li>
+                         |</ul>
+                         |</body>
+                         |</html>
+                         |""".stripMargin()
+
+        toMap(toc.node) == ["shiftjis": [title: "Shift_JISのタイトルです"]]
     }
 
     private Map toMap(Node node) {

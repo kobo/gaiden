@@ -27,12 +27,17 @@ import org.apache.commons.io.FileUtils
  */
 class DocumentWriter {
 
-    File outputDirectory
-    File staticDirectory
+    private File outputDirectory
+    private File staticDirectory
+    private String outputEncoding
 
-    DocumentWriter(staticDirectory = Holders.config.staticDirectoryFile, outputDirectory = Holders.config.outputDirectoryFile) {
+    DocumentWriter(
+        File staticDirectory = Holders.config.staticDirectoryFile,
+        File outputDirectory = Holders.config.outputDirectoryFile,
+        String outputEncoding = Holders.config.outputEncoding) {
         this.staticDirectory = staticDirectory
         this.outputDirectory = outputDirectory
+        this.outputEncoding = outputEncoding
     }
 
     /**
@@ -55,12 +60,12 @@ class DocumentWriter {
 
     private void writePages(List<Page> pages) {
         pages.each { Page page ->
-            page.writeTo(outputDirectory)
+            page.writeTo(outputDirectory, outputEncoding)
         }
     }
 
     private void writeToc(Toc toc) {
-        toc.writeTo(outputDirectory)
+        toc.writeTo(outputDirectory, outputEncoding)
     }
 
     private void copyStaticFiles() {

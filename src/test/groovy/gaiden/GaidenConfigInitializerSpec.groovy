@@ -36,6 +36,8 @@ class GaidenConfigInitializerSpec extends Specification {
             pagesDirectory == "test/pages"
             staticDirectory == "test/static"
             outputDirectory == "test/build/html"
+            inputEncoding == "Test Input Encoding"
+            outputEncoding == "Test Output Encoding"
         }
     }
 
@@ -55,6 +57,8 @@ class GaidenConfigInitializerSpec extends Specification {
             pagesDirectory == "pages"
             staticDirectory == "static"
             outputDirectory == "build"
+            inputEncoding == "UTF-8"
+            outputEncoding == "UTF-8"
         }
     }
 
@@ -74,6 +78,8 @@ class GaidenConfigInitializerSpec extends Specification {
             pagesDirectory == "pages"
             staticDirectory == "static"
             outputDirectory == "build"
+            inputEncoding == "UTF-8"
+            outputEncoding == "UTF-8"
         }
     }
 

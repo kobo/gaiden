@@ -61,7 +61,7 @@ class TemplateEngine {
 
     private Closure createLinkTag(String outputPath) {
         return { String resourcePath ->
-            if (!new File(resourcePath).absolute) {
+            if (!resourcePath.startsWith("/")) {
                 return resourcePath
             }
 

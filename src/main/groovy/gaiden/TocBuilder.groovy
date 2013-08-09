@@ -32,15 +32,17 @@ class TocBuilder {
     private TemplateEngine templateEngine
     private File tocFile
     private String tocOutputPath
+    private String inputEncoding
 
     TocBuilder(TemplateEngine templateEngine) {
-        this(templateEngine, Holders.config.tocPathFile, Holders.config.tocOutputPath)
+        this(templateEngine, Holders.config.tocPathFile, Holders.config.tocOutputPath, Holders.config.inputEncoding)
     }
 
-    TocBuilder(TemplateEngine templateEngine, File tocFile, String tocOutputPath) {
+    TocBuilder(TemplateEngine templateEngine, File tocFile, String tocOutputPath, String inputEncoding) {
         this.templateEngine = templateEngine
         this.tocFile = tocFile
         this.tocOutputPath = tocOutputPath
+        this.inputEncoding = inputEncoding
     }
 
     /**
@@ -61,7 +63,7 @@ class TocBuilder {
 
     private Node parseTocFile() {
         def tocBuilder = new NodeBuilder()
-        tocBuilder.toc(new GroovyShell().evaluate("{ -> ${tocFile.text} }"))
+        tocBuilder.toc(new GroovyShell().evaluate("{ -> ${tocFile.getText(inputEncoding)} }"))
     }
 
     private void buildContentOfToc(builder, nodes) {
