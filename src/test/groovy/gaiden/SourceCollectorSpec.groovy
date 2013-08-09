@@ -51,7 +51,7 @@ class SourceCollectorSpec extends Specification {
         documentSource.pageSources*.path as Set == ['short-extension.md', 'long-extension.markdown'] as Set
     }
 
-    def "'collect' should be return markdown files recursively"() {
+    def "'collect' should return markdown files recursively"() {
         setup:
         def collector = new SourceCollector(new File("src/test/resources/recursive-pages"))
 
