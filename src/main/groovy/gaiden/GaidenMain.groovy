@@ -27,7 +27,7 @@ import gaiden.command.GaidenClean
  */
 class GaidenMain {
 
-    private static final String CONFIG_PATH = "Config.groovy"
+    private static final String CONFIG_PATH = "GaidenConfig.groovy"
     private static final String USAGE_MESSAGE = """\
 Usage: gaiden <command>
 
@@ -46,6 +46,11 @@ Usage: gaiden <command>
     }
 
     void run(String... args) {
+        def gaidenConfig = new File(CONFIG_PATH)
+        if (!gaidenConfig.exists()) {
+            System.err.println("fatal: Not a Gaiden Project (Cannot find $CONFIG_PATH)")
+            return
+        }
         if (!args) {
             usage()
             return
@@ -53,7 +58,11 @@ Usage: gaiden <command>
 
         Holders.config = new GaidenConfigLoader().load(new File(CONFIG_PATH))
 
-        switch (args.first()) {
+        executeCommand(args.first())
+    }
+
+    void executeCommand(String command) {
+        switch (command) {
             case "build":
                 new GaidenBuild().execute()
                 break
@@ -62,7 +71,7 @@ Usage: gaiden <command>
                 break
             default:
                 usage()
-                return
+                break
         }
     }
 
