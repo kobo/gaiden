@@ -27,20 +27,21 @@ import groovy.xml.MarkupBuilder
 class TocBuilder {
 
     private static final String WHITESPACE = " "
-    private static final String TOC_HEADING = "Table of contents"
 
     private TemplateEngine templateEngine
     private File tocFile
     private String tocOutputPath
+    private String tocTitle
 
     TocBuilder(TemplateEngine templateEngine) {
         this(templateEngine, Holders.config.tocPathFile, Holders.config.tocOutputPath)
     }
 
-    TocBuilder(TemplateEngine templateEngine, File tocFile, String tocOutputPath) {
+    TocBuilder(TemplateEngine templateEngine, File tocFile, String tocOutputPath, String tocTitle) {
         this.templateEngine = templateEngine
         this.tocFile = tocFile
         this.tocOutputPath = tocOutputPath
+        this.tocTitle = tocTitle
     }
 
     /**
@@ -84,7 +85,7 @@ class TocBuilder {
 
         builder.doubleQuotes = true // surrounds an attribute with double quotes
 
-        builder.h1(TOC_HEADING)
+        builder.h1(tocTitle)
 
         buildContentOfToc(builder, tocNode.value())
 

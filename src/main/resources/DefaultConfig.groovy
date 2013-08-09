@@ -15,6 +15,7 @@
  */
 
 title = "Gaiden"
+tocTitle = "Table of contents"
 templatePath = "templates/layout.html"
 tocPath = "pages/toc.groovy"
 tocOutputPath = "toc.html"

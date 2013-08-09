@@ -32,13 +32,14 @@ class TocBuilderSpec extends Specification {
 
         and:
         def tocOutputPath = "toc.html"
+        def tocTitle = "Test TocBuilder Title"
 
         and:
         def templateEngine = new TemplateEngine(new File("/output"),
             new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath).build()
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, tocTitle).build()
 
         then:
         toc.path == "toc.html"
@@ -47,7 +48,7 @@ class TocBuilderSpec extends Specification {
                          |    <title>Gaiden</title>
                          |</head>
                          |<body>
-                         |<h1>Table of contents</h1>
+                         |<h1>$tocTitle</h1>
                          |<ul>
                          |    <li>
                          |        <a href="first.html">first title</a>
@@ -79,13 +80,14 @@ class TocBuilderSpec extends Specification {
 
         and:
         def tocOutputPath = "toc.html"
+        def tocTitle = "Test TocBuilder Title"
 
         and:
         def templateEngine = new TemplateEngine(new File("/output"),
             new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath).build()
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, tocTitle).build()
 
         then:
         toc.path == "toc.html"
@@ -94,7 +96,7 @@ class TocBuilderSpec extends Specification {
                          |    <title>Gaiden</title>
                          |</head>
                          |<body>
-                         |<h1>Table of contents</h1>
+                         |<h1>$tocTitle</h1>
                          |<ul>
                          |    <li>
                          |        <a href="first.html">first title</a>
@@ -126,7 +128,7 @@ class TocBuilderSpec extends Specification {
         tocFile.exists() >> false
 
         when:
-        def toc = new TocBuilder(null, tocFile, null).build()
+        def toc = new TocBuilder(null, tocFile, null, null).build()
 
         then:
         toc instanceof NullToc
