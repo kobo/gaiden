@@ -2,36 +2,31 @@
 <head>
     <meta charset="UTF-8">
     <title>$title</title>
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=0.5,user-scalable=yes,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="${link('/css/bootstrap.css')}">
-    <link rel="stylesheet" href="${link('/css/responsive.css')}">
-    <link rel="stylesheet" href="${link('/font/elusive-icons/css/elusive-webfont.min.css')}">
+    <link rel="stylesheet" href="${link('/css/prettify.css')}">
     <link rel="stylesheet" href="${link('/css/style.css')}">
 </head>
 <body>
-    <nav class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container-fluid">
-                <button type="button" class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse"><i class="icon-list"></i></button>
-                <a href="$tocLink" class="brand"><i class="icon-book"></i> $title</a>
-            </div>
+    <div class="navbar navbar-static-top">
+        <div class="container">
+            <a class="navbar-brand" href="$tocLink">$title</a>
+            <a class="toc btn btn-primary btn-lg" href="$tocLink"><span class="glyphicon glyphicon-list"></span></a>
         </div>
-    </nav>
-    <div class="page-container">
+    </div>
+    <div class="container">
         <section class="page-content">
             $content
         </section>
     </div>
     <footer id="footer" class="footer">
-        <p>Powered by Gaiden</p>
+        <div class="container">
+            <p class="credit text-muted">Powered by <a href="#">Gaiden</a>.</p>
+        </div>
     </footer>
 
     <script src="${link('/js/jquery-1.10.2.min.js')}"></script>
     <script src="${link('/js/bootstrap.js')}"></script>
     <script src="${link('/js/prettify.js')}"></script>
-    <script src="${link('/js/application.js')}"></script>
 </body>
 </html>
