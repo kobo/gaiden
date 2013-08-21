@@ -47,8 +47,9 @@ footer {
   height: 60px;
   width: 100%;
   background-color: #eee;
+  margin-top: 3em;
 }
 
 .container .credit {
-  margin: 20px 0;
+  margin-top: 20px;
 }
