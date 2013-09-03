@@ -16,7 +16,7 @@
 
 package gaiden
 
-import org.pegdown.PegDownProcessor
+import gaiden.markdown.GaidenMarkdownProcessor
 import spock.lang.Specification
 
 class PageBuilderSpec extends Specification {
@@ -24,10 +24,10 @@ class PageBuilderSpec extends Specification {
     def "'build' should build a page"() {
         setup:
         def templateEngine = Mock(TemplateEngine)
-        def pegdownProcessor = Mock(PegDownProcessor)
+        def markdownProcessor = Mock(GaidenMarkdownProcessor)
 
         and:
-        def builder = new PageBuilder(templateEngine, pegdownProcessor)
+        def builder = new PageBuilder(templateEngine, markdownProcessor)
 
         and:
         def pageSource = new PageSource(path: "test.md", content: "SOURCE_CONTENT")
@@ -36,7 +36,7 @@ class PageBuilderSpec extends Specification {
         builder.build(pageSource)
 
         then:
-        1 * pegdownProcessor.markdownToHtml("SOURCE_CONTENT") >> "PROCESSED_CONTENT"
+        1 * markdownProcessor.markdownToHtml("SOURCE_CONTENT", "test.html") >> "PROCESSED_CONTENT"
         1 * templateEngine.make([content: "PROCESSED_CONTENT", outputPath: "test.html"])
     }
 
