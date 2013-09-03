@@ -27,6 +27,9 @@ class GaidenConfig {
     /** The base title of page */
     String title
 
+    /** The title of TOC */
+    String tocTitle
+
     /** The path of template file */
     String templatePath
 

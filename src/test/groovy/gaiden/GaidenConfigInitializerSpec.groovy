@@ -30,6 +30,7 @@ class GaidenConfigInitializerSpec extends Specification {
         then:
         with(config) {
             title == "Test Title"
+            tocTitle == "Test TOC Title"
             templatePath == "test/templates/layout.html"
             tocPath == "test/pages/toc.groovy"
             tocOutputPath == "test/toc.html"
@@ -49,6 +50,7 @@ class GaidenConfigInitializerSpec extends Specification {
         then:
         with(config) {
             title == "Gaiden"
+            tocTitle == "Table of contents"
             templatePath == "templates/layout.html"
             tocPath == "pages/toc.groovy"
             tocOutputPath == "toc.html"
@@ -68,6 +70,7 @@ class GaidenConfigInitializerSpec extends Specification {
         then:
         with(config) {
             title == "Test Title"
+            tocTitle == "Table of contents"
             templatePath == "templates/layout.html"
             tocPath == "pages/toc.groovy"
             tocOutputPath == "toc.html"

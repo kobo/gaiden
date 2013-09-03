@@ -15,6 +15,7 @@
  */
 
 title = "Test Title"
+tocTitle = "Test TOC Title"
 templatePath = "test/templates/layout.html"
 tocPath = "test/pages/toc.groovy"
 tocOutputPath = "test/toc.html"
