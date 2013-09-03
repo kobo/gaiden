@@ -39,7 +39,7 @@ class DocumentWriterSpec extends Specification {
 
         and:
         def document = new Document(pages: [page1, page2, page3], toc: toc)
-        def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory)
+        def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory, "UTF-8")
 
         and:
         def saved = System.out
@@ -82,7 +82,7 @@ class DocumentWriterSpec extends Specification {
         def document = new Document(pages: [page], toc: toc)
 
         and:
-        def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory)
+        def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory, "UTF-8")
         documentWriter.write(document)
 
         when:
@@ -93,8 +93,38 @@ class DocumentWriterSpec extends Specification {
         new File("build/gaiden-test-doc/toc.html").text == toc.content
     }
 
-    private Page createPage(String path) {
-        new Page(path: path, content: "<title>Document</title><p>${path} content</p>")
+    def "'write' should write a specified encoding"() {
+        setup:
+        def page = createPage("document.html", "これはShift_JISのドキュメントです。")
+
+        and:
+        def toc = new Toc(path: "toc.html", content: "<h1>これはShift_JISのTOCです</h1>")
+
+        and:
+        def document = new Document(pages: [page], toc: toc)
+        def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory, "Shift_JIS")
+
+        when:
+        documentWriter.write(document)
+
+        then:
+        getFiles(outputDirectory) == [
+            "document.html",
+            "images/dummy.png",
+            "css/main.css",
+            "js/test.js",
+            "toc.html",
+        ] as Set
+
+        and:
+        new File("build/gaiden-test-doc/document.html").getText("Shift_JIS") == page.content
+
+        and:
+        new File("build/gaiden-test-doc/toc.html").getText("Shift_JIS") == toc.content
+    }
+
+    private Page createPage(String path, String content = null) {
+        new Page(path: path, content: content ?: "<title>Document</title><p>${path} content</p>")
     }
 
     private Set getFiles(File directory) {

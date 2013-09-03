@@ -22,7 +22,7 @@ class SourceCollectorSpec extends Specification {
 
     def "'collect' should return a document source"() {
         setup:
-        def collector = new SourceCollector(new File("src/test/resources/flat-pages"))
+        def collector = new SourceCollector(new File("src/test/resources/flat-pages"), "UTF-8")
 
         when:
         def documentSource = collector.collect()
@@ -39,7 +39,7 @@ class SourceCollectorSpec extends Specification {
 
     def "'collect' should return markdown files of valid filename"() {
         setup:
-        def collector = new SourceCollector(new File("src/test/resources/including-invalid-filename-pages"))
+        def collector = new SourceCollector(new File("src/test/resources/including-invalid-filename-pages"), "UTF-8")
 
         when:
         def documentSource = collector.collect()
@@ -53,7 +53,7 @@ class SourceCollectorSpec extends Specification {
 
     def "'collect' should return markdown files recursively"() {
         setup:
-        def collector = new SourceCollector(new File("src/test/resources/recursive-pages"))
+        def collector = new SourceCollector(new File("src/test/resources/recursive-pages"), "UTF-8")
 
         when:
         def documentSource = collector.collect()
@@ -67,6 +67,21 @@ class SourceCollectorSpec extends Specification {
             "second/second-1.md", "second/second-2.md", "second/second-3.md",
             "second/third/third-1.md", "second/third/third-2.md",
         ] as Set
+    }
+
+    def "'collect' should read a specified encoding"() {
+        setup:
+        def collector = new SourceCollector(new File("src/test/resources/shiftjis-pages"), "Shift_JIS")
+
+        when:
+        def documentSource = collector.collect()
+
+        then:
+        documentSource.pageSources.size() == 1
+
+        and:
+        def pageSource =  documentSource.pageSources.first()
+        pageSource.content == "これはShift_JISで書かれた文章です\n"
     }
 
 }

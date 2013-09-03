@@ -24,6 +24,8 @@ package gaiden.util
  */
 class FileUtils {
 
+    private static final String NORMALIZED_SEPARATOR = "/"
+
     /**
      * Replaces the extension of filename.
      *
@@ -58,11 +60,18 @@ class FileUtils {
     }
 
     private static String getFilePath(File file) {
-        file.canonicalPath
+        normalize(file.canonicalPath)
     }
 
     private static String getDirectoryPath(File directory) {
-        directory.canonicalPath + File.separator
+        normalize(directory.canonicalPath) + NORMALIZED_SEPARATOR
+    }
+
+    private static normalize(String path) {
+        if (File.separator == NORMALIZED_SEPARATOR) {
+            return path
+        }
+        path.replaceAll("\\\\", NORMALIZED_SEPARATOR)
     }
 
     private static String getRelativePath(String from, String to) {
@@ -70,12 +79,12 @@ class FileUtils {
         def replacedFrom = from.replaceFirst(commonBaseDir, '')
         def replacedTo = to.replaceFirst(commonBaseDir, '')
         def baseDirectory = getBaseDirectory(replacedFrom)
-        baseDirectory.replaceAll("[^${File.separator}]+${File.separator}", "..${File.separator}") + replacedTo
+        baseDirectory.replaceAll("[^$NORMALIZED_SEPARATOR]+$NORMALIZED_SEPARATOR", "..$NORMALIZED_SEPARATOR") + replacedTo
     }
 
     private static String getCommonBaseDirectory(String from, String to) {
         def result = []
-        def splitPathToken = { getBaseDirectory(it).split(File.separator) }
+        def splitPathToken = { getBaseDirectory(it).split(NORMALIZED_SEPARATOR) }
         def fromTokens = splitPathToken(from)
         def toTokens = splitPathToken(to)
         for (int i : 0..<[fromTokens, toTokens]*.size().min()) {
@@ -83,11 +92,11 @@ class FileUtils {
             result << fromTokens[i]
         }
         result << ''
-        result.join(File.separator)
+        result.join(NORMALIZED_SEPARATOR)
     }
 
     private static String getBaseDirectory(String path) {
-        path.replaceFirst("[^${File.separator}]*\$", '')
+        path.replaceFirst("[^$NORMALIZED_SEPARATOR]*\$", '')
     }
 
 }

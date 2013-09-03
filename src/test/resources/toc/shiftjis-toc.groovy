@@ -14,13 +14,4 @@
  * limitations under the License.
  */
 
-title = "Gaiden"
-tocTitle = "Table of contents"
-templatePath = "templates/layout.html"
-tocPath = "pages/toc.groovy"
-tocOutputPath = "toc.html"
-pagesDirectory = "pages"
-staticDirectory = "static"
-outputDirectory = "build"
-inputEncoding = "UTF-8"
-outputEncoding = "UTF-8"
+"shiftjis"(title: "Shift_JIS‚Ìƒ^ƒCƒgƒ‹‚Å‚·")
