@@ -28,7 +28,7 @@ import gaiden.SourceCollector
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class GaidenBuild {
+class GaidenBuild implements GaidenCommand {
 
     private SourceCollector sourceCollector
     private DocumentBuilder documentBuilder

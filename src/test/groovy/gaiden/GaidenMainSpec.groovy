@@ -22,14 +22,17 @@ import spock.lang.Specification
 
 class GaidenMainSpec extends Specification {
 
-    private static final String USAGE_MESSAGE = """\
-Usage: gaiden <command>
+    def savedSystemOut
+    def savedSystemErr
 
-   commands:
-       build  Build pages from source pages
-       clean  Clean the build directory
-"""
     def setup() {
+        savedSystemOut = System.out
+        savedSystemErr = System.err
+    }
+
+    def cleanup() {
+        System.out = savedSystemOut
+        System.err = savedSystemErr
     }
 
     def "'run' should run a command"() {
@@ -71,7 +74,6 @@ Usage: gaiden <command>
         new File("GaidenConfig.groovy") >> configFile
 
         and:
-        def saved = System.out
         def printStream = Mock(PrintStream)
         System.out = printStream
 
@@ -79,15 +81,11 @@ Usage: gaiden <command>
         new GaidenMain().run([] as String[])
 
         then:
-        1 * printStream.println(USAGE_MESSAGE)
-
-        cleanup:
-        System.out = saved
+        1 * printStream.println(GaidenMain.USAGE_MESSAGE)
     }
 
     def "'run' should not execute command if GaidenConfig.groovy doesn't exist"() {
         setup:
-        def saved = System.err
         def printStream = Mock(PrintStream)
         System.err = printStream
 
@@ -102,10 +100,7 @@ Usage: gaiden <command>
         new GaidenMain().run([] as String[])
 
         then:
-        1 * printStream.println("fatal: Not a Gaiden Project (Cannot find GaidenConfig.groovy)")
-
-        cleanup:
-        System.err = saved
+        1 * printStream.println("ERROR: Not a Gaiden project (Cannot find GaidenConfig.groovy)")
     }
 
     def "'executeCommand' should execute the build command"() {
@@ -136,7 +131,6 @@ Usage: gaiden <command>
 
     def "'executeCommand' should output usage if invalid command"() {
         setup:
-        def saved = System.out
         def printStream = Mock(PrintStream)
         System.out = printStream
 
@@ -144,10 +138,7 @@ Usage: gaiden <command>
         new GaidenMain().executeCommand("invalid")
 
         then:
-        1 * printStream.println(USAGE_MESSAGE)
-
-        cleanup:
-        System.out = saved
+        1 * printStream.println(GaidenMain.USAGE_MESSAGE)
     }
 
 }
