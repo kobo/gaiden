@@ -66,11 +66,19 @@ class TocBuilder {
     }
 
     private void buildContentOfToc(builder, nodes) {
+        if (!nodes) {
+            return
+        }
+
         builder.ul {
             nodes.each { Node node ->
-                li {
-                    a(href: node.name(), node.attributes().title)
-                    if (node.value()) {
+                if (node.name().startsWith("#")) {
+                    li(node.attributes().title) {
+                        buildContentOfToc(builder, node.value())
+                    }
+                } else {
+                    li {
+                        a(href: node.name(), node.attributes().title)
                         buildContentOfToc(builder, node.value())
                     }
                 }
