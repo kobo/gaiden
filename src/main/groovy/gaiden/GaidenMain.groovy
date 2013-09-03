@@ -18,6 +18,7 @@ package gaiden
 
 import gaiden.command.GaidenBuild
 import gaiden.command.GaidenClean
+import gaiden.command.GaidenCommand
 
 /**
  * A command line to execute Gaiden.
@@ -27,14 +28,15 @@ import gaiden.command.GaidenClean
  */
 class GaidenMain {
 
-    private static final String CONFIG_PATH = "Config.groovy"
-    private static final String USAGE_MESSAGE = """\
+    static final String USAGE_MESSAGE = """\
 Usage: gaiden <command>
 
    commands:
        build  Build pages from source pages
        clean  Clean the build directory
 """
+
+    private static final String CONFIG_FILE_NAME = "GaidenConfig.groovy"
 
     /**
      * A main command line interface.
@@ -46,23 +48,34 @@ Usage: gaiden <command>
     }
 
     void run(String... args) {
+        def gaidenConfig = new File(CONFIG_FILE_NAME)
+        if (!gaidenConfig.exists()) {
+            System.err.println("ERROR: Not a Gaiden project (Cannot find $CONFIG_FILE_NAME)")
+            return
+        }
         if (!args) {
             usage()
             return
         }
 
-        Holders.config = new GaidenConfigLoader().load(new File(CONFIG_PATH))
+        Holders.config = new GaidenConfigLoader().load(gaidenConfig)
 
-        switch (args.first()) {
+        executeCommand(args.first())
+    }
+
+    void executeCommand(String commandName) {
+        GaidenCommand command = createCommand(commandName)
+        command.execute()
+    }
+
+    private GaidenCommand createCommand(String commandName) {
+        switch (commandName) {
             case "build":
-                new GaidenBuild().execute()
-                break
+                return new GaidenBuild()
             case "clean":
-                new GaidenClean().execute()
-                break
+                return new GaidenClean()
             default:
-                usage()
-                return
+                return [execute: {-> usage() }] as GaidenCommand
         }
     }
 

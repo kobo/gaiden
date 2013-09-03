@@ -22,15 +22,15 @@ class GaidenCleanSpec extends Specification {
 
     def "'execute' should clean the build directory"() {
         setup:
-        def command = new GaidenClean()
-
-        and:
         def buildDirectory = File.createTempDir()
         new File(buildDirectory, "dummy").write("dummy")
         assert buildDirectory.exists()
 
+        and:
+        def command = new GaidenClean(buildDirectory)
+
         when:
-        command.execute(buildDirectory)
+        command.execute()
 
         then:
         !buildDirectory.exists()

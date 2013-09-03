@@ -16,27 +16,17 @@
 
 package gaiden.command
 
-import gaiden.Holders
-
 /**
- * The 'clean' command.
+ * A Command interface.
  *
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class GaidenClean implements GaidenCommand {
-
-    private File targetDirectory
-
-    GaidenClean(targetDirectory = Holders.config.outputDirectory) {
-        this.targetDirectory = targetDirectory
-    }
+interface GaidenCommand {
 
     /**
-     * Executes cleaning.
+     * Executes command.
      */
-    void execute() {
-        new AntBuilder().delete(dir: targetDirectory)
-    }
+    void execute()
 
 }
