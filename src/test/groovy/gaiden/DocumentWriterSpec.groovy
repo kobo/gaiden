@@ -123,6 +123,25 @@ class DocumentWriterSpec extends Specification {
         new File("build/gaiden-test-doc/toc.html").getText("Shift_JIS") == toc.content
     }
 
+    def "'write' should not write anything if toc file doesn't exist"() {
+        setup:
+        def toc = new NullToc()
+
+        and:
+        def document = new Document(pages: [], toc: toc)
+        def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory, "UTF-8")
+
+        when:
+        documentWriter.write(document)
+
+        then:
+        getFiles(outputDirectory) == [
+            "images/dummy.png",
+            "css/main.css",
+            "js/test.js",
+        ] as Set
+    }
+
     private Page createPage(String path, String content = null) {
         new Page(path: path, content: content ?: "<title>Document</title><p>${path} content</p>")
     }

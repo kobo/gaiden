@@ -25,7 +25,7 @@ package gaiden
 class NullToc extends Toc {
 
     @Override
-    void writeTo(File outputDirectory) {
+    void writeTo(File outputDirectory, String outputEncoding) {
         // do nothing
     }
 
