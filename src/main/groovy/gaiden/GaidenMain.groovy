@@ -51,11 +51,11 @@ Usage: gaiden <command>
         def gaidenConfig = new File(CONFIG_FILE_NAME)
         if (!gaidenConfig.exists()) {
             System.err.println("ERROR: Not a Gaiden project (Cannot find $CONFIG_FILE_NAME)")
-            return
+            System.exit(1)
         }
         if (!args) {
             usage()
-            return
+            System.exit(1)
         }
 
         Holders.config = new GaidenConfigLoader().load(gaidenConfig)

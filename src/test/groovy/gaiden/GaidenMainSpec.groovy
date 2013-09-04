@@ -24,15 +24,18 @@ class GaidenMainSpec extends Specification {
 
     def savedSystemOut
     def savedSystemErr
+    def savedSystemSecurityManager
 
     def setup() {
         savedSystemOut = System.out
         savedSystemErr = System.err
+        savedSystemSecurityManager = System.securityManager
     }
 
     def cleanup() {
         System.out = savedSystemOut
         System.err = savedSystemErr
+        System.securityManager = savedSystemSecurityManager
     }
 
     def "'run' should run a command"() {
@@ -77,17 +80,31 @@ class GaidenMainSpec extends Specification {
         def printStream = Mock(PrintStream)
         System.out = printStream
 
+        and:
+        def securityManager = Mock(SecurityManager)
+        System.securityManager = securityManager
+
         when:
         new GaidenMain().run([] as String[])
 
         then:
+        thrown(SecurityException)
+
+        and:
         1 * printStream.println(GaidenMain.USAGE_MESSAGE)
+        1 * securityManager.checkExit(1) >> {
+            throw new SecurityException("Use of System.exit() is forbidden!");
+        }
     }
 
     def "'run' should not execute command if GaidenConfig.groovy doesn't exist"() {
         setup:
         def printStream = Mock(PrintStream)
         System.err = printStream
+
+        and:
+        def securityManager = Mock(SecurityManager)
+        System.securityManager = securityManager
 
         and:
         def gaidenConfig = Mock(File)
@@ -100,7 +117,13 @@ class GaidenMainSpec extends Specification {
         new GaidenMain().run([] as String[])
 
         then:
+        thrown(SecurityException)
+
+        and:
         1 * printStream.println("ERROR: Not a Gaiden project (Cannot find GaidenConfig.groovy)")
+        1 * securityManager.checkExit(1) >> {
+            throw new SecurityException("Use of System.exit() is forbidden!");
+        }
     }
 
     def "'executeCommand' should execute the build command"() {
