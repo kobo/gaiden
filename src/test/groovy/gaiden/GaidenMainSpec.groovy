@@ -78,7 +78,7 @@ class GaidenMainSpec extends Specification {
 
         and:
         def printStream = Mock(PrintStream)
-        System.out = printStream
+        System.err = printStream
 
         and:
         def securityManager = Mock(SecurityManager)
@@ -155,7 +155,7 @@ class GaidenMainSpec extends Specification {
     def "'executeCommand' should output usage if invalid command"() {
         setup:
         def printStream = Mock(PrintStream)
-        System.out = printStream
+        System.err = printStream
 
         when:
         new GaidenMain().executeCommand("invalid")

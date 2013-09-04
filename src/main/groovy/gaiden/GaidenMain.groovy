@@ -80,7 +80,7 @@ Usage: gaiden <command>
     }
 
     private void usage() {
-        println USAGE_MESSAGE
+        System.err.println USAGE_MESSAGE
     }
 
 }
