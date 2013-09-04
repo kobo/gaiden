@@ -28,7 +28,7 @@ class GaidenClean implements GaidenCommand {
 
     private File targetDirectory
 
-    GaidenClean(targetDirectory = Holders.config.outputDirectory) {
+    GaidenClean(targetDirectory = Holders.config.outputDirectoryFile) {
         this.targetDirectory = targetDirectory
     }
 

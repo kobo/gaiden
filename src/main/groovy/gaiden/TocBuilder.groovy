@@ -35,7 +35,7 @@ class TocBuilder {
     private String inputEncoding
 
     TocBuilder(TemplateEngine templateEngine) {
-        this(templateEngine, Holders.config.tocPathFile, Holders.config.tocOutputPath, Holders.config.inputEncoding)
+        this(templateEngine, Holders.config.tocPathFile, Holders.config.tocOutputPath, Holders.config.tocTitle, Holders.config.inputEncoding)
     }
 
     TocBuilder(TemplateEngine templateEngine, File tocFile, String tocOutputPath, String tocTitle, String inputEncoding) {
