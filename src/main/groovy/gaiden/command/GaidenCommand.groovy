@@ -24,6 +24,8 @@ package gaiden.command
  */
 interface GaidenCommand {
 
+    boolean isOnlyGaidenProject()
+
     /**
      * Executes command.
      */

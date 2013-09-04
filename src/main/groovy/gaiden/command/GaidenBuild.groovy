@@ -47,10 +47,16 @@ class GaidenBuild implements GaidenCommand {
     /**
      * Executes building.
      */
+    @Override
     void execute() {
         DocumentSource documentSource = sourceCollector.collect()
         Document document = documentBuilder.build(documentSource)
         documentWriter.write(document)
+    }
+
+    @Override
+    boolean isOnlyGaidenProject() {
+        true
     }
 
 }

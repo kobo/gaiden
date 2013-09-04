@@ -19,6 +19,7 @@ package gaiden
 import gaiden.command.GaidenBuild
 import gaiden.command.GaidenClean
 import gaiden.command.GaidenCommand
+import gaiden.command.GaidenCreateProject
 
 /**
  * A command line to execute Gaiden.
@@ -32,8 +33,9 @@ class GaidenMain {
 Usage: gaiden <command>
 
    commands:
-       build  Build pages from source pages
-       clean  Clean the build directory
+       build                          Build pages from source pages
+       clean                          Clean the build directory
+       create-project <project name>  Create the project directory
 """
 
     private static final String CONFIG_FILE_NAME = "GaidenConfig.groovy"
@@ -48,34 +50,36 @@ Usage: gaiden <command>
     }
 
     void run(String... args) {
-        def gaidenConfig = new File(CONFIG_FILE_NAME)
-        if (!gaidenConfig.exists()) {
-            System.err.println("ERROR: Not a Gaiden project (Cannot find $CONFIG_FILE_NAME)")
-            System.exit(1)
-        }
         if (!args) {
             usage()
             System.exit(1)
         }
 
-        Holders.config = new GaidenConfigLoader().load(gaidenConfig)
+        def configFile = new File(CONFIG_FILE_NAME)
+        Holders.config = new GaidenConfigLoader().load(configFile)
 
-        executeCommand(args.first())
+        executeCommand(args.first(), configFile, args.tail() as List)
     }
 
-    void executeCommand(String commandName) {
-        GaidenCommand command = createCommand(commandName)
+    void executeCommand(String commandName, File configFile, List args) {
+        GaidenCommand command = createCommand(commandName, args)
+        if (command.onlyGaidenProject && !configFile.exists()) {
+            System.err.println("ERROR: Not a Gaiden project (Cannot find ${configFile.name})")
+            System.exit(1)
+        }
         command.execute()
     }
 
-    private GaidenCommand createCommand(String commandName) {
+    private GaidenCommand createCommand(String commandName, List args) {
         switch (commandName) {
             case "build":
                 return new GaidenBuild()
             case "clean":
                 return new GaidenClean()
+            case "create-project":
+                return new GaidenCreateProject(args)
             default:
-                return [execute: {-> usage() }] as GaidenCommand
+                return [execute: {-> usage() }, isOnlyGaidenProject: {-> false }] as GaidenCommand
         }
     }
 

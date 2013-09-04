@@ -58,6 +58,13 @@ gradle.taskGraph.whenReady { taskGraph ->
     }
 }
 
+startScripts {
+    doLast {
+        unixScript.text = unixScript.text.replace('$GAIDEN_OPTS', '$GAIDEN_OPTS -Dapp.home=$APP_HOME')
+        windowsScript.text = windowsScript.text.replace('%GAIDEN_OPTS%', '%GAIDEN_OPTS% -Dapp.home=%APP_HOME%')
+    }
+}
+
 codenarc {
     configFile = new File('codenarc.groovy')
     ignoreFailures = true

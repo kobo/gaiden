@@ -35,8 +35,14 @@ class GaidenClean implements GaidenCommand {
     /**
      * Executes cleaning.
      */
+    @Override
     void execute() {
         new AntBuilder().delete(dir: targetDirectory)
+    }
+
+    @Override
+    boolean isOnlyGaidenProject() {
+        true
     }
 
 }
