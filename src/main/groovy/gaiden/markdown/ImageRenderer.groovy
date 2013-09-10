@@ -16,7 +16,6 @@
 
 package gaiden.markdown
 
-import gaiden.Holders
 import gaiden.util.FileUtils
 
 /**
@@ -27,41 +26,39 @@ import gaiden.util.FileUtils
  */
 class ImageRenderer {
 
-    private String outputPath
-    private File outputDirectory
+    private String outputPagePath
 
-    ImageRenderer(String outputPath, File outputDirectory = Holders.config.outputDirectoryFile) {
-        this.outputPath = outputPath
-        this.outputDirectory = outputDirectory
+    ImageRenderer(String outputPagePath) {
+        this.outputPagePath = outputPagePath
     }
 
     /**
      * Simple model class for rendering an img element.
      */
-    static class Rendering {
+    static class ImageElement {
         String src
         String alt
     }
 
     /**
-     * Returns a rendering object which has replaced image path.
+     * Returns a rendering object which has a image path replaced with an appropriate relative path.
      * <p>
-     * If a image path doesn't start with slash, then don't replace.
+     * An original image path is used without a replacement if it doesn't start with a slash.
      *
      * @param url the path of image
      * @param alt the alternate text
-     * @return {@link Rendering}'s instance
+     * @return {@link ImageElement}'s instance
      */
-    Rendering render(String url, String alt) {
+    ImageElement render(String url, String alt) {
         if (!url.startsWith("/")) {
-            return new Rendering(src: url, alt: alt)
+            return new ImageElement(src: url, alt: alt)
         }
 
-        def outputFile = new File(outputDirectory, outputPath)
-        def resourceFile = new File(outputDirectory, url)
-        def src = FileUtils.getRelativePathForFileToFile(outputFile, resourceFile)
+        def outputPageFile = new File("/", outputPagePath)
+        def resourceFile = new File("/", url)
+        def src = FileUtils.getRelativePathForFileToFile(outputPageFile, resourceFile)
 
-        new Rendering(src: src, alt: alt)
+        new ImageElement(src: src, alt: alt)
     }
 
 }

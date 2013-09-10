@@ -45,11 +45,11 @@ class GaidenToHtmlSerializer extends ToHtmlSerializer {
     protected void printImageTag(SuperNode imageNode, String url) {
         def rendering = imageRenderer.render(url, printChildrenToString(imageNode))
         printer
-            .print("<img src=\"")
+            .print('<img src="')
             .print(rendering.src)
-            .print("\"  alt=\"")
+            .print('" alt="')
             .printEncoded(rendering.alt)
-            .print("\"/>");
+            .print('"/>');
     }
 
 }

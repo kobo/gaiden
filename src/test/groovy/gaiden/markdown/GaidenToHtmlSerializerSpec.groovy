@@ -30,20 +30,20 @@ class GaidenToHtmlSerializerSpec extends Specification {
 
         and:
         def imageRenderer = Mock(ImageRenderer)
-        1 * imageRenderer.render(url, alt) >> new ImageRenderer.Rendering(src: url, alt: alt)
+        1 * imageRenderer.render(url, alt) >> new ImageRenderer.ImageElement(src: url, alt: alt)
 
         and:
-        def printer = Mock(Printer)
-        1 * printer.print(url) >> printer
-        1 * printer.printEncoded(alt) >> printer
-        _ * printer.print(_) >> printer
+        def printer = new Printer()
 
         and:
         def expImageNode = new ExpImageNode("", url, new TextNode(alt))
         def serializer = new GaidenToHtmlSerializer(null, imageRenderer, printer)
 
-        expect:
+        when:
         serializer.printImageTag(expImageNode, url)
+
+        then:
+        printer.sb.toString() == '<img src="TEST_URL" alt="TEST_ALT"/>'
     }
 
 }

@@ -64,7 +64,11 @@ class FileUtils {
     }
 
     private static String getDirectoryPath(File directory) {
-        normalize(directory.canonicalPath) + NORMALIZED_SEPARATOR
+        def normalizedPath = normalize(directory.canonicalPath)
+        if (normalizedPath.endsWith(NORMALIZED_SEPARATOR)) {
+            return normalizedPath
+        }
+        normalizedPath + NORMALIZED_SEPARATOR
     }
 
     private static normalize(String path) {
@@ -92,7 +96,7 @@ class FileUtils {
             result << fromTokens[i]
         }
         result << ''
-        result.join(NORMALIZED_SEPARATOR)
+        result.join(NORMALIZED_SEPARATOR) ?: NORMALIZED_SEPARATOR
     }
 
     private static String getBaseDirectory(String path) {
