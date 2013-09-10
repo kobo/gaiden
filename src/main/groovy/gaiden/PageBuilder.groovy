@@ -16,9 +16,9 @@
 
 package gaiden
 
+import gaiden.markdown.GaidenMarkdownProcessor
 import gaiden.util.FileUtils
 import org.pegdown.Extensions
-import org.pegdown.PegDownProcessor
 
 /**
  * A markdown page builder builds from a markdown to a HTML.
@@ -31,15 +31,15 @@ class PageBuilder {
     private static final String OUTPUT_EXTENSION = "html"
 
     private TemplateEngine templateEngine
-    private PegDownProcessor pegDownProcessor
+    private GaidenMarkdownProcessor markdownProcessor
 
     PageBuilder(TemplateEngine templateEngine) {
-        this(templateEngine, new PegDownProcessor(Extensions.ALL - Extensions.HARDWRAPS))
+        this(templateEngine, new GaidenMarkdownProcessor(Extensions.ALL - Extensions.HARDWRAPS))
     }
 
-    PageBuilder(TemplateEngine templateEngine, PegDownProcessor pegDownProcessor) {
+    PageBuilder(TemplateEngine templateEngine, GaidenMarkdownProcessor markdownProcessor) {
         this.templateEngine = templateEngine
-        this.pegDownProcessor = pegDownProcessor
+        this.markdownProcessor = markdownProcessor
     }
 
     /**
@@ -57,7 +57,7 @@ class PageBuilder {
     }
 
     private String buildPage(PageSource pageSource, String outputPath) {
-        def content = pegDownProcessor.markdownToHtml(pageSource.content)
+        def content = markdownProcessor.markdownToHtml(pageSource.content, outputPath)
         templateEngine.make(content: content, outputPath: outputPath)
     }
 

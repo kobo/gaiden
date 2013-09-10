@@ -36,6 +36,7 @@ class FileUtilsSpec extends Specification {
         "../aaa/bbb/from.txt"   | "../aaa/ccc/to.txt"   | "../ccc/to.txt"
         "/aaa/bbb/"             | "/aaa/bbb/to.txt"     | "bbb/to.txt"  // When give a directory as 'fromFile', like this.
         "/aaa/bbb/from.txt"     | "/aaa/bbb/"           | "../bbb"      // When give a directory as 'toFile', like this.
+        "/from.txt"             | "/to.txt"             | "to.txt"
 
         fromFile = new File(from)
         toFile = new File(to)
@@ -57,6 +58,8 @@ class FileUtilsSpec extends Specification {
         "./bbb/ccc/"        | "./bbb/ccc/to.txt"    | "to.txt"
         "/aaa/bbb/from.txt" | "/aaa/bbb/to.txt"     | "../to.txt"  // When give a file as 'fromFile', like this.
         "/aaa/bbb/"         | "/aaa/bbb/"           | "../bbb"     // When give a directory as 'toFile', like this.
+        "/"                 | "/to.txt"             | "to.txt"
+        "/"                 | "/bbb/"               | "bbb"
 
         fromFile = new File(from)
         toFile = new File(to)
