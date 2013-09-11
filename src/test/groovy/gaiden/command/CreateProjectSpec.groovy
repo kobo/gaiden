@@ -18,54 +18,49 @@ package gaiden.command
 
 import spock.lang.Specification
 
-class GaidenCreateProjectSpec extends Specification {
+class CreateProjectSpec extends Specification {
 
     def savedSystemOut
     def savedSystemErr
     def savedSystemSecurityManager
 
+    String appHome
+    String newProjectName
+    File outputDirectory
+    File newProjectDirectory
+    GaidenCommand command
+
     def setup() {
         savedSystemOut = System.out
         savedSystemErr = System.err
         savedSystemSecurityManager = System.securityManager
+
+        appHome = "src/dist"
+        newProjectName = "newProject"
+        outputDirectory = File.createTempDir()
+        newProjectDirectory = new File(outputDirectory, newProjectName)
+        command = new CreateProject(appHome, outputDirectory.path)
     }
 
     def cleanup() {
         System.out = savedSystemOut
         System.err = savedSystemErr
         System.securityManager = savedSystemSecurityManager
+
+        outputDirectory.deleteDir()
     }
 
     def "'execute' should create the Gaiden project directory"() {
-        setup:
-        def appHome = "src/dist"
-        def newProjectName = "newProject"
-        def outputDirectory = File.createTempDir()
-
-        def command = new GaidenCreateProject([newProjectName], appHome, outputDirectory.path)
-
         when:
-        command.execute()
+        command.execute([newProjectName])
 
         then:
-        def newProjectDirectory = new File(outputDirectory, newProjectName)
         newProjectDirectory.exists()
         collectFilePathRecurse(newProjectDirectory) == collectFilePathRecurse(new File("$appHome/template"))
-
-        cleanup:
-        outputDirectory.deleteDir()
     }
 
     def "'execute' should not create the project directory when the directory already exists"() {
         setup:
-        def appHome = "src/dist"
-        def newProjectName = "newProject"
-        def outputDirectory = File.createTempDir()
-
-        def command = new GaidenCreateProject([newProjectName], appHome, outputDirectory.path)
-
-        and:
-        def newProjectDirectory = new File(outputDirectory, newProjectName)
         newProjectDirectory.mkdir()
 
         and:
@@ -77,7 +72,7 @@ class GaidenCreateProjectSpec extends Specification {
         System.err = printStream
 
         when:
-        command.execute()
+        command.execute([newProjectName])
 
         then:
         1 * securityManager.checkExit(1) >> { throw new SecurityException() }
@@ -97,7 +92,7 @@ class GaidenCreateProjectSpec extends Specification {
 
     def "'execute' should output error message when project name is not given"() {
         setup:
-        def command = new GaidenCreateProject([], null, null)
+        def command = new CreateProject(null, null)
 
         and:
         def securityManager = Mock(SecurityManager)
@@ -108,7 +103,7 @@ class GaidenCreateProjectSpec extends Specification {
         System.err = printStream
 
         when:
-        command.execute()
+        command.execute([])
 
         then:
         1 * securityManager.checkExit(1) >> { throw new SecurityException() }

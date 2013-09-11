@@ -24,11 +24,13 @@ import gaiden.Holders
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class GaidenClean implements GaidenCommand {
+class Clean implements GaidenCommand {
 
     private File targetDirectory
 
-    GaidenClean(targetDirectory = Holders.config.outputDirectoryFile) {
+    final boolean onlyGaidenProject = true
+
+    Clean(targetDirectory = Holders.config.outputDirectoryFile) {
         this.targetDirectory = targetDirectory
     }
 
@@ -36,13 +38,8 @@ class GaidenClean implements GaidenCommand {
      * Executes cleaning.
      */
     @Override
-    void execute() {
+    void execute(List args = []) {
         new AntBuilder().delete(dir: targetDirectory)
-    }
-
-    @Override
-    boolean isOnlyGaidenProject() {
-        true
     }
 
 }

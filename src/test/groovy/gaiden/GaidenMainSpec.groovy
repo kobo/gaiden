@@ -16,9 +16,8 @@
 
 package gaiden
 
-import gaiden.command.GaidenBuild
-import gaiden.command.GaidenClean
-import gaiden.command.GaidenCreateProject
+import gaiden.command.CommandFactory
+import gaiden.command.GaidenCommand
 import spock.lang.Specification
 
 class GaidenMainSpec extends Specification {
@@ -53,12 +52,15 @@ class GaidenMainSpec extends Specification {
         def gaidenConfig = new GaidenConfig()
 
         and:
-        GroovyMock(GaidenBuild, global: true)
-        def gaidenBuild = Mock(GaidenBuild)
-        1 * gaidenBuild.getProperty("onlyGaidenProject") >> true
+        def command = Mock(GaidenCommand)
+        1 * command.onlyGaidenProject >> true
+        def commandFactory = Mock(CommandFactory)
+        1 * commandFactory.createCommand("valid-command") >> command
+        def gaidenMain = new GaidenMain()
+        gaidenMain.commandFactory = commandFactory
 
         when:
-        new GaidenMain().run("build")
+        gaidenMain.run("valid-command")
 
         then:
         1 * new GaidenConfigLoader() >> gaidenConfigLoader
@@ -66,8 +68,7 @@ class GaidenMainSpec extends Specification {
         Holders.config == gaidenConfig
 
         and:
-        1 * new GaidenBuild() >> gaidenBuild
-        1 * gaidenBuild.execute()
+        1 * command.execute([])
     }
 
     def "'run' should output usage if no argument"() {
@@ -92,64 +93,32 @@ class GaidenMainSpec extends Specification {
         }
     }
 
-    def "'executeCommand' should execute the build command"() {
-        setup:
-        GroovyMock(GaidenBuild, global: true)
-        def command = Mock(GaidenBuild)
-
-        when:
-        new GaidenMain().executeCommand("build", null, [])
-
-        then:
-        1 * new GaidenBuild() >> command
-        1 * command.execute()
-    }
-
-    def "'executeCommand' should execute the clean command"() {
-        setup:
-        GroovyMock(GaidenClean, global: true)
-        def command = Mock(GaidenClean)
-
-        when:
-        new GaidenMain().executeCommand("clean", null, [])
-
-        then:
-        1 * new GaidenClean() >> command
-        1 * command.execute()
-    }
-
-    def "'executeCommand' should execute the create project command"() {
-        setup:
-        GroovyMock(GaidenCreateProject, global: true)
-        def command = Mock(GaidenCreateProject)
-
-        when:
-        new GaidenMain().executeCommand("create-project", null, ["project"])
-
-        then:
-        1 * new GaidenCreateProject(["project"]) >> command
-        1 * command.execute()
-    }
-
     def "'executeCommand' should output usage if invalid command"() {
         setup:
         def printStream = Mock(PrintStream)
         System.err = printStream
 
+        and:
+        def securityManager = Mock(SecurityManager)
+        System.securityManager = securityManager
+
         when:
         new GaidenMain().executeCommand("invalid", null, [])
 
         then:
+        thrown(SecurityException)
+
+        and:
         1 * printStream.println(GaidenMain.USAGE_MESSAGE)
+        1 * securityManager.checkExit(1) >> {
+            throw new SecurityException()
+        }
     }
 
     def "'executeCommand' should not execute command if GaidenConfig.groovy doesn't exist"() {
         setup:
-        def gaidenBuild = Stub(GaidenBuild)
+        def gaidenBuild = Mock(GaidenCommand)
         gaidenBuild.onlyGaidenProject >> true
-
-        GroovyStub(GaidenBuild, global: true)
-        new GaidenBuild() >> gaidenBuild
 
         and:
         def gaidenConfigFile = Stub(File)

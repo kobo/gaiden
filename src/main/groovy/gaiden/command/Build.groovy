@@ -16,24 +16,30 @@
 
 package gaiden.command
 
-import spock.lang.Specification
+import gaiden.Document
+import gaiden.DocumentBuilder
+import gaiden.DocumentSource
+import gaiden.DocumentWriter
+import gaiden.SourceCollector
 
-class GaidenCleanSpec extends Specification {
+/**
+ * The 'build' command.
+ *
+ * @author Hideki IGARASHI
+ * @author Kazuki YAMAMOTO
+ */
+class Build implements GaidenCommand {
 
-    def "'execute' should clean the build directory"() {
-        setup:
-        def buildDirectory = File.createTempDir()
-        new File(buildDirectory, "dummy").write("dummy")
-        assert buildDirectory.exists()
+    final boolean onlyGaidenProject = true
 
-        and:
-        def command = new GaidenClean(buildDirectory)
-
-        when:
-        command.execute()
-
-        then:
-        !buildDirectory.exists()
+    /**
+     * Executes building.
+     */
+    @Override
+    void execute(List args = []) {
+        DocumentSource documentSource = new SourceCollector().collect()
+        Document document = new DocumentBuilder().build(documentSource)
+        new DocumentWriter().write(document)
     }
 
 }

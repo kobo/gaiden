@@ -22,30 +22,30 @@ package gaiden.command
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class GaidenCreateProject implements GaidenCommand {
+class CreateProject implements GaidenCommand {
 
-    private List args
     private String appHome
-    private String outputDirectory
+    private String outputDirectoryPath
 
-    GaidenCreateProject(List args, String appHome = System.properties["app.home"], String outputDirectory = ".") {
-        this.args = args
+    final boolean onlyGaidenProject = false
+
+    CreateProject(String appHome = System.properties["app.home"], String outputDirectoryPath = ".") {
         this.appHome = appHome
-        this.outputDirectory = outputDirectory
+        this.outputDirectoryPath = outputDirectoryPath
     }
 
     /**
      * Executes creating project.
      */
     @Override
-    void execute() {
+    void execute(List args = []) {
         if (args.empty) {
             System.err.println "ERROR: Project name is required"
             System.err.println "Usage: gaiden create-project <project name>"
             System.exit(1)
         }
 
-        def projectDirectory = new File(outputDirectory, args.first() as String)
+        def projectDirectory = new File(outputDirectoryPath, args.first() as String)
         if (projectDirectory.exists()) {
             System.err.println "ERROR: The Gaiden project already exists: ${projectDirectory.name}"
             System.exit(1)
@@ -54,11 +54,6 @@ class GaidenCreateProject implements GaidenCommand {
         new AntBuilder().copy(toDir: projectDirectory) {
             fileset(dir: "$appHome/template", defaultexcludes: "no")
         }
-    }
-
-    @Override
-    boolean isOnlyGaidenProject() {
-        false
     }
 
 }

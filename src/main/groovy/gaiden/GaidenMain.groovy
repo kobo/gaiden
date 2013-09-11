@@ -16,10 +16,8 @@
 
 package gaiden
 
-import gaiden.command.GaidenBuild
-import gaiden.command.GaidenClean
+import gaiden.command.CommandFactory
 import gaiden.command.GaidenCommand
-import gaiden.command.GaidenCreateProject
 
 /**
  * A command line to execute Gaiden.
@@ -39,6 +37,8 @@ Usage: gaiden <command>
 """
 
     private static final String CONFIG_FILE_NAME = "GaidenConfig.groovy"
+
+    private CommandFactory commandFactory = new CommandFactory()
 
     /**
      * A main command line interface.
@@ -62,25 +62,27 @@ Usage: gaiden <command>
     }
 
     void executeCommand(String commandName, File configFile, List args) {
-        GaidenCommand command = createCommand(commandName, args)
+        GaidenCommand command = createCommand(commandName)
+
+        if (!command) {
+            usage()
+            System.exit(1)
+        }
+
         if (command.onlyGaidenProject && !configFile.exists()) {
             System.err.println("ERROR: Not a Gaiden project (Cannot find ${configFile.name})")
             System.exit(1)
         }
-        command.execute()
+
+        command.execute(args)
     }
 
-    private GaidenCommand createCommand(String commandName, List args) {
-        switch (commandName) {
-            case "build":
-                return new GaidenBuild()
-            case "clean":
-                return new GaidenClean()
-            case "create-project":
-                return new GaidenCreateProject(args)
-            default:
-                return [execute: {-> usage() }, isOnlyGaidenProject: {-> false }] as GaidenCommand
-        }
+    protected void setCommandFactory(CommandFactory commandFactory) {
+        this.commandFactory = commandFactory
+    }
+
+    private GaidenCommand createCommand(String commandName) {
+        commandFactory.createCommand(commandName)
     }
 
     private void usage() {
