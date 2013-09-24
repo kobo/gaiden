@@ -16,8 +16,8 @@
 
 package gaiden
 
-import gaiden.command.GaidenBuild
-import gaiden.command.GaidenClean
+import gaiden.command.CommandFactory
+import gaiden.command.GaidenCommand
 import spock.lang.Specification
 
 class GaidenMainSpec extends Specification {
@@ -40,8 +40,8 @@ class GaidenMainSpec extends Specification {
 
     def "'run' should run a command"() {
         setup:
-        def configFile = Mock(File)
-        1 * configFile.exists() >> true
+        def configFile = Stub(File)
+        configFile.exists() >> true
 
         GroovyMock(File, global: true)
         new File("GaidenConfig.groovy") >> configFile
@@ -52,11 +52,15 @@ class GaidenMainSpec extends Specification {
         def gaidenConfig = new GaidenConfig()
 
         and:
-        GroovyMock(GaidenBuild, global: true)
-        def gaidenBuild = Mock(GaidenBuild)
+        def command = Mock(GaidenCommand)
+        1 * command.onlyGaidenProject >> true
+        def commandFactory = Mock(CommandFactory)
+        1 * commandFactory.createCommand("valid-command") >> command
+        def gaidenMain = new GaidenMain()
+        gaidenMain.commandFactory = commandFactory
 
         when:
-        new GaidenMain().run("build")
+        gaidenMain.run("valid-command")
 
         then:
         1 * new GaidenConfigLoader() >> gaidenConfigLoader
@@ -64,19 +68,11 @@ class GaidenMainSpec extends Specification {
         Holders.config == gaidenConfig
 
         and:
-        1 * new GaidenBuild() >> gaidenBuild
-        1 * gaidenBuild.execute()
+        1 * command.execute([])
     }
 
     def "'run' should output usage if no argument"() {
         setup:
-        def configFile = Mock(File)
-        1 * configFile.exists() >> true
-
-        GroovyMock(File, global: true)
-        new File("GaidenConfig.groovy") >> configFile
-
-        and:
         def printStream = Mock(PrintStream)
         System.err = printStream
 
@@ -93,63 +89,8 @@ class GaidenMainSpec extends Specification {
         and:
         1 * printStream.println(GaidenMain.USAGE_MESSAGE)
         1 * securityManager.checkExit(1) >> {
-            throw new SecurityException("Use of System.exit() is forbidden!");
+            throw new SecurityException()
         }
-    }
-
-    def "'run' should not execute command if GaidenConfig.groovy doesn't exist"() {
-        setup:
-        def printStream = Mock(PrintStream)
-        System.err = printStream
-
-        and:
-        def securityManager = Mock(SecurityManager)
-        System.securityManager = securityManager
-
-        and:
-        def gaidenConfig = Mock(File)
-        1 * gaidenConfig.exists() >> false
-
-        GroovyMock(File, global: true)
-        new File("GaidenConfig.groovy") >> gaidenConfig
-
-        when:
-        new GaidenMain().run([] as String[])
-
-        then:
-        thrown(SecurityException)
-
-        and:
-        1 * printStream.println("ERROR: Not a Gaiden project (Cannot find GaidenConfig.groovy)")
-        1 * securityManager.checkExit(1) >> {
-            throw new SecurityException("Use of System.exit() is forbidden!");
-        }
-    }
-
-    def "'executeCommand' should execute the build command"() {
-        setup:
-        GroovyMock(GaidenBuild, global: true)
-        def gaidenBuild = Mock(GaidenBuild)
-
-        when:
-        new GaidenMain().executeCommand("build")
-
-        then:
-        1 * new GaidenBuild() >> gaidenBuild
-        1 * gaidenBuild.execute()
-    }
-
-    def "'executeCommand' should execute the clean command"() {
-        setup:
-        GroovyMock(GaidenClean, global: true)
-        def gaidenClean = Mock(GaidenClean)
-
-        when:
-        new GaidenMain().executeCommand("clean")
-
-        then:
-        1 * new GaidenClean() >> gaidenClean
-        1 * gaidenClean.execute()
     }
 
     def "'executeCommand' should output usage if invalid command"() {
@@ -157,11 +98,52 @@ class GaidenMainSpec extends Specification {
         def printStream = Mock(PrintStream)
         System.err = printStream
 
+        and:
+        def securityManager = Mock(SecurityManager)
+        System.securityManager = securityManager
+
         when:
-        new GaidenMain().executeCommand("invalid")
+        new GaidenMain().executeCommand("invalid", null, [])
 
         then:
+        thrown(SecurityException)
+
+        and:
         1 * printStream.println(GaidenMain.USAGE_MESSAGE)
+        1 * securityManager.checkExit(1) >> {
+            throw new SecurityException()
+        }
+    }
+
+    def "'executeCommand' should not execute command if GaidenConfig.groovy doesn't exist"() {
+        setup:
+        def gaidenBuild = Mock(GaidenCommand)
+        gaidenBuild.onlyGaidenProject >> true
+
+        and:
+        def gaidenConfigFile = Stub(File)
+        gaidenConfigFile.exists() >> false
+        gaidenConfigFile.name >> "TEST_CONFIG_FILE_NAME"
+
+        and:
+        def printStream = Mock(PrintStream)
+        System.err = printStream
+
+        and:
+        def securityManager = Mock(SecurityManager)
+        System.securityManager = securityManager
+
+        when:
+        new GaidenMain().executeCommand("build", gaidenConfigFile, [])
+
+        then:
+        thrown(SecurityException)
+
+        and:
+        1 * printStream.println("ERROR: Not a Gaiden project (Cannot find TEST_CONFIG_FILE_NAME)")
+        1 * securityManager.checkExit(1) >> {
+            throw new SecurityException()
+        }
     }
 
 }

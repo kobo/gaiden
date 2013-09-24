@@ -28,29 +28,18 @@ import gaiden.SourceCollector
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class GaidenBuild implements GaidenCommand {
+class Build implements GaidenCommand {
 
-    private SourceCollector sourceCollector
-    private DocumentBuilder documentBuilder
-    private DocumentWriter documentWriter
-
-    GaidenBuild(
-        SourceCollector sourceCollector = new SourceCollector(),
-        DocumentBuilder documentBuilder = new DocumentBuilder(),
-        DocumentWriter documentWriter = new DocumentWriter()
-    ) {
-        this.sourceCollector = sourceCollector
-        this.documentBuilder = documentBuilder
-        this.documentWriter = documentWriter
-    }
+    final boolean onlyGaidenProject = true
 
     /**
      * Executes building.
      */
-    void execute() {
-        DocumentSource documentSource = sourceCollector.collect()
-        Document document = documentBuilder.build(documentSource)
-        documentWriter.write(document)
+    @Override
+    void execute(List args = []) {
+        DocumentSource documentSource = new SourceCollector().collect()
+        Document document = new DocumentBuilder().build(documentSource)
+        new DocumentWriter().write(document)
     }
 
 }

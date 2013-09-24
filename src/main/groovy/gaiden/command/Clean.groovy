@@ -16,24 +16,30 @@
 
 package gaiden.command
 
-import spock.lang.Specification
+import gaiden.Holders
 
-class GaidenCleanSpec extends Specification {
+/**
+ * The 'clean' command.
+ *
+ * @author Hideki IGARASHI
+ * @author Kazuki YAMAMOTO
+ */
+class Clean implements GaidenCommand {
 
-    def "'execute' should clean the build directory"() {
-        setup:
-        def buildDirectory = File.createTempDir()
-        new File(buildDirectory, "dummy").write("dummy")
-        assert buildDirectory.exists()
+    private File targetDirectory
 
-        and:
-        def command = new GaidenClean(buildDirectory)
+    final boolean onlyGaidenProject = true
 
-        when:
-        command.execute()
+    Clean(targetDirectory = Holders.config.outputDirectoryFile) {
+        this.targetDirectory = targetDirectory
+    }
 
-        then:
-        !buildDirectory.exists()
+    /**
+     * Executes cleaning.
+     */
+    @Override
+    void execute(List args = []) {
+        new AntBuilder().delete(dir: targetDirectory)
     }
 
 }

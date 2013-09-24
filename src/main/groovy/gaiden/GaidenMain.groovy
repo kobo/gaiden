@@ -16,8 +16,7 @@
 
 package gaiden
 
-import gaiden.command.GaidenBuild
-import gaiden.command.GaidenClean
+import gaiden.command.CommandFactory
 import gaiden.command.GaidenCommand
 
 /**
@@ -32,11 +31,14 @@ class GaidenMain {
 Usage: gaiden <command>
 
    commands:
-       build  Build pages from source pages
-       clean  Clean the build directory
+       build                          Build pages from source pages
+       clean                          Clean the build directory
+       create-project <project name>  Create the project directory
 """
 
     private static final String CONFIG_FILE_NAME = "GaidenConfig.groovy"
+
+    private CommandFactory commandFactory = new CommandFactory()
 
     /**
      * A main command line interface.
@@ -48,35 +50,39 @@ Usage: gaiden <command>
     }
 
     void run(String... args) {
-        def gaidenConfig = new File(CONFIG_FILE_NAME)
-        if (!gaidenConfig.exists()) {
-            System.err.println("ERROR: Not a Gaiden project (Cannot find $CONFIG_FILE_NAME)")
-            System.exit(1)
-        }
         if (!args) {
             usage()
             System.exit(1)
         }
 
-        Holders.config = new GaidenConfigLoader().load(gaidenConfig)
+        def configFile = new File(CONFIG_FILE_NAME)
+        Holders.config = new GaidenConfigLoader().load(configFile)
 
-        executeCommand(args.first())
+        executeCommand(args.first(), configFile, args.tail() as List)
     }
 
-    void executeCommand(String commandName) {
+    void executeCommand(String commandName, File configFile, List args) {
         GaidenCommand command = createCommand(commandName)
-        command.execute()
+
+        if (!command) {
+            usage()
+            System.exit(1)
+        }
+
+        if (command.onlyGaidenProject && !configFile.exists()) {
+            System.err.println("ERROR: Not a Gaiden project (Cannot find ${configFile.name})")
+            System.exit(1)
+        }
+
+        command.execute(args)
+    }
+
+    protected void setCommandFactory(CommandFactory commandFactory) {
+        this.commandFactory = commandFactory
     }
 
     private GaidenCommand createCommand(String commandName) {
-        switch (commandName) {
-            case "build":
-                return new GaidenBuild()
-            case "clean":
-                return new GaidenClean()
-            default:
-                return [execute: {-> usage() }] as GaidenCommand
-        }
+        commandFactory.createCommand(commandName)
     }
 
     private void usage() {
