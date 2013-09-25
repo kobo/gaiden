@@ -60,11 +60,13 @@ class DocumentBuilder {
      * @return {@link Document}'s instance
      */
     Document build(DocumentSource documentSource) {
-        new Document(toc: buildToc(), pages: buildPages(documentSource))
+        def pages = buildPages(documentSource)
+        def toc = buildToc(pages)
+        new Document(toc: toc, pages: pages)
     }
 
-    private Toc buildToc() {
-        tocBuilder.build()
+    private Toc buildToc(List<Page> pages) {
+        tocBuilder.build(pages)
     }
 
     private List<Page> buildPages(DocumentSource documentSource) {

@@ -38,6 +38,16 @@ class FileUtils {
     }
 
     /**
+     * Removes the extension of filename.
+     *
+     * @param filename
+     * @return the removed filename
+     */
+    static String removeExtension(String filename) {
+        filename.replaceFirst(/\.[^.]+$/, "")
+    }
+
+    /**
      * Gets the relative path of the base file from the target file.
      *
      * @param from the base file
