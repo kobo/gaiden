@@ -33,11 +33,14 @@ class PageBuilderSpec extends Specification {
         def pageSource = new PageSource(path: "test.md", content: "SOURCE_CONTENT")
 
         when:
-        builder.build(pageSource)
+        def page = builder.build(pageSource)
 
         then:
         1 * markdownProcessor.markdownToHtml("SOURCE_CONTENT", "test.html") >> "PROCESSED_CONTENT"
         1 * templateEngine.make([content: "PROCESSED_CONTENT", outputPath: "test.html"])
+
+        and:
+        page.originalPath == "test.md"
     }
 
 }
