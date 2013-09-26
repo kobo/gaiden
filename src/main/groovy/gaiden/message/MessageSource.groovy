@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package gaiden
+package gaiden.message
 
-import gaiden.message.MessageSource
+import java.text.MessageFormat
 
 /**
- * The Shared instance holder.
+ * MessageSource is message resolver which support
+ * for the parameterization and internationalization.
  *
- * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
+ * @author Hideki IGARASHI
  */
-class Holders {
+class MessageSource {
 
-    /** {@link GaidenConfig}'s instance */
-    static GaidenConfig config
+    private ResourceBundle resource
 
-    /** {@link MessageSource}'s instance */
-    static MessageSource messageSource
+    MessageSource(String bundleName = "messages") {
+        resource = ResourceBundle.getBundle(bundleName)
+    }
 
     /**
      * Gets a message for the given key.
@@ -38,10 +39,14 @@ class Holders {
      * @param key the key for message
      * @param arguments the list of objects to be bound into the message
      * @return resolved message, {@code null} if can not resolve the message
-     * @see MessageSource#getMessage(String, List)
      */
-    static String getMessage(String key, List<Object> arguments) {
-        messageSource.getMessage(key, arguments) ?: key
+    String getMessage(String key, List<Object> arguments = []) {
+        try {
+            MessageFormat.format(resource.getString(key), arguments as Object[])
+        } catch (MissingResourceException e) {
+            // NOOP
+            null
+        }
     }
 
 }

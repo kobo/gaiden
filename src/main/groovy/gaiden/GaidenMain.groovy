@@ -18,6 +18,8 @@ package gaiden
 
 import gaiden.command.CommandFactory
 import gaiden.command.GaidenCommand
+import gaiden.exception.GaidenException
+import gaiden.message.MessageSource
 
 /**
  * A command line to execute Gaiden.
@@ -26,15 +28,6 @@ import gaiden.command.GaidenCommand
  * @author Kazuki YAMAMOTO
  */
 class GaidenMain {
-
-    static final String USAGE_MESSAGE = """\
-Usage: gaiden <command>
-
-   commands:
-       build                          Build pages from source pages
-       clean                          Clean the build directory
-       create-project <project name>  Create the project directory
-"""
 
     private static final String CONFIG_FILE_NAME = "GaidenConfig.groovy"
 
@@ -46,13 +39,19 @@ Usage: gaiden <command>
      * @param args all command line args
      */
     static void main(String... args) {
-        new GaidenMain().run(args)
+        try {
+            new GaidenMain().run(args)
+        } catch (GaidenException e) {
+            System.err.println(e.message)
+            System.exit(1)
+        }
     }
 
     void run(String... args) {
+        Holders.messageSource = new MessageSource()
+
         if (!args) {
-            usage()
-            System.exit(1)
+            throw new GaidenException("usage")
         }
 
         def configFile = new File(CONFIG_FILE_NAME)
@@ -64,14 +63,8 @@ Usage: gaiden <command>
     void executeCommand(String commandName, File configFile, List args) {
         GaidenCommand command = createCommand(commandName)
 
-        if (!command) {
-            usage()
-            System.exit(1)
-        }
-
         if (command.onlyGaidenProject && !configFile.exists()) {
-            System.err.println("ERROR: Not a Gaiden project (Cannot find ${configFile.name})")
-            System.exit(1)
+            throw new GaidenException("not.gaiden.project.error", [configFile.name])
         }
 
         command.execute(args)
@@ -83,10 +76,6 @@ Usage: gaiden <command>
 
     private GaidenCommand createCommand(String commandName) {
         commandFactory.createCommand(commandName)
-    }
-
-    private void usage() {
-        System.err.println USAGE_MESSAGE
     }
 
 }

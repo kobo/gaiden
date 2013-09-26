@@ -16,6 +16,7 @@
 
 package gaiden.command
 
+import gaiden.exception.GaidenException
 import spock.lang.Specification
 
 class CreateProjectSpec extends Specification {
@@ -63,25 +64,12 @@ class CreateProjectSpec extends Specification {
         setup:
         newProjectDirectory.mkdir()
 
-        and:
-        def securityManager = Mock(SecurityManager)
-        System.securityManager = securityManager
-
-        and:
-        def printStream = Mock(PrintStream)
-        System.err = printStream
-
         when:
         command.execute([newProjectName])
 
         then:
-        1 * securityManager.checkExit(1) >> { throw new SecurityException() }
-
-        and:
-        thrown(SecurityException)
-
-        and:
-        1 * printStream.println("ERROR: The Gaiden project already exists: ${newProjectName}")
+        def e = thrown(GaidenException)
+        e.key == "command.create.project.already.exists.error"
 
         and:
         collectFilePathRecurse(newProjectDirectory).size() == 0
@@ -94,26 +82,12 @@ class CreateProjectSpec extends Specification {
         setup:
         def command = new CreateProject(null, null)
 
-        and:
-        def securityManager = Mock(SecurityManager)
-        System.securityManager = securityManager
-
-        and:
-        def printStream = Mock(PrintStream)
-        System.err = printStream
-
         when:
         command.execute([])
 
         then:
-        1 * securityManager.checkExit(1) >> { throw new SecurityException() }
-
-        and:
-        thrown(SecurityException)
-
-        and:
-        1 * printStream.println("ERROR: Project name is required")
-        1 * printStream.println("Usage: gaiden create-project <project name>")
+        def e = thrown(GaidenException)
+        e.key == "command.create.project.name.required.error"
     }
 
     private Set collectFilePathRecurse(File directory) {
