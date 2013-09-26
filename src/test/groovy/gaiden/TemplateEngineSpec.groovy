@@ -41,9 +41,9 @@ class TemplateEngineSpec extends Specification {
                      |'''.stripMargin()
     }
 
-    def "'make' should evaluate the 'link'"() {
+    def "'make' should evaluate the 'resource'"() {
         setup:
-        def templateText = '${link("' + resourcePath + '")}'
+        def templateText = '${resource("' + resourcePath + '")}'
         def templateEngine = new TemplateEngine(new File("/output"), templateText, [title: "Gaiden", tocPath: "toc.html"])
         def binding = [outputPath: outputPath]
 
@@ -57,9 +57,9 @@ class TemplateEngineSpec extends Specification {
         ""             | "ccc/ddd.html" | ""
     }
 
-    def "'make' should evaluate the 'tocLink'"() {
+    def "'make' should evaluate the 'tocPath'"() {
         setup:
-        def templateText = '${tocLink}'
+        def templateText = '${tocPath}'
         def templateEngine = new TemplateEngine(new File("/output"), templateText, [title: "Gaiden", tocPath: "toc.html"])
         def binding = [outputPath: outputPath]
 

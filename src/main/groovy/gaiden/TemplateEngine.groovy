@@ -53,13 +53,13 @@ class TemplateEngine {
     String make(Map binding) {
         def mergedBinding = baseBinding + binding
 
-        mergedBinding.link = createLinkTag(mergedBinding.outputPath)
-        mergedBinding.tocLink = createTocLinkTag(mergedBinding.outputPath, mergedBinding.tocPath)
+        mergedBinding.resource = createResourceMethod(mergedBinding.outputPath)
+        mergedBinding.tocPath = createTocPathProperty(mergedBinding.outputPath, mergedBinding.tocPath)
 
         template.make(mergedBinding)
     }
 
-    private Closure createLinkTag(String outputPath) {
+    private Closure createResourceMethod(String outputPath) {
         return { String resourcePath ->
             if (!resourcePath.startsWith("/")) {
                 return resourcePath
@@ -72,7 +72,7 @@ class TemplateEngine {
         }
     }
 
-    private String createTocLinkTag(String outputPath, String tocPath) {
+    private String createTocPathProperty(String outputPath, String tocPath) {
         def outputFile = new File(outputDirectoryFile, outputPath)
         def tocFile = new File(outputDirectoryFile, tocPath)
 
