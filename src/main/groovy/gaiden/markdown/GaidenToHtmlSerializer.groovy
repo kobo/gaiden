@@ -49,7 +49,7 @@ class GaidenToHtmlSerializer extends ToHtmlSerializer {
             .print(rendering.src)
             .print('" alt="')
             .printEncoded(rendering.alt)
-            .print('"/>');
+            .print('"/>')
     }
 
 }

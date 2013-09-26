@@ -254,7 +254,7 @@ ruleset {
     MultipleLoggers
     PrintStackTrace
     //Println
-    SystemErrPrint
+    //SystemErrPrint
     SystemOutPrint
 
     // rulesets/naming.xml
@@ -279,7 +279,7 @@ ruleset {
     NonFinalSubclassOfSensitiveInterface
     ObjectFinalize
     PublicFinalizeMethod
-    SystemExit
+    //SystemExit
     UnsafeArrayDeclaration
 
     // rulesets/serialization.xml

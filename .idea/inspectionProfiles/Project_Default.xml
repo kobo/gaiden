@@ -165,7 +165,6 @@
     <inspection_tool class="SynchronizedOnString" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SynchronizedOnThis" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SynchronizedReadObjectMethod" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="SystemErrPrint" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SystemOutPrint" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="TernaryCouldBeElvis" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ThreadGroup" enabled="true" level="WARNING" enabled_by_default="true" />
