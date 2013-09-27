@@ -2,14 +2,14 @@
 
 Gaiden is a tool that makes it easy to create documentation with Markdown.
 It assumes familiarity with the command-line.
-The [Groovy](http://groovy.codehaus.org/ "Groovy - Home") language the base of the tool.
+The [Groovy](http://groovy.codehaus.org/ "Groovy - Home") language is the base of the tool.
 
 
 ## Getting Started
 
 You need a [Java SE](http://www.oracle.com/technetwork/java/javase/downloads/index.html "Java SE Downloads") installed, but it is not necessary to install Groovy because it's bundled with the Gaiden distribution.
 
-To install Gaiden, Download a binary distribution of Gaiden and unpack it into some file on your local file system.
+To install Gaiden, download a binary distribution of Gaiden and unpack it into some file on your local file system.
 Add the `bin` directory path in unpacked the distribution to your `PATH` environment variable.
 Then in a shell, type the following:
 
@@ -19,10 +19,12 @@ cd sample-project
 gaiden build
 ```
 
+You can see the documentation built when you open `build/index.html` file in your web browser.
+
 
 ## Commands
 
-The basic usage scenario is:
+The basic usage is:
 
 ```
 gaiden <command name>
@@ -52,7 +54,7 @@ clean
 ## Template
 
 The cool template is provided by default in Gaiden.
-Alternatively, If you are not sure you can customize the template.
+Alternatively, if you don't like it very much, you can customize the template.
 To customize the template, you will need to edit the `templates/layout.html` file.
 
 The most simple template is the following:
@@ -68,48 +70,50 @@ The most simple template is the following:
 </html>
 ```
 
-You can use  extension properties and methods which start with '$' in the template.
-It can be used to reference to variables or run helper methods.
+You can use  extension properties and methods which start with `$` in the template.
+It can be used to refer to variables or run helper methods.
+
 
 ### Extension Property and Method
 
-Gaiden supports the following extension properties and methods:
+Gaiden supports the following extension properties and methods by default:
 
 title
-:   A title of documents which is configured in `GaidenConfig.groovy`:
+:   A title of a documentation which can be configured in `GaidenConfig.groovy`:
     ```
     <title>$title</title>
     ```
 
 content
-:   A content of html which is generated from a markdown source in the pages directory:
+:   A content of html which is generated from a Markdown source in the `pages` directory:
     ```
     <body>
         $content
     </body>
     ```
 
-link
+resource
 :   Creates a link to the static resources, e.g. image, css and javascript:
     ```
     <html>
     <head>
         ...
-        <link rel="stylesheet" href="${link('/css/main.css')}">
-        <script src="${link('/js/jquery.min.js')}"></script>
+        <link rel="stylesheet" href="${resource('/css/main.css')}">
+        <script src="${resource('/js/jquery.min.js')}"></script>
     </head>
     <body>
-        <img src="${link('/img/logo.jpg')}"/>
+        <img src="${resource('/img/logo.jpg')}"/>
         ...
     </body>
     </html>
     ```
 
-tocList
+tocPath
 :   Create a link to the table of contents page:
     ```
-    <a href="$tocLink">Table of Contents</a>
+    <a href="$tocPath">Table of Contents</a>
     ```
+
 
 ## Configuration
 
@@ -118,6 +122,9 @@ You can customize behavior by changing settings.
 
 title
 :   Base title of page.
+
+tocTitle
+:   Title of TOC.
 
 templatePath
 :   Path of template file.
@@ -150,7 +157,7 @@ outputDirectory
     **default :** `build`
 
 inputEncoding
-:   Encoding of input markdown resource.
+:   Encoding of input Markdown resource.
 
     **default :** `UTF-8`
 
@@ -161,44 +168,46 @@ outputEncoding
 
 ## ToC
 
-Create `pages/toc.groovy` file which defines document structure, if you need a table of contents.
-You can write it with dsl support following like:
+Create `pages/toc.groovy` file which defines document structure if you need a table of contents.
+You can write it with DSL support as follows:
 
 ```
-"introduction.html"(title: "Introduction")
-"quickstart/quickstart.html"(title: "Quick Start")
+"introduction.md"(title: "Introduction")
+"quickstart/quickstart.md"(title: "Quick Start")
 ```
 
 This file also defines the section titles using the `title` attribute.
-If you have nested documents, you can use block:
+If you have nested pages, you can use block:
 
 ```
-"introduction.html"(title: "Introduction") {
-    "introduction/whatis.html"(title: "What is Gaiden?")
-    "introduction/install.html"(title: "Install")
+"introduction.md"(title: "Introduction") {
+    "introduction/whatis.md"(title: "What is Gaiden?")
+    "introduction/install.md"(title: "Install")
 }
-"quickstart/quickstart.html"(title: "Quick Start") {
-    "quickstart/addingcontent.html"(title: "Adding content")
+"quickstart/quickstart.md"(title: "Quick Start") {
+    "quickstart/addingcontent.md"(title: "Adding content")
 }
 ```
+
 
 ## Markdown
 
 If you don't know the Markdown, please refer to [Markdown Syntax Guide](http://daringfireball.net/projects/markdown/syntax) at Daring Firebal.
 
-Gaiden uses [PegDown](https://github.com/sirthias/pegdown) as a markdwon library under the hood.
+Gaiden uses [PegDown](https://github.com/sirthias/pegdown) as a Markdwon library under the hood.
 In addition, Gaiden provides some syntax support.
+
 
 ### Image
 
-You can use absolute path from the static resource directory in the path of image syntax.
+You can use an absolute path from a static resource directory in a path of image syntax.
 For example:
 
 ```
 ![alt text](/img/some-image.png)
 ```
 
-Gaiden generates automatically relative path from absolute path which is specified.
+Gaiden automatically generates relative a path from an absolute path which is specified.
 
 
 ## License
