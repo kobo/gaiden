@@ -40,7 +40,6 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
      * @return the HTML
      * @throws ParsingTimeoutException if the input cannot be parsed within the configured parsing timeout
      */
-    @Override
     String markdownToHtml(String markdownSource, String outputPath) throws ParsingTimeoutException {
         def astRoot = parseMarkdown(markdownSource.toCharArray())
         new GaidenToHtmlSerializer(new LinkRenderer(), new ImageRenderer(outputPath)).toHtml(astRoot)
