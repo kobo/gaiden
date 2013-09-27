@@ -68,6 +68,16 @@ startScripts {
     }
 }
 
+def distFiles = files(
+    "${project.projectDir}/README.md",
+    "${project.projectDir}/NOTICE",
+    "${project.projectDir}/LICENSE",
+)
+
+applicationDistribution.from(distFiles) {
+    into '/'
+}
+
 codenarc {
     configFile = new File('codenarc.groovy')
     ignoreFailures = true
