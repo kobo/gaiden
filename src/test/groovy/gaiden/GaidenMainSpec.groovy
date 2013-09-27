@@ -19,6 +19,7 @@ package gaiden
 import gaiden.command.CommandFactory
 import gaiden.command.GaidenCommand
 import gaiden.exception.GaidenException
+import gaiden.exception.IllegalOperationException
 import gaiden.message.MessageSource
 import spock.lang.Specification
 
@@ -67,7 +68,7 @@ class GaidenMainSpec extends Specification {
         thrown(SecurityException)
 
         and:
-        1 * printStream.println("Test Message")
+        1 * printStream.println("ERROR: Test Message")
         1 * securityManager.checkExit(1) >> {
             throw new SecurityException()
         }
@@ -121,7 +122,7 @@ class GaidenMainSpec extends Specification {
         new GaidenMain().run([] as String[])
 
         then:
-        def e = thrown(GaidenException)
+        def e = thrown(IllegalOperationException)
         e.key == "usage"
     }
 

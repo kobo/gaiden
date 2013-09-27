@@ -19,36 +19,20 @@ package gaiden.exception
 import gaiden.Holders
 
 /**
- * An exception for Gaiden.
+ * Thrown when an operation is illegal.
  *
- * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
+ * @author Kazuki YAMAMOTO
  */
-class GaidenException extends RuntimeException {
+class IllegalOperationException extends GaidenException {
 
-    final String key
-    final List<Object> arguments
-
-    GaidenException(String key, List<Object> arguments = []) {
-        super(key)
-        this.key = key
-        this.arguments = arguments
-    }
-
-    GaidenException(String key, Throwable cause) {
-        super(key, cause)
-        this.key = key
-    }
-
-    GaidenException(String key, List<Object> arguments, Throwable cause) {
-        super(key, cause)
-        this.key = key
-        this.arguments = arguments
+    IllegalOperationException() {
+        super("usage")
     }
 
     @Override
     String getMessage() {
-        return "ERROR: " + Holders.getMessage(key, arguments)
+        return Holders.getMessage(key, arguments)
     }
 
 }

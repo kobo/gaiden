@@ -18,7 +18,7 @@ package gaiden.command
 
 import gaiden.GaidenConfig
 import gaiden.Holders
-import gaiden.exception.GaidenException
+import gaiden.exception.IllegalOperationException
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -43,7 +43,7 @@ class CommandFactorySpec extends Specification {
         "create-project" | CreateProject
     }
 
-    def "'createCommand' should throw the exception when a command is invalid"() {
+    def "'createCommand' should throw an exception when a command is invalid"() {
         setup:
         Holders.config = Mock(GaidenConfig)
         CommandFactory factory = new CommandFactory()
@@ -52,7 +52,7 @@ class CommandFactorySpec extends Specification {
         factory.createCommand(commandName)
 
         then:
-        def e = thrown(GaidenException)
+        def e = thrown(IllegalOperationException)
         e.key == "usage"
 
         where:

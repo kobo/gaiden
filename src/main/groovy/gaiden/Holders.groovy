@@ -37,11 +37,11 @@ class Holders {
      *
      * @param key the key for message
      * @param arguments the list of objects to be bound into the message
-     * @return resolved message, {@code null} if can not resolve the message
+     * @return resolved message, the given {@code key} if cannot resolve the message
      * @see MessageSource#getMessage(String, List)
      */
     static String getMessage(String key, List<Object> arguments) {
-        messageSource.getMessage(key, arguments) ?: key
+        messageSource.getMessage(key, arguments)
     }
 
 }

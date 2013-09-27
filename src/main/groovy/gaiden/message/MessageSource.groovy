@@ -19,7 +19,7 @@ package gaiden.message
 import java.text.MessageFormat
 
 /**
- * MessageSource is message resolver which support
+ * MessageSource is a message resolver which supports
  * for the parameterization and internationalization.
  *
  * @author Kazuki YAMAMOTO
@@ -34,18 +34,18 @@ class MessageSource {
     }
 
     /**
-     * Gets a message for the given key.
+     * Returns a message for the given key.
      *
      * @param key the key for message
      * @param arguments the list of objects to be bound into the message
-     * @return resolved message, {@code null} if can not resolve the message
+     * @return resolved message, {@code key} if cannot resolve the message
      */
     String getMessage(String key, List<Object> arguments = []) {
         try {
             MessageFormat.format(resource.getString(key), arguments as Object[])
         } catch (MissingResourceException e) {
             // NOOP
-            null
+            return key
         }
     }
 

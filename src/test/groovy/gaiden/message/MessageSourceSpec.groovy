@@ -20,7 +20,7 @@ import spock.lang.Specification
 
 class MessageSourceSpec extends Specification {
 
-    def "'getMessage' should get message"() {
+    def "'getMessage' should return message"() {
         setup:
         def messageSource = new MessageSource("message.test_messages")
 
@@ -32,7 +32,8 @@ class MessageSourceSpec extends Specification {
         "simple"    | []             | "simple message"
         "argument"  | []             | "{0} {1} argument message"
         "argument"  | ["foo", "bar"] | "foo bar argument message"
-        "notexists" | []             | null
+        "argument"  | null           | "{0} {1} argument message"
+        "notexists" | []             | "notexists"
     }
 
 }

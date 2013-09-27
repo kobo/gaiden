@@ -16,7 +16,7 @@
 
 package gaiden.command
 
-import gaiden.exception.GaidenException
+import gaiden.exception.IllegalOperationException
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 
 /**
@@ -33,12 +33,12 @@ class CommandFactory {
     GaidenCommand createCommand(String commandName) {
         def commandClassName = getCommandClassName(commandName)
         if (!commandClassName) {
-            throw new GaidenException("usage")
+            throw new IllegalOperationException()
         }
 
         def commandClass = resolveCommandClass(commandClassName)
         if (!commandClass) {
-            throw new GaidenException("usage")
+            throw new IllegalOperationException()
         }
 
         return commandClass.newInstance() as GaidenCommand

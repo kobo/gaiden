@@ -19,6 +19,7 @@ package gaiden
 import gaiden.command.CommandFactory
 import gaiden.command.GaidenCommand
 import gaiden.exception.GaidenException
+import gaiden.exception.IllegalOperationException
 import gaiden.message.MessageSource
 
 /**
@@ -51,7 +52,7 @@ class GaidenMain {
         Holders.messageSource = new MessageSource()
 
         if (!args) {
-            throw new GaidenException("usage")
+            throw new IllegalOperationException()
         }
 
         def configFile = new File(CONFIG_FILE_NAME)

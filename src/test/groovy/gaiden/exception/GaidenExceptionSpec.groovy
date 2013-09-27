@@ -22,7 +22,7 @@ import spock.lang.Specification
 
 class GaidenExceptionSpec extends Specification {
 
-    def "'getMessage' should get message"() {
+    def "'getMessage' should return message"() {
         setup:
         def savedMessageSource = Holders.messageSource
         Holders.messageSource = new MessageSource("message.test_messages")
@@ -31,7 +31,7 @@ class GaidenExceptionSpec extends Specification {
         def e = new GaidenException("simple")
 
         then:
-        e.message == "simple message"
+        e.message == "ERROR: simple message"
 
         cleanup:
         Holders.messageSource = savedMessageSource
