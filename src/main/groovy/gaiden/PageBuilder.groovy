@@ -44,6 +44,7 @@ class PageBuilder {
      * Build from a page source to a page.
      *
      * @param context the context to be built
+     * @param pageSource the page source to be built
      * @return {@link Page}'s instance
      */
     Page build(PageBuildContext context, PageSource pageSource) {
@@ -54,7 +55,7 @@ class PageBuilder {
     }
 
     private String buildPage(PageBuildContext context, PageSource pageSource) {
-        def content = markdownProcessor.markdownToHtml(pageSource)
+        def content = markdownProcessor.markdownToHtml(context, pageSource)
 
         def binding = new BindingBuilder()
             .setContent(content)

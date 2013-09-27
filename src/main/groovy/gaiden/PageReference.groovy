@@ -79,4 +79,35 @@ class PageReference {
         }
         true
     }
+
+    /**
+     * Checks the path is an absolute path.
+     *
+     * @return {@code true} if the path is an absolute path
+     */
+    boolean isAbsolutePath() {
+        !path.startsWith("/")
+    }
+
+    /**
+     * Checks the extension of filename is a page source extension.
+     *
+     * @return {@code true} if the extension of filename is a page source extension
+     * @see SourceCollector#PAGE_SOURCE_EXTENSIONS
+     */
+    boolean isPageSourceExtension() {
+        !extension || extension in SourceCollector.PAGE_SOURCE_EXTENSIONS
+    }
+
+    /**
+     * Converts this page reference into a page reference which has a full path.
+     *
+     * @param rootDirectory the root directory of page sources
+     * @param baseDirectory the directory of base
+     * @return the page reference which has a full path
+     */
+    PageReference toFullPathPageReference(File rootDirectory, File baseDirectory) {
+        assert isAbsolutePath()
+        new PageReference(FileUtils.getRelativePathForDirectoryToFile(rootDirectory, new File(baseDirectory, path)) + fragment)
+    }
 }

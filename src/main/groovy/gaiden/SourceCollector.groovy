@@ -26,7 +26,7 @@ import gaiden.util.FileUtils
  */
 class SourceCollector {
 
-    private static final PAGE_SOURCE_EXTENSIONS = ['md', 'markdown']
+    static final PAGE_SOURCE_EXTENSIONS = ['md', 'markdown']
 
     private File pagesDirectory
     private String inputEncoding

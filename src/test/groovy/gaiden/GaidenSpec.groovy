@@ -30,6 +30,9 @@ abstract class GaidenSpec extends Specification {
     @AutoCleanup("delete")
     def tocFile = File.createTempFile("toc", "groovy")
 
+    @AutoCleanup("deleteDir")
+    def pagesDirectory = File.createTempDir()
+
     def setup() {
         saveSystemProperties()
         setupMessageSource()
