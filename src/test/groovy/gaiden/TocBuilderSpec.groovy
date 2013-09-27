@@ -16,6 +16,7 @@
 
 package gaiden
 
+import gaiden.message.MessageSource
 import spock.lang.Specification
 
 
@@ -29,6 +30,8 @@ class TocBuilderSpec extends Specification {
         savedSystemOut = System.out
         savedSystemErr = System.err
         savedSystemSecurityManager = System.securityManager
+
+        Holders.messageSource = new MessageSource()
     }
 
     def cleanup() {

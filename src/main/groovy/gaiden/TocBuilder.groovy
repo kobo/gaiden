@@ -124,8 +124,7 @@ class TocBuilder {
             targetPath ==~ /${FileUtils.removeExtension(page.originalPath)}(\.md)?/
         }
         if (!page) {
-            // TODO resolve from messageSource
-            System.err.println("WARNING: '${abstractPath}' in the Table of Contents refers to non-existent page")
+            System.err.println("WARNING: " + Holders.getMessage("toc.page.reference.not.exists.message", [abstractPath]))
             return null
         }
         return page.path + fragment
