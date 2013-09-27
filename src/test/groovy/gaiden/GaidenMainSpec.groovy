@@ -18,6 +18,9 @@ package gaiden
 
 import gaiden.command.CommandFactory
 import gaiden.command.GaidenCommand
+import gaiden.exception.GaidenException
+import gaiden.exception.IllegalOperationException
+import gaiden.message.MessageSource
 import spock.lang.Specification
 
 class GaidenMainSpec extends Specification {
@@ -36,6 +39,39 @@ class GaidenMainSpec extends Specification {
         System.out = savedSystemOut
         System.err = savedSystemErr
         System.securityManager = savedSystemSecurityManager
+    }
+
+    def "'main' should catch an exception and output a message"() {
+        setup:
+        def printStream = Mock(PrintStream)
+        System.err = printStream
+
+        and:
+        def messageSource = Stub(MessageSource)
+        messageSource.getMessage("test.key", _) >> "Test Message"
+        Holders.messageSource = messageSource
+
+        and:
+        def gaidenMain = Stub(GaidenMain)
+        gaidenMain.run(_) >> { throw new GaidenException("test.key") }
+        GroovySpy(GaidenMain, global: true)
+        new GaidenMain() >> gaidenMain
+
+        and:
+        def securityManager = Mock(SecurityManager)
+        System.securityManager = securityManager
+
+        when:
+        GaidenMain.main(null)
+
+        then:
+        thrown(SecurityException)
+
+        and:
+        1 * printStream.println("ERROR: Test Message")
+        1 * securityManager.checkExit(1) >> {
+            throw new SecurityException()
+        }
     }
 
     def "'run' should run a command"() {
@@ -59,60 +95,44 @@ class GaidenMainSpec extends Specification {
         def gaidenMain = new GaidenMain()
         gaidenMain.commandFactory = commandFactory
 
+        and:
+        def savedMessageSource = Holders.messageSource
+        Holders.messageSource = new MessageSource("message.test_messages")
+
         when:
         gaidenMain.run("valid-command")
 
         then:
+        Holders.messageSource != null
+
+        and:
         1 * new GaidenConfigLoader() >> gaidenConfigLoader
         1 * gaidenConfigLoader.load(_) >> gaidenConfig
         Holders.config == gaidenConfig
 
         and:
         1 * command.execute([])
+
+        cleanup:
+        Holders.messageSource = savedMessageSource
     }
 
     def "'run' should output usage if no argument"() {
-        setup:
-        def printStream = Mock(PrintStream)
-        System.err = printStream
-
-        and:
-        def securityManager = Mock(SecurityManager)
-        System.securityManager = securityManager
-
         when:
         new GaidenMain().run([] as String[])
 
         then:
-        thrown(SecurityException)
-
-        and:
-        1 * printStream.println(GaidenMain.USAGE_MESSAGE)
-        1 * securityManager.checkExit(1) >> {
-            throw new SecurityException()
-        }
+        def e = thrown(IllegalOperationException)
+        e.key == "usage"
     }
 
     def "'executeCommand' should output usage if invalid command"() {
-        setup:
-        def printStream = Mock(PrintStream)
-        System.err = printStream
-
-        and:
-        def securityManager = Mock(SecurityManager)
-        System.securityManager = securityManager
-
         when:
         new GaidenMain().executeCommand("invalid", null, [])
 
         then:
-        thrown(SecurityException)
-
-        and:
-        1 * printStream.println(GaidenMain.USAGE_MESSAGE)
-        1 * securityManager.checkExit(1) >> {
-            throw new SecurityException()
-        }
+        def e = thrown(GaidenException)
+        e.key == "usage"
     }
 
     def "'executeCommand' should not execute command if GaidenConfig.groovy doesn't exist"() {
@@ -125,25 +145,12 @@ class GaidenMainSpec extends Specification {
         gaidenConfigFile.exists() >> false
         gaidenConfigFile.name >> "TEST_CONFIG_FILE_NAME"
 
-        and:
-        def printStream = Mock(PrintStream)
-        System.err = printStream
-
-        and:
-        def securityManager = Mock(SecurityManager)
-        System.securityManager = securityManager
-
         when:
         new GaidenMain().executeCommand("build", gaidenConfigFile, [])
 
         then:
-        thrown(SecurityException)
-
-        and:
-        1 * printStream.println("ERROR: Not a Gaiden project (Cannot find TEST_CONFIG_FILE_NAME)")
-        1 * securityManager.checkExit(1) >> {
-            throw new SecurityException()
-        }
+        def e = thrown(GaidenException)
+        e.key == "not.gaiden.project.error"
     }
 
 }

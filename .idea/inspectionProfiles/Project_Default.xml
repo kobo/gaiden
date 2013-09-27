@@ -97,6 +97,7 @@
     <inspection_tool class="GStringAsMapKey" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="GrMethodMayBeStatic" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="GroovyLangImmutable" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyUnusedCatchParameter" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="HardCodedWindowsFileSeparator" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="HardCodedWindowsRootDirectory" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="HashtableIsObsolete" enabled="true" level="WARNING" enabled_by_default="true" />

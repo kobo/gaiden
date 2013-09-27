@@ -16,6 +16,8 @@
 
 package gaiden.command
 
+import gaiden.exception.GaidenException
+
 /**
  * The 'create-project' command.
  *
@@ -40,15 +42,12 @@ class CreateProject implements GaidenCommand {
     @Override
     void execute(List args = []) {
         if (args.empty) {
-            System.err.println "ERROR: Project name is required"
-            System.err.println "Usage: gaiden create-project <project name>"
-            System.exit(1)
+            throw new GaidenException("command.create.project.name.required.error")
         }
 
         def projectDirectory = new File(outputDirectoryPath, args.first() as String)
         if (projectDirectory.exists()) {
-            System.err.println "ERROR: The Gaiden project already exists: ${projectDirectory.name}"
-            System.exit(1)
+            throw new GaidenException("command.create.project.already.exists.error", [projectDirectory.name])
         }
 
         new AntBuilder().copy(toDir: projectDirectory) {
