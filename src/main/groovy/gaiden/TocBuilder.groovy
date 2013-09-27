@@ -80,9 +80,16 @@ class TocBuilder {
                         buildContentOfToc(builder, node.value(), pages)
                     }
                 } else {
-                    li {
-                        a(href: resolveOutputPath(pages, node.name() as String), node.attributes().title)
-                        buildContentOfToc(builder, node.value(), pages)
+                    def outputPath = resolveOutputPath(pages, node.name() as String)
+                    if (outputPath) {
+                        li {
+                            a(href: outputPath, node.attributes().title)
+                            buildContentOfToc(builder, node.value(), pages)
+                        }
+                    } else {
+                        li(node.attributes().title) {
+                            buildContentOfToc(builder, node.value(), pages)
+                        }
                     }
                 }
             }
@@ -108,15 +115,20 @@ class TocBuilder {
         def targetPath = hasFragment ? abstractPath.substring(0, abstractPath.lastIndexOf("#")) : abstractPath
         def fragment = hasFragment ? abstractPath.substring(abstractPath.lastIndexOf("#")) : ""
 
-        def page = pages.find { Page page ->
-            FileUtils.removeExtension(page.originalPath) == targetPath
-        }
-
-        if (!page) {
+        def extension = FileUtils.getExtension(new File(targetPath).name)
+        if (extension != null && extension != "md") {
             return abstractPath
         }
 
-        page.path + fragment
+        def page = pages.find { Page page ->
+            targetPath ==~ /${FileUtils.removeExtension(page.originalPath)}(\.md)?/
+        }
+        if (!page) {
+            // TODO resolve from messageSource
+            System.err.println("WARNING: '${abstractPath}' in the Table of Contents refers to non-existent page")
+            return null
+        }
+        return page.path + fragment
     }
 
 }

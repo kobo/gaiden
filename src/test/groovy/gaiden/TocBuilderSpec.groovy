@@ -21,12 +21,29 @@ import spock.lang.Specification
 
 class TocBuilderSpec extends Specification {
 
+    def savedSystemOut
+    def savedSystemErr
+    def savedSystemSecurityManager
+
+    def setup() {
+        savedSystemOut = System.out
+        savedSystemErr = System.err
+        savedSystemSecurityManager = System.securityManager
+    }
+
+    def cleanup() {
+        System.out = savedSystemOut
+        System.err = savedSystemErr
+        System.securityManager = savedSystemSecurityManager
+    }
+
     def "'build' should return a toc"() {
         setup:
         def tocInputFile = GroovyMock(File)
         tocInputFile.getText("UTF-8") >> """
             "first"(title: 'first title')
-            "second"(title: 'second title')
+            "second.md"(title: 'second title')
+            "third.html"(title: 'third title')
         """
         tocInputFile.exists() >> true
 
@@ -62,6 +79,9 @@ class TocBuilderSpec extends Specification {
                          |    <li>
                          |        <a href="second.html">second title</a>
                          |    </li>
+                         |    <li>
+                         |        <a href="third.html">third title</a>
+                         |    </li>
                          |</ul>
                          |</body>
                          |</html>
@@ -69,8 +89,58 @@ class TocBuilderSpec extends Specification {
 
         toMap(toc.node) == [
             "first": [title: "first title"],
-            "second": [title: "second title"],
+            "second.md": [title: "second title"],
+            "third.html": [title: "third title"],
         ]
+    }
+
+    def "'build' should not make a link if not found a page source"() {
+        setup:
+        def tocInputFile = GroovyMock(File)
+        tocInputFile.getText("UTF-8") >> """
+            "first"(title: 'first title')
+            "second.md"(title: 'second title')
+            "third.html"(title: 'third title')
+        """
+        tocInputFile.exists() >> true
+
+        and:
+        def printStream = Mock(PrintStream)
+        System.err = printStream
+
+        and:
+        def tocOutputPath = "toc.html"
+        def tocTitle = "Test TocBuilder Title"
+
+        and:
+        def templateEngine = new TemplateEngine(new File("/output"),
+            new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
+
+        when:
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, tocTitle, "UTF-8").build([])
+
+        then:
+        toc.path == "toc.html"
+        toc.content == """<html>
+                         |<head>
+                         |    <title>Gaiden</title>
+                         |</head>
+                         |<body>
+                         |<h1>$tocTitle</h1>
+                         |<ul>
+                         |    <li>first title</li>
+                         |    <li>second title</li>
+                         |    <li>
+                         |        <a href="third.html">third title</a>
+                         |    </li>
+                         |</ul>
+                         |</body>
+                         |</html>
+                         |""".stripMargin()
+
+        and:
+        1 * printStream.println("WARNING: 'second.md' in the Table of Contents refers to non-existent page")
+        1 * printStream.println("WARNING: 'first' in the Table of Contents refers to non-existent page")
     }
 
     def "'build' should return a hierarchy toc"() {
@@ -113,8 +183,7 @@ class TocBuilderSpec extends Specification {
                          |    <li>
                          |        <a href="first.html">first title</a>
                          |    </li>
-                         |    <li>
-                         |        <a href="second/">second title</a>
+                         |    <li>second title
                          |        <ul>
                          |            <li>
                          |                <a href="second/second1.html">second 1 title</a>
@@ -268,9 +337,7 @@ class TocBuilderSpec extends Specification {
                          |<body>
                          |<h1>$tocTitle</h1>
                          |<ul>
-                         |    <li>
-                         |        <a href="shiftjis">Shift_JISのタイトルです</a>
-                         |    </li>
+                         |    <li>Shift_JISのタイトルです</li>
                          |</ul>
                          |</body>
                          |</html>

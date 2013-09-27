@@ -87,4 +87,15 @@ class FileUtilsSpec extends Specification {
         "/path/to/target"         | "/path/to/target"
     }
 
+    def "'getExtension' should return extension of target filename"() {
+        expect:
+        FileUtils.getExtension(filename) == expected
+
+        where:
+        filename         | expected
+        "target.md"      | "md"
+        "target.html.md" | "md"
+        "target"         | null
+    }
+
 }
