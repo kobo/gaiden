@@ -54,7 +54,7 @@ class FileUtils {
      * @return the extension
      */
     static String getExtension(String filename) {
-        int index = filename.lastIndexOf(".");
+        int index = filename.lastIndexOf(".")
         if (index == -1) {
             return null
         }

@@ -337,7 +337,7 @@ ruleset {
     UnnecessarySelfAssignment
     UnnecessarySemicolon
     UnnecessaryStringInstantiation
-    UnnecessarySubstring
+    //UnnecessarySubstring
     UnnecessaryTernaryExpression
     UnnecessaryTransientModifier
 

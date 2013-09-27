@@ -208,7 +208,6 @@
     <inspection_tool class="UnnecessaryPublicModifier" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessarySelfAssignment" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryStringInstantiation" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="UnnecessarySubstring" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryTernaryExpression" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryTransientModifier" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnsafeArrayDeclaration" enabled="true" level="WARNING" enabled_by_default="true" />
