@@ -76,4 +76,26 @@ class FileUtilsSpec extends Specification {
         "/path/to/target"         | "html"    | "/path/to/target"
     }
 
+    def "'removeExtension' should remove extension of target filename"() {
+        expect:
+        FileUtils.removeExtension(filename) == expected
+
+        where:
+        filename                  | expected
+        "/path/to/target.md"      | "/path/to/target"
+        "/path/to/target.html.md" | "/path/to/target.html"
+        "/path/to/target"         | "/path/to/target"
+    }
+
+    def "'getExtension' should return extension of target filename"() {
+        expect:
+        FileUtils.getExtension(filename) == expected
+
+        where:
+        filename         | expected
+        "target.md"      | "md"
+        "target.html.md" | "md"
+        "target"         | null
+    }
+
 }

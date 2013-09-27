@@ -51,6 +51,7 @@ class PageBuilder {
     Page build(PageSource pageSource) {
         def outputPath = FileUtils.replaceExtension(pageSource.path, OUTPUT_EXTENSION)
         new Page(
+            originalPath: pageSource.path,
             path: outputPath,
             content: buildPage(pageSource, outputPath),
         )

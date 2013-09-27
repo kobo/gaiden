@@ -24,6 +24,9 @@ package gaiden
  */
 class Page {
 
+    /** A relative path from the input directory */
+    String originalPath
+
     /** A relative path from the output directory */
     String path
 

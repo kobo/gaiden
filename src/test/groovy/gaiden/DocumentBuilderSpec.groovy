@@ -46,7 +46,7 @@ class DocumentBuilderSpec extends Specification {
 
         then:
         2 * pageBuilder.build(_)
-        1 * tocBuilder.build()
+        1 * tocBuilder.build(_)
 
         and:
         document

@@ -16,6 +16,7 @@
 
 package gaiden
 
+import gaiden.util.FileUtils
 import groovy.xml.MarkupBuilder
 
 /**
@@ -51,13 +52,13 @@ class TocBuilder {
      *
      * @return {@link Toc}'s instance
      */
-    Toc build() {
+    Toc build(List<Page> pages) {
         if (!tocFile.exists()) {
             return new NullToc()
         }
 
         Node tocNode = parseTocFile()
-        def content = templateEngine.make(content: buildContent(tocNode), outputPath: tocOutputPath)
+        def content = templateEngine.make(content: buildContent(tocNode, pages), outputPath: tocOutputPath)
 
         new Toc(path: tocOutputPath, content: content, node: tocNode)
     }
@@ -67,7 +68,7 @@ class TocBuilder {
         tocBuilder.toc(new GroovyShell().evaluate("{ -> ${tocFile.getText(inputEncoding)} }"))
     }
 
-    private void buildContentOfToc(builder, nodes) {
+    private void buildContentOfToc(builder, nodes, List<Page> pages) {
         if (!nodes) {
             return
         }
@@ -76,19 +77,26 @@ class TocBuilder {
             nodes.each { Node node ->
                 if (node.name().startsWith("#")) {
                     li(node.attributes().title) {
-                        buildContentOfToc(builder, node.value())
+                        buildContentOfToc(builder, node.value(), pages)
                     }
                 } else {
-                    li {
-                        a(href: node.name(), node.attributes().title)
-                        buildContentOfToc(builder, node.value())
+                    def outputPath = resolveOutputPath(pages, node.name() as String)
+                    if (outputPath) {
+                        li {
+                            a(href: outputPath, node.attributes().title)
+                            buildContentOfToc(builder, node.value(), pages)
+                        }
+                    } else {
+                        li(node.attributes().title) {
+                            buildContentOfToc(builder, node.value(), pages)
+                        }
                     }
                 }
             }
         }
     }
 
-    private String buildContent(Node tocNode) {
+    private String buildContent(Node tocNode, List<Page> pages) {
         def writer = new StringWriter()
         def printer = new IndentPrinter(writer, WHITESPACE * 4)
         def builder = new MarkupBuilder(printer)
@@ -97,9 +105,30 @@ class TocBuilder {
 
         builder.h1(tocTitle)
 
-        buildContentOfToc(builder, tocNode.value())
+        buildContentOfToc(builder, tocNode.value(), pages)
 
         writer.toString()
+    }
+
+    private static String resolveOutputPath(List<Page> pages, String abstractPath) {
+        def hasFragment = abstractPath.contains("#")
+        def targetPath = hasFragment ? abstractPath.substring(0, abstractPath.lastIndexOf("#")) : abstractPath
+        def fragment = hasFragment ? abstractPath.substring(abstractPath.lastIndexOf("#")) : ""
+
+        def extension = FileUtils.getExtension(new File(targetPath).name)
+        if (extension != null && extension != "md") {
+            return abstractPath
+        }
+
+        def page = pages.find { Page page ->
+            targetPath ==~ /${FileUtils.removeExtension(page.originalPath)}(\.md)?/
+        }
+        if (!page) {
+            // TODO resolve from messageSource
+            System.err.println("WARNING: '${abstractPath}' in the Table of Contents refers to non-existent page")
+            return null
+        }
+        return page.path + fragment
     }
 
 }
