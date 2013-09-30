@@ -166,6 +166,20 @@ outputEncoding
 
     **default :** `UTF-8`
 
+**NOTE**: The encoding of `GaidenConfig.groovy` must be same as the `file.encoding` system property.
+If you want to use another encoding, you can use `JAVA_OPTS` or `GAIDEN_OPTS` to pass JVM options to Gaiden as follows, for Unix:
+
+```
+$ export GAIDEN_OPTS="-Dfile.encoding=Shift_JIS"
+```
+
+for Windows:
+
+```
+> set GAIDEN_OPTS="-Dfile.encoding=UTF-8"
+```
+
+
 ## ToC
 
 Create `pages/toc.groovy` file which defines document structure if you need a table of contents.
