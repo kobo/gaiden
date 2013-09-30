@@ -30,16 +30,19 @@ The basic usage is:
 gaiden <command name>
 ```
 
-create-project &lt;project name&gt;
-: The starting point for Gaiden.
-  The `create-project` command creates the project directory using the _&lt;project name&gt;_ specified by user.
+<dl>
+  <dt>create-project &lt;project name&gt;</dt>
+  <dd>
+    The starting point for Gaiden.
+    The <code>create-project</code> command creates the project directory using the <em>&lt;project name&gt;</em> specified by user.
+  </dd>
 
-build
-: The `build` command builds HTML pages from Markdown files using templates, and copies static resources.
+  <dt>build</dt>
+  <dd>The <code>build</code> command builds HTML pages from Markdown files using templates, and copies static resources.</dd>
 
-clean
-: The `clean` command deletes all built and copied resources.
-
+  <dt>clean</dt>
+  <dd>The <code>clean</code> command deletes all built and copied resources.</dd>
+</dl>
 
 ## Project Structure
 
@@ -78,41 +81,51 @@ It can be used to refer to variables or run helper methods.
 
 Gaiden supports the following extension properties and methods by default:
 
-title
-:   A title of a documentation which can be configured in `GaidenConfig.groovy`:
-    ```
-    <title>$title</title>
-    ```
+<dl>
+  <dt>title</dt>
+  <dd>
+    A title of a documentation which can be configured in <code>GaidenConfig.groovy</code>:
+    <pre>
+&lt;title&gt;$title&lt;/title&gt;
+</pre>
+  </dd>
 
-content
-:   A content of html which is generated from a Markdown source in the `pages` directory:
-    ```
-    <body>
-        $content
-    </body>
-    ```
+  <dt>content</dt>
+  <dd>
+    A content of html which is generated from a Markdown source in the <code>pages</code> directory:
+  <pre>
+&lt;body&gt;
+    $content
+&lt;/body&gt;
+</pre>
+  </dd>
 
-resource
-:   Creates a link to the static resources, e.g. image, css and javascript:
-    ```
-    <html>
-    <head>
-        ...
-        <link rel="stylesheet" href="${resource('/css/main.css')}">
-        <script src="${resource('/js/jquery.min.js')}"></script>
-    </head>
-    <body>
-        <img src="${resource('/img/logo.jpg')}"/>
-        ...
-    </body>
-    </html>
-    ```
+  <dt>resource</dt>
+  <dd>
+    Creates a link to the static resources, e.g. image, css and javascript:
+    <pre>
+&lt;html&gt;
+&lt;head&gt;
+    ...
+    &lt;link rel="stylesheet" href="${resource('/css/main.css')}"&gt;
+    &lt;script src="${resource('/js/jquery.min.js')}"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;img src="${resource('/img/logo.jpg')}"/&gt;
+    ...
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+  </dd>
 
-tocPath
-:   Create a link to the table of contents page:
-    ```
-    <a href="$tocPath">Table of Contents</a>
-    ```
+  <dt>tocPath</dt>
+  <dd>
+    Create a link to the table of contents page:
+    <pre>
+&lt;a href="$tocPath"&gt;Table of Contents&lt;/a&gt;
+</pre>
+  </dd>
+</dl>
 
 
 ## Configuration
@@ -120,51 +133,61 @@ tocPath
 Gaiden provides settings for generating the document in 'GaidenConfig.groovy'.
 You can customize behavior by changing settings.
 
-title
-:   Base title of page.
+<dl>
+  <dt>title</dt>
+  <dd>Base title of page.</dd>
 
-tocTitle
-:   Title of TOC.
+  <dt>tocTitle</dt>
+  <dd>Title of TOC.</dd>
 
-templatePath
-:   Path of template file.
+  <dt>templatePath</dt>
+  <dd>
+    <p>Path of template file.</p>
+    <p><strong>default:</strong> <code>templates/layout.html</code></p>
+  </dd>
 
-    **default:** `templates/layout.html`
+  <dt>tocPath</dt>
+  <dd>
+    <p>Path of TOC file.</p>
+    <p><strong>default:</strong> <code>pages/toc.groovy</code>
+  </dd>
 
-tocPath
-:   Path of TOC file.
+  <dt>tocOutputPath</dt>
+  <dd>
+    <p>Path of TOC output file.</p>
+    <p><strong>default:</strong> <code>toc.html</code>
+  </dd>
 
-    **default:** `pages/toc.groovy`
+  <dt>pagesDirectory</dt>
+  <dd>
+    <p>Directory of page source files.</p>
+    <p><strong>default:</strong> <code>pages</code>
+  </dd>
 
-tocOutputPath
-:   Path of TOC output file.
+  <dt>staticDirectory</dt>
+  <dd>
+    <p>Directory of static files.</p>
+    <p><strong>default:</strong> <code>static</code>
+  </dd>
 
-    **default:** `toc.html`
+  <dt>outputDirectory</dt>
+  <dd>
+    <p>Directory to be outputted a document.</p>
+    <p><strong>default:</strong> <code>build</code>
+  </dd>
 
-pagesDirectory
-:   Directory of page source files.
+  <dt>inputEncoding</dt>
+  <dd>
+    <p>Encoding of input Markdown resource.</p>
+    <p><strong>default:</strong> <code>UTF-8</code>
+  </dd>
 
-    **default:** `pages`
-
-staticDirectory
-:   Directory of static files.
-
-    **default:** `static`
-
-outputDirectory
-:   Directory to be outputted a document.
-
-    **default :** `build`
-
-inputEncoding
-:   Encoding of input Markdown resource.
-
-    **default :** `UTF-8`
-
-outputEncoding
-:   Encoding of output document.
-
-    **default :** `UTF-8`
+  <dt>outputEncoding</dt>
+  <dd>
+    <p>Encoding of output document.</p>
+    <p><strong>default:</strong> <code>UTF-8</code>
+  </dd>
+</dl>
 
 **NOTE**: The encoding of `GaidenConfig.groovy` must be same as the `file.encoding` system property.
 If you want to use another encoding, you can use `JAVA_OPTS` or `GAIDEN_OPTS` to pass JVM options to Gaiden as follows, for Unix:
