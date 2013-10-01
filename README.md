@@ -9,7 +9,7 @@ The [Groovy](http://groovy.codehaus.org/ "Groovy - Home") language is the base o
 
 You need a [Java SE](http://www.oracle.com/technetwork/java/javase/downloads/index.html "Java SE Downloads") installed, but it is not necessary to install Groovy because it's bundled with the Gaiden distribution.
 
-To install Gaiden, download a binary distribution of Gaiden and unpack it into some file on your local file system.
+To install Gaiden, download [a binary distribution of Gaiden](https://github.com/kobo/gaiden/releases) and unpack it into some file on your local file system.
 Add the `bin` directory path in unpacked the distribution to your `PATH` environment variable.
 Then in a shell, type the following:
 
