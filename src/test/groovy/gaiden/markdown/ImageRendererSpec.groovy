@@ -17,6 +17,7 @@
 package gaiden.markdown
 
 import gaiden.Holders
+import gaiden.PageSource
 import gaiden.message.MessageSource
 import spock.lang.Specification
 
@@ -36,7 +37,8 @@ class ImageRendererSpec extends Specification {
 
     def "'render' should return a rendering object which has replaced image path"() {
         setup:
-        def renderer = new ImageRenderer(pagePath, new File("non-existent-static"))
+        def pageSource = new PageSource(path: pageSourcePath)
+        def renderer = new ImageRenderer(pageSource, new File("non-existent-static"))
 
         and:
         def printStream = Mock(PrintStream)
@@ -50,20 +52,20 @@ class ImageRendererSpec extends Specification {
         rendering.alt == "TEST_ALT"
 
         and: "output a warning message when a image file doesn't exist"
-        1 * printStream.println("WARNING: '${imagePath}' in the '${pagePath}' refers to non-existent file")
+        1 * printStream.println("WARNING: '${imagePath}' in the '${pageSource.path}' refers to non-existent file")
 
         where:
-        pagePath         | imagePath        | renderingSrc
-        "test.html"      | "/img/test.png"  | "img/test.png"
-        "test.html"      | "/test.png"      | "test.png"
-        "path/test.html" | "/img/test.png"  | "../img/test.png"
-        "path/test.html" | "/test.png"      | "../test.png"
-        "path/test.html" | "/path/test.png" | "test.png"
+        pageSourcePath | imagePath        | renderingSrc
+        "test.md"      | "/img/test.png"  | "img/test.png"
+        "test.md"      | "/test.png"      | "test.png"
+        "path/test.md" | "/img/test.png"  | "../img/test.png"
+        "path/test.md" | "/test.png"      | "../test.png"
+        "path/test.md" | "/path/test.png" | "test.png"
     }
 
     def "'render' should not replace an image path if doesn't start with a slash"() {
         setup:
-        def renderer = new ImageRenderer("test.html", new File("test/resources/static-files"))
+        def renderer = new ImageRenderer(new PageSource(path: "test.md"), new File("test/resources/static-files"))
 
         when:
         def rendering = renderer.render("img/test.png", "TEST_ALT")
@@ -75,7 +77,7 @@ class ImageRendererSpec extends Specification {
 
     def "'render' should not output a warning message when a image file exists"() {
         setup:
-        def renderer = new ImageRenderer("test.html", new File("src/test/resources/static-files"))
+        def renderer = new ImageRenderer(new PageSource(path: pageSourcePath), new File("src/test/resources/static-files"))
 
         and:
         def printStream = Mock(PrintStream)
@@ -92,14 +94,16 @@ class ImageRendererSpec extends Specification {
         0 * printStream.println(_)
 
         where:
-        imagePath           | renderingSrc
-        "/images/dummy.png" | "images/dummy.png"
-        "images/dummy.png"  | "images/dummy.png"
+        pageSourcePath | imagePath             | renderingSrc
+        "test.md"      | "/images/dummy.png"   | "images/dummy.png"
+        "test.md"      | "images/dummy.png"    | "images/dummy.png"
+        "path/test.md" | "/images/dummy.png"   | "../images/dummy.png"
+        "path/test.md" | "../images/dummy.png" | "../images/dummy.png"
     }
 
     def "'render' should not output a warning message when a image path is URL"() {
         setup:
-        def renderer = new ImageRenderer("test.html", new File("src/test/resources/static-files"))
+        def renderer = new ImageRenderer(new PageSource(path: "test.md"), new File("src/test/resources/static-files"))
 
         and:
         def printStream = Mock(PrintStream)
