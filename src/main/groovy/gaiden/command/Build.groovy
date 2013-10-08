@@ -16,9 +16,9 @@
 
 package gaiden.command
 
+import gaiden.context.BuildContext
 import gaiden.Document
 import gaiden.DocumentBuilder
-import gaiden.DocumentSource
 import gaiden.DocumentWriter
 import gaiden.SourceCollector
 
@@ -37,8 +37,9 @@ class Build implements GaidenCommand {
      */
     @Override
     void execute(List args = []) {
-        DocumentSource documentSource = new SourceCollector().collect()
-        Document document = new DocumentBuilder().build(documentSource)
+        def documentSource = new SourceCollector().collect()
+        def context = new BuildContext(documentSource: documentSource)
+        Document document = new DocumentBuilder().build(context)
         new DocumentWriter().write(document)
     }
 

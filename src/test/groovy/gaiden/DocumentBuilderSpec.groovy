@@ -16,6 +16,8 @@
 
 package gaiden
 
+import gaiden.context.BuildContext
+import gaiden.context.PageBuildContext
 import spock.lang.Specification
 
 class DocumentBuilderSpec extends Specification {
@@ -27,6 +29,7 @@ class DocumentBuilderSpec extends Specification {
             new PageSource(path: "source1.md", content: "# markdown1"),
             new PageSource(path: "source2.md", content: "# markdown2"),
         ]
+        def context = new BuildContext(documentSource: documentSource)
 
         and:
         def pageBuilder = Mock(PageBuilder)
@@ -42,11 +45,11 @@ class DocumentBuilderSpec extends Specification {
         )
 
         when:
-        def document = builder.build(documentSource)
+        def document = builder.build(context)
 
         then:
-        2 * pageBuilder.build(_)
-        1 * tocBuilder.build(_)
+        1 * tocBuilder.build(_ as BuildContext)
+        2 * pageBuilder.build(_ as PageBuildContext, _ as PageSource)
 
         and:
         document

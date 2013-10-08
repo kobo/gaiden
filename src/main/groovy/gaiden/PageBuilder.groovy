@@ -16,8 +16,8 @@
 
 package gaiden
 
+import gaiden.context.PageBuildContext
 import gaiden.markdown.GaidenMarkdownProcessor
-import gaiden.util.FileUtils
 import org.pegdown.Extensions
 
 /**
@@ -27,8 +27,6 @@ import org.pegdown.Extensions
  * @author Kazuki YAMAMOTO
  */
 class PageBuilder {
-
-    private static final String OUTPUT_EXTENSION = "html"
 
     private TemplateEngine templateEngine
     private GaidenMarkdownProcessor markdownProcessor
@@ -45,21 +43,19 @@ class PageBuilder {
     /**
      * Build from a page source to a page.
      *
-     * @param pageSource the page source to be built
+     * @param context the context to be built
      * @return {@link Page}'s instance
      */
-    Page build(PageSource pageSource) {
-        def outputPath = FileUtils.replaceExtension(pageSource.path, OUTPUT_EXTENSION)
+    Page build(PageBuildContext context, PageSource pageSource) {
         new Page(
-            originalPath: pageSource.path,
-            path: outputPath,
-            content: buildPage(pageSource, outputPath),
+            source: pageSource,
+            content: buildPage(context, pageSource),
         )
     }
 
-    private String buildPage(PageSource pageSource, String outputPath) {
-        def content = markdownProcessor.markdownToHtml(pageSource.content, outputPath)
-        templateEngine.make(content: content, outputPath: outputPath)
+    private String buildPage(PageBuildContext context, PageSource pageSource) {
+        def content = markdownProcessor.markdownToHtml(pageSource)
+        templateEngine.make(content: content, outputPath: pageSource.outputPagePath)
     }
 
 }

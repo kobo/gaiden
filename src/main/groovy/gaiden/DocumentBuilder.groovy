@@ -16,6 +16,9 @@
 
 package gaiden
 
+import gaiden.context.BuildContext
+import gaiden.context.PageBuildContext
+
 /**
  * A document builder builds from a document source to a document.
  *
@@ -56,22 +59,22 @@ class DocumentBuilder {
     /**
      * Builds a document from a document source.
      *
-     * @param documentSource the document source to be built
+     * @param context the context to be built
      * @return {@link Document}'s instance
      */
-    Document build(DocumentSource documentSource) {
-        def pages = buildPages(documentSource)
-        def toc = buildToc(pages)
+    Document build(BuildContext context) {
+        def toc = buildToc(context)
+        def pages = buildPages(new PageBuildContext(documentSource: context.documentSource, toc: toc))
         new Document(toc: toc, pages: pages)
     }
 
-    private Toc buildToc(List<Page> pages) {
-        tocBuilder.build(pages)
+    private Toc buildToc(BuildContext context) {
+        tocBuilder.build(context)
     }
 
-    private List<Page> buildPages(DocumentSource documentSource) {
-        documentSource.pageSources.collect { pageSource ->
-            pageBuilder.build(pageSource)
+    private List<Page> buildPages(PageBuildContext context) {
+        context.documentSource.pageSources.collect { pageSource ->
+            pageBuilder.build(context, pageSource)
         }
     }
 

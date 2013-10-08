@@ -14,36 +14,18 @@
  * limitations under the License.
  */
 
-package gaiden
+package gaiden.context
+
+import gaiden.DocumentSource
 
 /**
- * A table of contents.
+ * To provide objects for building.
  *
  * @author Hideki IGARASHI
- * @author Kazuki YAMAMOTO
  */
-class Toc {
+class BuildContext {
 
-    /** A root node of TOC */
-    Node node
-
-    /** A relative path from the output directory */
-    String path
-
-    /** A output content */
-    String content
-
-    /**
-     * Writes the TOC to a file.
-     *
-     * @param outputDirectory the output directory to which to write the page
-     */
-    void writeTo(File outputDirectory, String outputEncoding) {
-        def file = new File(outputDirectory, path)
-        if (!file.parentFile.exists()) {
-            assert file.parentFile.mkdirs()
-        }
-        file.write(content, outputEncoding)
-    }
+    /** A document source */
+    DocumentSource documentSource
 
 }

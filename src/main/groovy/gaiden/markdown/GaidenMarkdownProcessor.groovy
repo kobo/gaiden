@@ -16,6 +16,7 @@
 
 package gaiden.markdown
 
+import gaiden.PageSource
 import org.pegdown.LinkRenderer
 import org.pegdown.ParsingTimeoutException
 import org.pegdown.PegDownProcessor
@@ -35,14 +36,13 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
     /**
      * Converts the given markdown source to HTML.
      *
-     * @param markdownSource the markdown source to convert
-     * @param outputPath the relative path from the output directory
+     * @param pageSource the page source to convert
      * @return the HTML
      * @throws ParsingTimeoutException if the input cannot be parsed within the configured parsing timeout
      */
-    String markdownToHtml(String markdownSource, String outputPath) throws ParsingTimeoutException {
-        def astRoot = parseMarkdown(markdownSource.toCharArray())
-        new GaidenToHtmlSerializer(new LinkRenderer(), new ImageRenderer(outputPath)).toHtml(astRoot)
+    String markdownToHtml(PageSource pageSource) throws ParsingTimeoutException {
+        def astRoot = parseMarkdown(pageSource.content.toCharArray())
+        new GaidenToHtmlSerializer(new LinkRenderer(), new ImageRenderer(pageSource.outputPagePath)).toHtml(astRoot)
     }
 
 }
