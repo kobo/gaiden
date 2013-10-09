@@ -52,7 +52,7 @@ class TocBuilderSpec extends Specification {
         tocInputFile.exists() >> true
 
         and:
-        def tocOutputPath = "toc.html"
+        def tocOutputFilePath = "toc.html"
         def tocTitle = "Test TocBuilder Title"
 
         and:
@@ -68,7 +68,7 @@ class TocBuilderSpec extends Specification {
         def context = new BuildContext(documentSource: documentSource)
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, tocTitle, "UTF-8").build(context)
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "UTF-8").build(context)
 
         then:
         toc.path == "toc.html"
@@ -115,7 +115,7 @@ class TocBuilderSpec extends Specification {
         System.err = printStream
 
         and:
-        def tocOutputPath = "toc.html"
+        def tocOutputFilePath = "toc.html"
         def tocTitle = "Test TocBuilder Title"
 
         and:
@@ -123,7 +123,7 @@ class TocBuilderSpec extends Specification {
             new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, tocTitle, "UTF-8").build(contextOfEmptyPageSource)
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "UTF-8").build(contextOfEmptyPageSource)
 
         then:
         toc.path == "toc.html"
@@ -161,7 +161,7 @@ class TocBuilderSpec extends Specification {
         tocInputFile.exists() >> true
 
         and:
-        def tocOutputPath = "toc.html"
+        def tocOutputFilePath = "toc.html"
         def tocTitle = "Test TocBuilder Title"
 
         and:
@@ -177,7 +177,7 @@ class TocBuilderSpec extends Specification {
         def context = new BuildContext(documentSource: documentSource)
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, tocTitle, "UTF-8").build(context)
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "UTF-8").build(context)
 
         then:
         toc.path == "toc.html"
@@ -220,7 +220,7 @@ class TocBuilderSpec extends Specification {
         tocInputFile.exists() >> true
 
         and:
-        def tocOutputPath = "toc.html"
+        def tocOutputFilePath = "toc.html"
         def tocTitle = "Test TocBuilder Title"
 
         and:
@@ -235,7 +235,7 @@ class TocBuilderSpec extends Specification {
         def context = new BuildContext(documentSource: documentSource)
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, tocTitle, "UTF-8").build(context)
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "UTF-8").build(context)
 
         then:
         toc.path == "toc.html"
@@ -283,7 +283,7 @@ class TocBuilderSpec extends Specification {
         tocInputFile.exists() >> true
 
         and:
-        def tocOutputPath = "toc.html"
+        def tocOutputFilePath = "toc.html"
         def tocTitle = "Test TocBuilder Title"
 
         and:
@@ -291,7 +291,7 @@ class TocBuilderSpec extends Specification {
             new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, tocTitle, "UTF-8").build(contextOfEmptyPageSource)
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "UTF-8").build(contextOfEmptyPageSource)
 
         then:
         toc.path == "toc.html"
@@ -328,7 +328,7 @@ class TocBuilderSpec extends Specification {
         def tocInputFile = new File("src/test/resources/toc/shiftjis-toc.groovy")
 
         and:
-        def tocOutputPath = "toc.html"
+        def tocOutputFilePath = "toc.html"
         def tocTitle = "Test TocBuilder Title"
 
         and:
@@ -336,7 +336,7 @@ class TocBuilderSpec extends Specification {
             new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, tocTitle, "Shift_JIS").build(contextOfEmptyPageSource)
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "Shift_JIS").build(contextOfEmptyPageSource)
 
         then:
         toc.path == "toc.html"

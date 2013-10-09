@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-title = "Test Title"
-tocTitle = "Test TOC Title"
-templateFilePath = "test/templates/layout.html"
-tocFilePath = "test/pages/toc.groovy"
-tocOutputFilePath = "test/toc.html"
-pagesDirectoryPath = "test/pages"
-staticDirectoryPath = "test/static"
-outputDirectoryPath = "test/build/html"
-inputEncoding = "Test Input Encoding"
-outputEncoding = "Test Output Encoding"
+templatePath = "templates/deprecated.html"
+tocPath = "pages/deprecated-toc.groovy"
+tocOutputPath = "deprecated-toc.html"
+pagesDirectory = "deprecated-pages"
+staticDirectory = "deprecated-static"
+outputDirectory = "deprecated-build"

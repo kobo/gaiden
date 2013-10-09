@@ -31,7 +31,7 @@ class SourceCollector {
     private File pagesDirectory
     private String inputEncoding
 
-    SourceCollector(File pagesDirectory = Holders.config.pagesDirectoryFile, String inputEncoding = Holders.config.inputEncoding) {
+    SourceCollector(File pagesDirectory = Holders.config.pagesDirectory, String inputEncoding = Holders.config.inputEncoding) {
         this.pagesDirectory = pagesDirectory
         this.inputEncoding = inputEncoding
     }

@@ -30,7 +30,7 @@ class Clean implements GaidenCommand {
 
     final boolean onlyGaidenProject = true
 
-    Clean(targetDirectory = Holders.config.outputDirectoryFile) {
+    Clean(targetDirectory = Holders.config.outputDirectory) {
         this.targetDirectory = targetDirectory
     }
 

@@ -32,18 +32,18 @@ class TocBuilder {
 
     private TemplateEngine templateEngine
     private File tocFile
-    private String tocOutputPath
+    private String tocOutputFilePath
     private String tocTitle
     private String inputEncoding
 
     TocBuilder(TemplateEngine templateEngine) {
-        this(templateEngine, Holders.config.tocPathFile, Holders.config.tocOutputPath, Holders.config.tocTitle, Holders.config.inputEncoding)
+        this(templateEngine, Holders.config.tocFile, Holders.config.tocOutputFilePath, Holders.config.tocTitle, Holders.config.inputEncoding)
     }
 
-    TocBuilder(TemplateEngine templateEngine, File tocFile, String tocOutputPath, String tocTitle, String inputEncoding) {
+    TocBuilder(TemplateEngine templateEngine, File tocFile, String tocOutputFilePath, String tocTitle, String inputEncoding) {
         this.templateEngine = templateEngine
         this.tocFile = tocFile
-        this.tocOutputPath = tocOutputPath
+        this.tocOutputFilePath = tocOutputFilePath
         this.tocTitle = tocTitle
         this.inputEncoding = inputEncoding
     }
@@ -59,9 +59,9 @@ class TocBuilder {
         }
 
         Node tocNode = parseTocFile()
-        def content = templateEngine.make(content: buildContent(tocNode, context), outputPath: tocOutputPath)
+        def content = templateEngine.make(content: buildContent(tocNode, context), outputPath: tocOutputFilePath)
 
-        new Toc(path: tocOutputPath, content: content, node: tocNode)
+        new Toc(path: tocOutputFilePath, content: content, node: tocNode)
     }
 
     private Node parseTocFile() {

@@ -138,54 +138,84 @@ You can customize behavior by changing settings.
   <dd>Base title of page.</dd>
 
   <dt>tocTitle</dt>
-  <dd>Title of TOC.</dd>
+  <dd>The title of TOC.</dd>
 
-  <dt>templatePath</dt>
+  <dt>templateFilePath</dt>
   <dd>
-    <p>Path of template file.</p>
+    <p>The path of template file.</p>
     <p><strong>default:</strong> <code>templates/layout.html</code></p>
   </dd>
 
-  <dt>tocPath</dt>
+  <dt>tocFilePath</dt>
   <dd>
-    <p>Path of TOC file.</p>
+    <p>The path of TOC file.</p>
     <p><strong>default:</strong> <code>pages/toc.groovy</code>
   </dd>
 
-  <dt>tocOutputPath</dt>
+  <dt>tocOutputFilePath</dt>
   <dd>
-    <p>Path of TOC output file.</p>
+    <p>The path of TOC output file.</p>
     <p><strong>default:</strong> <code>toc.html</code>
   </dd>
 
-  <dt>pagesDirectory</dt>
+  <dt>pagesDirectoryPath</dt>
   <dd>
-    <p>Directory of page source files.</p>
+    <p>The path of page source files directory.</p>
     <p><strong>default:</strong> <code>pages</code>
   </dd>
 
-  <dt>staticDirectory</dt>
+  <dt>staticDirectoryPath</dt>
   <dd>
-    <p>Directory of static files.</p>
+    <p>The path of static files directory.</p>
     <p><strong>default:</strong> <code>static</code>
   </dd>
 
-  <dt>outputDirectory</dt>
+  <dt>outputDirectoryPath</dt>
   <dd>
-    <p>Directory to be outputted a document.</p>
+    <p>The path of directory to be outputted a document.</p>
     <p><strong>default:</strong> <code>build</code>
   </dd>
 
   <dt>inputEncoding</dt>
   <dd>
-    <p>Encoding of input Markdown resource.</p>
+    <p>The encoding of input Markdown resource.</p>
     <p><strong>default:</strong> <code>UTF-8</code>
   </dd>
 
   <dt>outputEncoding</dt>
   <dd>
-    <p>Encoding of output document.</p>
+    <p>The encoding of output document.</p>
     <p><strong>default:</strong> <code>UTF-8</code>
+  </dd>
+
+  <dt>templatePath (deprecated)</dt>
+  <dd>
+    <p>Please use <code>templateFilePath</code> instead.</p>
+  </dd>
+
+  <dt>tocPath (deprecated)</dt>
+  <dd>
+    <p>Please use <code>tocFilePath</code> instead.</p>
+  </dd>
+
+  <dt>tocOutputPath (deprecated)</dt>
+  <dd>
+    <p>Please use <code>tocOutputFilePath</code> instead.</p>
+  </dd>
+
+  <dt>pagesDirectory (deprecated)</dt>
+  <dd>
+    <p>Please use <code>pagesDirectoryPath</code> instead.</p>
+  </dd>
+
+  <dt>staticDirectory (deprecated)</dt>
+  <dd>
+    <p>Please use <code>staticDirectoryPath</code> instead.</p>
+  </dd>
+
+  <dt>outputDirectory (deprecated)</dt>
+  <dd>
+    <p>Please use <code>outputDirectoryPath</code> instead.</p>
   </dd>
 </dl>
 

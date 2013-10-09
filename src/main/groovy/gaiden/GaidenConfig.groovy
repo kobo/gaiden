@@ -31,22 +31,22 @@ class GaidenConfig {
     String tocTitle
 
     /** The path of template file */
-    String templatePath
+    String templateFilePath
 
     /** The path of TOC file */
-    String tocPath
+    String tocFilePath
 
     /** The path of TOC output file */
-    String tocOutputPath
+    String tocOutputFilePath
 
-    /** The directory of page source files */
-    String pagesDirectory
+    /** The path of page source files directory */
+    String pagesDirectoryPath
 
-    /** The directory of static files */
-    String staticDirectory
+    /** The path of static files directory */
+    String staticDirectoryPath
 
     /** The directory to be outputted a document */
-    String outputDirectory
+    String outputDirectoryPath
 
     /** The input encoding of files */
     String inputEncoding
@@ -54,29 +54,75 @@ class GaidenConfig {
     /** The output encoding of files */
     String outputEncoding
 
-    /** Gets the {@link #templatePath} as {@link File} */
-    File getTemplatePathFile() {
-        new File(templatePath)
+    /** Gets the {@link #templateFilePath} as {@link File} */
+    File getTemplateFile() {
+        new File(templateFilePath)
     }
 
-    /** Gets the {@link #tocPath} as {@link File} */
-    File getTocPathFile() {
-        new File(tocPath)
+    /** Gets the {@link #tocFilePath} as {@link File} */
+    File getTocFile() {
+        new File(tocFilePath)
     }
 
-    /** Gets the {@link #pagesDirectory} as {@link File} */
-    File getPagesDirectoryFile() {
-        new File(pagesDirectory)
+    /** Gets the {@link #pagesDirectoryPath} as {@link File} */
+    File getPagesDirectory() {
+        new File(pagesDirectoryPath)
     }
 
-    /** Gets the {@link #staticDirectory} as {@link File} */
-    File getStaticDirectoryFile() {
-        new File(staticDirectory)
+    /** Gets the {@link #staticDirectoryPath} as {@link File} */
+    File getStaticDirectory() {
+        new File(staticDirectoryPath)
     }
 
-    /** Gets the {@link #outputDirectory} as {@link File} */
-    File getOutputDirectoryFile() {
-        new File(outputDirectory)
+    /** Gets the {@link #outputDirectoryPath} as {@link File} */
+    File getOutputDirectory() {
+        new File(outputDirectoryPath)
+    }
+
+    /**
+     * Replaces a deprecated parameter with new one.
+     *
+     * @param name a property name
+     * @param value a property value
+     */
+    def propertyMissing(String name, value) {
+        def deprecatedMapping = [
+            templatePath: "templateFilePath",
+            tocPath: "tocFilePath",
+            tocOutputPath: "tocOutputFilePath",
+        ]
+
+        if (!deprecatedMapping.containsKey(name)) {
+            throw new MissingPropertyException(name, this.class)
+        }
+
+        printDeprecatedWarning(name, deprecatedMapping[name])
+        this."${deprecatedMapping[name]}" = value
+    }
+
+    // Conflicts with getPagesDirectory()
+    @Deprecated
+    void setPagesDirectory(String value) {
+        printDeprecatedWarning("pagesDirectory", "pagesDirectoryPath")
+        pagesDirectoryPath = value
+    }
+
+    // Conflicts with getStaticDirectory()
+    @Deprecated
+    void setStaticDirectory(String value) {
+        printDeprecatedWarning("staticDirectory", "staticDirectoryPath")
+        staticDirectoryPath = value
+    }
+
+    // Conflicts with getOutputDirectory()
+    @Deprecated
+    void setOutputDirectory(String value) {
+        printDeprecatedWarning("outputDirectory", "outputDirectoryPath")
+        outputDirectoryPath = value
+    }
+
+    private void printDeprecatedWarning(String deprecatedName, String insteadName) {
+        System.err.println("WARNING: ${Holders.messageSource.getMessage("config.deprecated.parameter.message", [deprecatedName, insteadName])}")
     }
 
 }

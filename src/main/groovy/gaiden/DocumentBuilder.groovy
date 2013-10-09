@@ -33,26 +33,26 @@ class DocumentBuilder {
     private PageBuilder pageBuilder
     private TocBuilder tocBuilder
 
-    private File outputDirectoryFile
+    private File outputDirectory
 
     DocumentBuilder() {
-        this.templateFile = Holders.config.templatePathFile
+        this.templateFile = Holders.config.templateFile
         this.baseBinding = [
             title: Holders.config.title,
-            tocPath: Holders.config.tocOutputPath,
+            tocPath: Holders.config.tocOutputFilePath,
         ]
-        this.outputDirectoryFile = Holders.config.outputDirectoryFile
+        this.outputDirectory = Holders.config.outputDirectory
 
         def templateEngine = createTemplateEngine()
         this.pageBuilder = new PageBuilder(templateEngine)
         this.tocBuilder = new TocBuilder(templateEngine)
     }
 
-    DocumentBuilder(File templateFile, PageBuilder pageBuilder, TocBuilder tocBuilder, File outputDirectoryFile, Map baseBinding) {
+    DocumentBuilder(File templateFile, PageBuilder pageBuilder, TocBuilder tocBuilder, File outputDirectory, Map baseBinding) {
         this.templateFile = templateFile
         this.pageBuilder = pageBuilder
         this.tocBuilder = tocBuilder
-        this.outputDirectoryFile = outputDirectoryFile
+        this.outputDirectory = outputDirectory
         this.baseBinding = baseBinding
     }
 
@@ -79,7 +79,7 @@ class DocumentBuilder {
     }
 
     private TemplateEngine createTemplateEngine() {
-        new TemplateEngine(outputDirectoryFile, templateFile.text, baseBinding)
+        new TemplateEngine(outputDirectory, templateFile.text, baseBinding)
     }
 
 }

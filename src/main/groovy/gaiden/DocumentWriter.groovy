@@ -32,8 +32,8 @@ class DocumentWriter {
     private String outputEncoding
 
     DocumentWriter(
-        File staticDirectory = Holders.config.staticDirectoryFile,
-        File outputDirectory = Holders.config.outputDirectoryFile,
+        File staticDirectory = Holders.config.staticDirectory,
+        File outputDirectory = Holders.config.outputDirectory,
         String outputEncoding = Holders.config.outputEncoding) {
         this.staticDirectory = staticDirectory
         this.outputDirectory = outputDirectory

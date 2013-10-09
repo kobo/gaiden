@@ -30,7 +30,7 @@ class TemplateEngine {
 
     private Template template
     private Map baseBinding
-    private File outputDirectoryFile
+    private File outputDirectory
 
     /**
      * Creates a new {@link TemplateEngine} instance by the given template text and the base binding variables.
@@ -38,8 +38,8 @@ class TemplateEngine {
      * @param templateText a template text
      * @param baseBinding base binding variables
      */
-    TemplateEngine(File outputDirectoryFile, String templateText, Map baseBinding) {
-        this.outputDirectoryFile = outputDirectoryFile
+    TemplateEngine(File outputDirectory, String templateText, Map baseBinding) {
+        this.outputDirectory = outputDirectory
         template = new SimpleTemplateEngine().createTemplate(templateText)
         this.baseBinding = baseBinding
     }
@@ -65,16 +65,16 @@ class TemplateEngine {
                 return resourcePath
             }
 
-            def outputFile = new File(outputDirectoryFile, outputPath)
-            def resourceFile = new File(outputDirectoryFile, resourcePath)
+            def outputFile = new File(outputDirectory, outputPath)
+            def resourceFile = new File(outputDirectory, resourcePath)
 
             FileUtils.getRelativePathForFileToFile(outputFile, resourceFile)
         }
     }
 
     private String createTocPathProperty(String outputPath, String tocPath) {
-        def outputFile = new File(outputDirectoryFile, outputPath)
-        def tocFile = new File(outputDirectoryFile, tocPath)
+        def outputFile = new File(outputDirectory, outputPath)
+        def tocFile = new File(outputDirectory, tocPath)
 
         FileUtils.getRelativePathForFileToFile(outputFile, tocFile)
     }
