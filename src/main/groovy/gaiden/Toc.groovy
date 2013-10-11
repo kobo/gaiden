@@ -22,9 +22,15 @@ package gaiden
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class Toc extends Page {
+class Toc {
 
     /** A root node of TOC */
     Node node
+
+    /** A relative path from the output directory */
+    String path
+
+    /** A output content */
+    String content
 
 }

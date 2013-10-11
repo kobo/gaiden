@@ -16,6 +16,8 @@
 
 package gaiden
 
+import gaiden.util.FileUtils
+
 /**
  * A holder for a content of source and the meta information.
  *
@@ -24,10 +26,21 @@ package gaiden
  */
 class PageSource {
 
+    private static final String OUTPUT_EXTENSION = "html"
+
     /** A relative path from the pages directory */
     String path
 
     /** A content of source */
     String content
+
+    /**
+     * Returns a output page path.
+     *
+     * @return a output page path
+     */
+    String getOutputPath() {
+        FileUtils.replaceExtension(path, OUTPUT_EXTENSION)
+    }
 
 }

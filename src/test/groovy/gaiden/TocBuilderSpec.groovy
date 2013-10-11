@@ -16,6 +16,7 @@
 
 package gaiden
 
+import gaiden.context.BuildContext
 import gaiden.message.MessageSource
 import spock.lang.Specification
 
@@ -51,7 +52,7 @@ class TocBuilderSpec extends Specification {
         tocInputFile.exists() >> true
 
         and:
-        def tocOutputPath = "toc.html"
+        def tocOutputFilePath = "toc.html"
         def tocTitle = "Test TocBuilder Title"
 
         and:
@@ -59,13 +60,15 @@ class TocBuilderSpec extends Specification {
             new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
 
         and:
-        def pages = [
-            new Page(originalPath: "first.md", path: "first.html"),
-            new Page(originalPath: "second.md", path: "second.html"),
+        def pageSources = [
+            new PageSource(path: "first.md"),
+            new PageSource(path: "second.md"),
         ]
+        def documentSource = new DocumentSource(pageSources: pageSources)
+        def context = new BuildContext(documentSource: documentSource)
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, tocTitle, "UTF-8").build(pages)
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "UTF-8").build(context)
 
         then:
         toc.path == "toc.html"
@@ -112,7 +115,7 @@ class TocBuilderSpec extends Specification {
         System.err = printStream
 
         and:
-        def tocOutputPath = "toc.html"
+        def tocOutputFilePath = "toc.html"
         def tocTitle = "Test TocBuilder Title"
 
         and:
@@ -120,7 +123,7 @@ class TocBuilderSpec extends Specification {
             new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, tocTitle, "UTF-8").build([])
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "UTF-8").build(contextOfEmptyPageSource)
 
         then:
         toc.path == "toc.html"
@@ -158,7 +161,7 @@ class TocBuilderSpec extends Specification {
         tocInputFile.exists() >> true
 
         and:
-        def tocOutputPath = "toc.html"
+        def tocOutputFilePath = "toc.html"
         def tocTitle = "Test TocBuilder Title"
 
         and:
@@ -166,13 +169,15 @@ class TocBuilderSpec extends Specification {
             new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
 
         and:
-        def pages = [
-            new Page(originalPath: "first.md", path: "first.html"),
-            new Page(originalPath: "second/second1", path: "second/second1.html"),
+        def pageSources = [
+            new PageSource(path: "first.md"),
+            new PageSource(path: "second/second1.md"),
         ]
+        def documentSource = new DocumentSource(pageSources: pageSources)
+        def context = new BuildContext(documentSource: documentSource)
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, tocTitle, "UTF-8").build(pages)
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "UTF-8").build(context)
 
         then:
         toc.path == "toc.html"
@@ -215,7 +220,7 @@ class TocBuilderSpec extends Specification {
         tocInputFile.exists() >> true
 
         and:
-        def tocOutputPath = "toc.html"
+        def tocOutputFilePath = "toc.html"
         def tocTitle = "Test TocBuilder Title"
 
         and:
@@ -223,12 +228,14 @@ class TocBuilderSpec extends Specification {
             new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
 
         and:
-        def pages = [
-            new Page(originalPath: "first.md", path: "first.html"),
+        def pageSources = [
+            new PageSource(path: "first.md"),
         ]
+        def documentSource = new DocumentSource(pageSources: pageSources)
+        def context = new BuildContext(documentSource: documentSource)
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, tocTitle, "UTF-8").build(pages)
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "UTF-8").build(context)
 
         then:
         toc.path == "toc.html"
@@ -252,16 +259,16 @@ class TocBuilderSpec extends Specification {
         ]
     }
 
-    def "'build' should return the null object when the toc file does not exist"() {
+    def "'build' should return the null when the toc file does not exist"() {
         setup:
         def tocFile = Mock(File)
         tocFile.exists() >> false
 
         when:
-        def toc = new TocBuilder(null, tocFile, null, null, null).build([])
+        def toc = new TocBuilder(null, tocFile, null, null, null).build(contextOfEmptyPageSource)
 
         then:
-        toc instanceof NullToc
+        toc == null
     }
 
     def "'build' should not link a path with '#'"() {
@@ -276,7 +283,7 @@ class TocBuilderSpec extends Specification {
         tocInputFile.exists() >> true
 
         and:
-        def tocOutputPath = "toc.html"
+        def tocOutputFilePath = "toc.html"
         def tocTitle = "Test TocBuilder Title"
 
         and:
@@ -284,7 +291,7 @@ class TocBuilderSpec extends Specification {
             new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, tocTitle, "UTF-8").build([])
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "UTF-8").build(contextOfEmptyPageSource)
 
         then:
         toc.path == "toc.html"
@@ -321,7 +328,7 @@ class TocBuilderSpec extends Specification {
         def tocInputFile = new File("src/test/resources/toc/shiftjis-toc.groovy")
 
         and:
-        def tocOutputPath = "toc.html"
+        def tocOutputFilePath = "toc.html"
         def tocTitle = "Test TocBuilder Title"
 
         and:
@@ -329,7 +336,7 @@ class TocBuilderSpec extends Specification {
             new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputPath, tocTitle, "Shift_JIS").build([])
+        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "Shift_JIS").build(contextOfEmptyPageSource)
 
         then:
         toc.path == "toc.html"
@@ -367,6 +374,11 @@ class TocBuilderSpec extends Specification {
         }
 
         processNode(node).children
+    }
+
+    private BuildContext getContextOfEmptyPageSource() {
+        def documentSource = new DocumentSource(pageSources: [])
+        new BuildContext(documentSource: documentSource)
     }
 
 }

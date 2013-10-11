@@ -24,26 +24,17 @@ package gaiden
  */
 class Page {
 
-    /** A relative path from the input directory */
-    String originalPath
-
-    /** A relative path from the output directory */
-    String path
+    /** A page source */
+    PageSource source
 
     /** A output content */
     String content
 
     /**
-     * Writes a page to a file.
-     *
-     * @param outputDirectory the output directory to which to write the page
+     * Returns a relative path from the output directory.
      */
-    void writeTo(File outputDirectory, String outputEncoding) {
-        def file = new File(outputDirectory, path)
-        if (!file.parentFile.exists()) {
-            assert file.parentFile.mkdirs()
-        }
-        file.write(content, outputEncoding)
+    String getPath() {
+        source.outputPath
     }
 
 }

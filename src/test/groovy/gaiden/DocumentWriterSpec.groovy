@@ -30,9 +30,9 @@ class DocumentWriterSpec extends Specification {
 
     def "'write' should write a document to files"() {
         setup:
-        def page1 = createPage("document1.html")
-        def page2 = createPage("document2.html")
-        def page3 = createPage("sub/document3.html")
+        def page1 = createPage("document1.md")
+        def page2 = createPage("document2.md")
+        def page3 = createPage("sub/document3.md")
 
         and:
         def toc = new Toc(path: "toc.html", content: "<h1>table of contents</h1>")
@@ -77,7 +77,7 @@ class DocumentWriterSpec extends Specification {
 
     def "'write' should overwrite when file already exists"() {
         setup:
-        def page = createPage("document1.html")
+        def page = createPage("document1.md")
         def toc = new Toc(path: "toc.html", content: "<h1>table of contents</h1>")
         def document = new Document(pages: [page], toc: toc)
 
@@ -95,7 +95,7 @@ class DocumentWriterSpec extends Specification {
 
     def "'write' should write a specified encoding"() {
         setup:
-        def page = createPage("document.html", "これはShift_JISのドキュメントです。")
+        def page = createPage("document.md", "これはShift_JISのドキュメントです。")
 
         and:
         def toc = new Toc(path: "toc.html", content: "<h1>これはShift_JISのTOCです</h1>")
@@ -125,10 +125,7 @@ class DocumentWriterSpec extends Specification {
 
     def "'write' should not write anything if toc file doesn't exist"() {
         setup:
-        def toc = new NullToc()
-
-        and:
-        def document = new Document(pages: [], toc: toc)
+        def document = new Document(pages: [], toc: null)
         def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory, "UTF-8")
 
         when:
@@ -143,7 +140,8 @@ class DocumentWriterSpec extends Specification {
     }
 
     private Page createPage(String path, String content = null) {
-        new Page(path: path, content: content ?: "<title>Document</title><p>${path} content</p>")
+        def source = new PageSource(path: path)
+        new Page(source: source, content: content ?: "<title>Document</title><p>${source.outputPath} content</p>")
     }
 
     private Set getFiles(File directory) {

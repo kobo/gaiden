@@ -14,33 +14,18 @@
  * limitations under the License.
  */
 
-package gaiden.command
+package gaiden.context
 
-import gaiden.context.BuildContext
-import gaiden.Document
-import gaiden.DocumentBuilder
-import gaiden.DocumentWriter
-import gaiden.SourceCollector
+import gaiden.DocumentSource
 
 /**
- * The 'build' command.
+ * To provide objects for building.
  *
  * @author Hideki IGARASHI
- * @author Kazuki YAMAMOTO
  */
-class Build implements GaidenCommand {
+class BuildContext {
 
-    final boolean onlyGaidenProject = true
-
-    /**
-     * Executes building.
-     */
-    @Override
-    void execute(List args = []) {
-        def documentSource = new SourceCollector().collect()
-        def context = new BuildContext(documentSource: documentSource)
-        Document document = new DocumentBuilder().build(context)
-        new DocumentWriter().write(document)
-    }
+    /** A document source */
+    DocumentSource documentSource
 
 }

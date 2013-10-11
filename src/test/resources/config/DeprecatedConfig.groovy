@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package gaiden
-
-/**
- * A Null Object of {@link Toc}.
- *
- * @author Hideki IGARASHI
- * @author Kazuki YAMAMOTO
- */
-class NullToc extends Toc {
-
-    @Override
-    void writeTo(File outputDirectory, String outputEncoding) {
-        // do nothing
-    }
-
-}
+templatePath = "templates/deprecated.html"
+tocPath = "pages/deprecated-toc.groovy"
+tocOutputPath = "deprecated-toc.html"
+pagesDirectory = "deprecated-pages"
+staticDirectory = "deprecated-static"
+outputDirectory = "deprecated-build"

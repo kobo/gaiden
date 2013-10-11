@@ -16,6 +16,7 @@
 
 package gaiden
 
+import gaiden.context.PageBuildContext
 import gaiden.markdown.GaidenMarkdownProcessor
 import spock.lang.Specification
 
@@ -31,16 +32,18 @@ class PageBuilderSpec extends Specification {
 
         and:
         def pageSource = new PageSource(path: "test.md", content: "SOURCE_CONTENT")
+        def documentSource = new DocumentSource(pageSources: [pageSource])
+        def context = new PageBuildContext(documentSource: documentSource)
 
         when:
-        def page = builder.build(pageSource)
+        def page = builder.build(context, pageSource)
 
         then:
-        1 * markdownProcessor.markdownToHtml("SOURCE_CONTENT", "test.html") >> "PROCESSED_CONTENT"
+        1 * markdownProcessor.markdownToHtml(pageSource) >> "PROCESSED_CONTENT"
         1 * templateEngine.make([content: "PROCESSED_CONTENT", outputPath: "test.html"])
 
         and:
-        page.originalPath == "test.md"
+        page.source.path == "test.md"
     }
 
 }

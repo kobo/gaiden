@@ -33,7 +33,7 @@ class Holders {
     static MessageSource messageSource
 
     /**
-     * Gets a message for the given key.
+     * Returns a message for the given key.
      *
      * @param key the key for message
      * @param arguments the list of objects to be bound into the message

@@ -5,22 +5,22 @@
 //tocTitle = "Table of contents"
 
 // The path of template file
-//templatePath = "templates/layout.html"
+//templateFilePath = "templates/layout.html"
 
 // The path of TOC file
-//tocPath = "pages/toc.groovy"
+//tocFilePath = "pages/toc.groovy"
 
 // The path of TOC output file
-//tocOutputPath = "toc.html"
+//tocOutputFilePath = "toc.html"
 
-// The directory of page source files
-//pagesDirectory = "pages"
+// The path of page source files directory
+//pagesDirectoryPath = "pages"
 
-// The directory of static files
-//staticDirectory = "static"
+// The path of static files directory
+//staticDirectoryPath = "static"
 
-// The directory to be outputted a document
-//outputDirectory = "build/html"
+// The path of directory to be outputted a document
+//outputDirectoryPath = "build/html"
 
 // The encoding of input Markdown resource
 //inputEncoding = "UTF-8"

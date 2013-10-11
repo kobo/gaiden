@@ -16,6 +16,9 @@
 
 package gaiden
 
+import gaiden.context.BuildContext
+import gaiden.context.PageBuildContext
+
 /**
  * A document builder builds from a document source to a document.
  *
@@ -30,53 +33,53 @@ class DocumentBuilder {
     private PageBuilder pageBuilder
     private TocBuilder tocBuilder
 
-    private File outputDirectoryFile
+    private File outputDirectory
 
     DocumentBuilder() {
-        this.templateFile = Holders.config.templatePathFile
+        this.templateFile = Holders.config.templateFile
         this.baseBinding = [
             title: Holders.config.title,
-            tocPath: Holders.config.tocOutputPath,
+            tocPath: Holders.config.tocOutputFilePath,
         ]
-        this.outputDirectoryFile = Holders.config.outputDirectoryFile
+        this.outputDirectory = Holders.config.outputDirectory
 
         def templateEngine = createTemplateEngine()
         this.pageBuilder = new PageBuilder(templateEngine)
         this.tocBuilder = new TocBuilder(templateEngine)
     }
 
-    DocumentBuilder(File templateFile, PageBuilder pageBuilder, TocBuilder tocBuilder, File outputDirectoryFile, Map baseBinding) {
+    DocumentBuilder(File templateFile, PageBuilder pageBuilder, TocBuilder tocBuilder, File outputDirectory, Map baseBinding) {
         this.templateFile = templateFile
         this.pageBuilder = pageBuilder
         this.tocBuilder = tocBuilder
-        this.outputDirectoryFile = outputDirectoryFile
+        this.outputDirectory = outputDirectory
         this.baseBinding = baseBinding
     }
 
     /**
      * Builds a document from a document source.
      *
-     * @param documentSource the document source to be built
+     * @param context the context to be built
      * @return {@link Document}'s instance
      */
-    Document build(DocumentSource documentSource) {
-        def pages = buildPages(documentSource)
-        def toc = buildToc(pages)
+    Document build(BuildContext context) {
+        def toc = buildToc(context)
+        def pages = buildPages(new PageBuildContext(documentSource: context.documentSource, toc: toc))
         new Document(toc: toc, pages: pages)
     }
 
-    private Toc buildToc(List<Page> pages) {
-        tocBuilder.build(pages)
+    private Toc buildToc(BuildContext context) {
+        tocBuilder.build(context)
     }
 
-    private List<Page> buildPages(DocumentSource documentSource) {
-        documentSource.pageSources.collect { pageSource ->
-            pageBuilder.build(pageSource)
+    private List<Page> buildPages(PageBuildContext context) {
+        context.documentSource.pageSources.collect { pageSource ->
+            pageBuilder.build(context, pageSource)
         }
     }
 
     private TemplateEngine createTemplateEngine() {
-        new TemplateEngine(outputDirectoryFile, templateFile.text, baseBinding)
+        new TemplateEngine(outputDirectory, templateFile.text, baseBinding)
     }
 
 }
