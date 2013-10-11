@@ -259,7 +259,7 @@ class TocBuilderSpec extends Specification {
         ]
     }
 
-    def "'build' should return the null object when the toc file does not exist"() {
+    def "'build' should return the null when the toc file does not exist"() {
         setup:
         def tocFile = Mock(File)
         tocFile.exists() >> false
@@ -268,7 +268,7 @@ class TocBuilderSpec extends Specification {
         def toc = new TocBuilder(null, tocFile, null, null, null).build(contextOfEmptyPageSource)
 
         then:
-        toc instanceof NullToc
+        toc == null
     }
 
     def "'build' should not link a path with '#'"() {

@@ -45,7 +45,7 @@ class GaidenConfig {
     /** The path of static files directory */
     String staticDirectoryPath
 
-    /** The directory to be outputted a document */
+    /** The path of directory to be outputted a document */
     String outputDirectoryPath
 
     /** The input encoding of files */
@@ -54,27 +54,27 @@ class GaidenConfig {
     /** The output encoding of files */
     String outputEncoding
 
-    /** Gets the {@link #templateFilePath} as {@link File} */
+    /** Returns the {@link #templateFilePath} as {@link File} */
     File getTemplateFile() {
         new File(templateFilePath)
     }
 
-    /** Gets the {@link #tocFilePath} as {@link File} */
+    /** Returns the {@link #tocFilePath} as {@link File} */
     File getTocFile() {
         new File(tocFilePath)
     }
 
-    /** Gets the {@link #pagesDirectoryPath} as {@link File} */
+    /** Returns the {@link #pagesDirectoryPath} as {@link File} */
     File getPagesDirectory() {
         new File(pagesDirectoryPath)
     }
 
-    /** Gets the {@link #staticDirectoryPath} as {@link File} */
+    /** Returns the {@link #staticDirectoryPath} as {@link File} */
     File getStaticDirectory() {
         new File(staticDirectoryPath)
     }
 
-    /** Gets the {@link #outputDirectoryPath} as {@link File} */
+    /** Returns the {@link #outputDirectoryPath} as {@link File} */
     File getOutputDirectory() {
         new File(outputDirectoryPath)
     }

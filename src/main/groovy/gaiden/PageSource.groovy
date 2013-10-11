@@ -35,11 +35,11 @@ class PageSource {
     String content
 
     /**
-     * Gets a output page path.
+     * Returns a output page path.
      *
      * @return a output page path
      */
-    String getOutputPagePath() {
+    String getOutputPath() {
         FileUtils.replaceExtension(path, OUTPUT_EXTENSION)
     }
 

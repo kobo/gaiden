@@ -31,16 +31,10 @@ class Page {
     String content
 
     /**
-     * Writes a page to a file.
-     *
-     * @param outputDirectory the output directory to which to write the page
+     * Returns a relative path from the output directory.
      */
-    void writeTo(File outputDirectory, String outputEncoding) {
-        def file = new File(outputDirectory, source.outputPagePath)
-        if (!file.parentFile.exists()) {
-            assert file.parentFile.mkdirs()
-        }
-        file.write(content, outputEncoding)
+    String getPath() {
+        source.outputPath
     }
 
 }

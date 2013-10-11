@@ -62,7 +62,7 @@ class FileUtils {
     }
 
     /**
-     * Gets the relative path of the base file from the target file.
+     * Returns the relative path of the base file from the target file.
      *
      * @param from the base file
      * @param to the target file
@@ -73,7 +73,7 @@ class FileUtils {
     }
 
     /**
-     * Gets the relative path of the base directory from the target file.
+     * Returns the relative path of the base directory from the target file.
      *
      * @param from the base directory
      * @param to the target file

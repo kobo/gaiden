@@ -125,10 +125,7 @@ class DocumentWriterSpec extends Specification {
 
     def "'write' should not write anything if toc file doesn't exist"() {
         setup:
-        def toc = new NullToc()
-
-        and:
-        def document = new Document(pages: [], toc: toc)
+        def document = new Document(pages: [], toc: null)
         def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory, "UTF-8")
 
         when:
@@ -144,7 +141,7 @@ class DocumentWriterSpec extends Specification {
 
     private Page createPage(String path, String content = null) {
         def source = new PageSource(path: path)
-        new Page(source: source, content: content ?: "<title>Document</title><p>${source.outputPagePath} content</p>")
+        new Page(source: source, content: content ?: "<title>Document</title><p>${source.outputPath} content</p>")
     }
 
     private Set getFiles(File directory) {

@@ -55,7 +55,7 @@ class PageBuilder {
 
     private String buildPage(PageBuildContext context, PageSource pageSource) {
         def content = markdownProcessor.markdownToHtml(pageSource)
-        templateEngine.make(content: content, outputPath: pageSource.outputPagePath)
+        templateEngine.make(content: content, outputPath: pageSource.outputPath)
     }
 
 }

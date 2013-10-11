@@ -60,12 +60,24 @@ class DocumentWriter {
 
     private void writePages(List<Page> pages) {
         pages.each { Page page ->
-            page.writeTo(outputDirectory, outputEncoding)
+            writeToFile(page)
         }
     }
 
     private void writeToc(Toc toc) {
-        toc.writeTo(outputDirectory, outputEncoding)
+        writeToFile(toc)
+    }
+
+    void writeToFile(data) {
+        if (!data) {
+            return
+        }
+
+        def file = new File(outputDirectory, data.path as String)
+        if (!file.parentFile.exists()) {
+            assert file.parentFile.mkdirs()
+        }
+        file.write(data.content as String, outputEncoding)
     }
 
     private void copyStaticFiles() {

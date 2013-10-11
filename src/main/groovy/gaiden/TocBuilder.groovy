@@ -55,11 +55,11 @@ class TocBuilder {
      */
     Toc build(BuildContext context) {
         if (!tocFile.exists()) {
-            return new NullToc()
+            return null
         }
 
         Node tocNode = parseTocFile()
-        def content = templateEngine.make(content: buildContent(tocNode, context), outputPath: tocOutputFilePath)
+        def content = templateEngine.make(content: buildContent(context, tocNode), outputPath: tocOutputFilePath)
 
         new Toc(path: tocOutputFilePath, content: content, node: tocNode)
     }
@@ -69,7 +69,7 @@ class TocBuilder {
         tocBuilder.toc(new GroovyShell().evaluate("{ -> ${tocFile.getText(inputEncoding)} }"))
     }
 
-    private void buildContentOfToc(builder, nodes, BuildContext context) {
+    private void buildContentOfToc(BuildContext context, builder, nodes) {
         if (!nodes) {
             return
         }
@@ -78,18 +78,18 @@ class TocBuilder {
             nodes.each { Node node ->
                 if (node.name().startsWith("#")) {
                     li(node.attributes().title) {
-                        buildContentOfToc(builder, node.value(), context)
+                        buildContentOfToc(context, builder, node.value())
                     }
                 } else {
                     def outputPath = resolveOutputPath(context, node.name() as String)
                     if (outputPath) {
                         li {
                             a(href: outputPath, node.attributes().title)
-                            buildContentOfToc(builder, node.value(), context)
+                            buildContentOfToc(context, builder, node.value())
                         }
                     } else {
                         li(node.attributes().title) {
-                            buildContentOfToc(builder, node.value(), context)
+                            buildContentOfToc(context, builder, node.value())
                         }
                     }
                 }
@@ -97,7 +97,7 @@ class TocBuilder {
         }
     }
 
-    private String buildContent(Node tocNode, BuildContext context) {
+    private String buildContent(BuildContext context, Node tocNode) {
         def writer = new StringWriter()
         def printer = new IndentPrinter(writer, WHITESPACE * 4)
         def builder = new MarkupBuilder(printer)
@@ -106,7 +106,7 @@ class TocBuilder {
 
         builder.h1(tocTitle)
 
-        buildContentOfToc(builder, tocNode.value(), context)
+        buildContentOfToc(context, builder, tocNode.value())
 
         writer.toString()
     }
@@ -128,7 +128,7 @@ class TocBuilder {
             System.err.println("WARNING: " + Holders.getMessage("toc.page.reference.not.exists.message", [abstractPath]))
             return null
         }
-        return pageSource.outputPagePath + fragment
+        return pageSource.outputPath + fragment
     }
 
 }
