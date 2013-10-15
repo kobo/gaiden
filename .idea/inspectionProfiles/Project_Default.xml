@@ -189,7 +189,6 @@
     <inspection_tool class="UnnecessaryDefInVariableDeclaration" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryDotClass" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryDoubleInstantiation" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="UnnecessaryElseStatement" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryFail" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryFinalOnPrivateMethod" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryFloatInstantiation" enabled="true" level="WARNING" enabled_by_default="true" />
