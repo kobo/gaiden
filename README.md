@@ -9,14 +9,21 @@ The [Groovy](http://groovy.codehaus.org/ "Groovy - Home") language is the base o
 
 You need a [Java SE](http://www.oracle.com/technetwork/java/javase/downloads/index.html "Java SE Downloads") installed, but it is not necessary to install Groovy because it's bundled with the Gaiden distribution.
 
-To install Gaiden, download [a binary distribution of Gaiden](https://github.com/kobo/gaiden/releases) and unpack it into some file on your local file system.
+Installing Gainden on Unix based systems is easiest with [GVM](http://gvmtool.net/):
+
+```sh
+$ gvm install gaiden
+```
+
+Or download [a binary distribution of Gaiden](https://github.com/kobo/gaiden/releases) and unpack it into some file on your local file system.
 Add the `bin` directory path in unpacked the distribution to your `PATH` environment variable.
+
 Then in a shell, type the following:
 
-```
-gaiden create-project sample-project
-cd sample-project
-gaiden build
+```sh
+$ gaiden create-project sample-project
+$ cd sample-project
+$ gaiden build
 ```
 
 You can see the documentation built when you open `build/index.html` file in your web browser.
@@ -26,8 +33,8 @@ You can see the documentation built when you open `build/index.html` file in you
 
 The basic usage is:
 
-```
-gaiden <command name>
+```sh
+$ gaiden <command name>
 ```
 
 <dl>
@@ -222,7 +229,7 @@ You can customize behavior by changing settings.
 **NOTE**: The encoding of `GaidenConfig.groovy` must be same as the `file.encoding` system property.
 If you want to use another encoding, you can use `JAVA_OPTS` or `GAIDEN_OPTS` to pass JVM options to Gaiden as follows, for Unix:
 
-```
+```sh
 $ export GAIDEN_OPTS="-Dfile.encoding=Shift_JIS"
 ```
 
@@ -238,7 +245,7 @@ for Windows:
 Create `pages/toc.groovy` file which defines document structure if you need a table of contents.
 You can write it with DSL support as follows:
 
-```
+```groovy
 "introduction.md"(title: "Introduction")
 "quickstart/quickstart.md"(title: "Quick Start")
 ```
@@ -246,7 +253,7 @@ You can write it with DSL support as follows:
 This file also defines the section titles using the `title` attribute.
 If you have nested pages, you can use block:
 
-```
+```groovy
 "introduction.md"(title: "Introduction") {
     "introduction/whatis.md"(title: "What is Gaiden?")
     "introduction/install.md"(title: "Install")
@@ -270,7 +277,7 @@ In addition, Gaiden provides some syntax support.
 You can use an absolute path from a static resource directory in a path of image syntax.
 For example:
 
-```
+```markdown
 ![alt text](/img/some-image.png)
 ```
 
