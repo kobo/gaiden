@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import org.apache.tools.ant.filters.ReplaceTokens
+import org.gradle.internal.os.OperatingSystem
+
 apply plugin: 'groovy'
 apply plugin: 'application'
 
@@ -37,6 +40,7 @@ dependencies {
     compile 'org.apache.ant:ant:1.9.1'
     compile 'org.pegdown:pegdown:1.2.1'
     compile 'commons-io:commons-io:2.4'
+    compile 'commons-cli:commons-cli:1.2'
 
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
 
@@ -82,4 +86,40 @@ codenarc {
     configFile = new File('codenarc.groovy')
     ignoreFailures = true
     reportFormat = 'xml'
+}
+
+processResources {
+    filter ReplaceTokens, tokens: [
+        revision: revision,
+        version: version,
+        buildDate: new Date().format("yyyy-MM-dd HH:mm:ss.SSSZ"),
+        username: System.properties["user.name"],
+        javaVersion: System.properties["java.version"],
+        osName: System.properties["os.name"],
+        osVersion: System.properties["os.version"]
+    ]
+}
+
+def getRevision() {
+    if (!file(".git/HEAD").exists()) {
+        return
+    }
+
+    def baos = new ByteArrayOutputStream()
+    def execResult = exec {
+        ignoreExitValue = true
+        commandLine = ["git", "log", "-1", "--format=%H"]
+        if (OperatingSystem.current().windows) {
+            commandLine = ["cmd", "/c"] + commandLine
+        }
+        standardOutput = baos
+    }
+    if (execResult.exitValue == 0) {
+        return new String(baos.toByteArray(), "utf8").trim()
+    }
+
+    // Read commit id directly from filesystem
+    def headRef = file(".git/HEAD").text
+    headRef = headRef.replaceAll('ref: ', '').trim()
+    file(".git/$headRef").text.trim()
 }
