@@ -33,7 +33,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.1.4'
+    compile 'org.codehaus.groovy:groovy-all:2.2.0'
     compile 'org.apache.ant:ant:1.9.1'
     compile 'org.pegdown:pegdown:1.2.1'
     compile 'commons-io:commons-io:2.4'
