@@ -16,6 +16,8 @@
 
 package gaiden.markdown
 
+import gaiden.Holders
+import gaiden.PageSource
 import gaiden.util.FileUtils
 
 /**
@@ -26,10 +28,12 @@ import gaiden.util.FileUtils
  */
 class ImageRenderer {
 
-    private String outputPagePath
+    private PageSource pageSource
+    private File staticDirectory
 
-    ImageRenderer(String outputPagePath) {
-        this.outputPagePath = outputPagePath
+    ImageRenderer(PageSource pageSource, File staticDirectory = Holders.config.staticDirectory) {
+        this.pageSource = pageSource
+        this.staticDirectory = staticDirectory
     }
 
     /**
@@ -41,24 +45,43 @@ class ImageRenderer {
     }
 
     /**
-     * Returns a rendering object which has a image path replaced with an appropriate relative path.
+     * Returns a rendering object which has an image path replaced with an appropriate relative path.
      * <p>
-     * An original image path is used without a replacement if it doesn't start with a slash.
+     * An original image path is used without a replacement if it doesn't start with a slash or it is URL.
+     * <p>
+     * Also outputs a warning message when an image file doesn't exist.
      *
-     * @param url the path of image
+     * @param imagePath the path of image
      * @param alt the alternate text
      * @return {@link ImageElement}'s instance
      */
-    ImageElement render(String url, String alt) {
-        if (!url.startsWith("/")) {
-            return new ImageElement(src: url, alt: alt)
+    ImageElement render(String imagePath, String alt) {
+        if (imagePath =~ /^\w+:\/\//) {  // URL
+            return new ImageElement(src: imagePath, alt: alt)
         }
 
-        def outputPageFile = new File("/", outputPagePath)
-        def resourceFile = new File("/", url)
-        def src = FileUtils.getRelativePathForFileToFile(outputPageFile, resourceFile)
+        def relativeImagePath = getRelativePathForImageFileToOutputPageFile(imagePath)
+        new ImageElement(src: relativeImagePath, alt: alt)
+    }
 
-        new ImageElement(src: src, alt: alt)
+    private String getRelativePathForImageFileToOutputPageFile(String imagePath) {
+        def staticOutputPageFile = new File(staticDirectory, pageSource.outputPath)
+
+        if (imagePath.startsWith("/")) {
+            def resourceFile = new File(staticDirectory, imagePath)
+            checkFileExists(resourceFile, imagePath)
+            return FileUtils.getRelativePathForFileToFile(staticOutputPageFile, resourceFile)
+        } else {
+            def resourceFile = new File(staticOutputPageFile.parentFile, imagePath)
+            checkFileExists(resourceFile, imagePath)
+            return imagePath
+        }
+    }
+
+    private void checkFileExists(File resourceFile, String imagePath) {
+        if (!resourceFile.canonicalFile.exists()) { // It is required to normalize path such as '/path/to/../images/sample.png'.
+            System.err.println("WARNING: " + Holders.getMessage("image.reference.not.exists.message", [imagePath, pageSource.path]))
+        }
     }
 
 }

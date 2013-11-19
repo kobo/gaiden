@@ -42,7 +42,7 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
      */
     String markdownToHtml(PageSource pageSource) throws ParsingTimeoutException {
         def astRoot = parseMarkdown(pageSource.content.toCharArray())
-        new GaidenToHtmlSerializer(new LinkRenderer(), new ImageRenderer(pageSource.outputPath)).toHtml(astRoot)
+        new GaidenToHtmlSerializer(new LinkRenderer(), new ImageRenderer(pageSource)).toHtml(astRoot)
     }
 
 }
