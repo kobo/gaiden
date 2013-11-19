@@ -1,5 +1,7 @@
 # Gaiden
 
+[![Build Status](https://drone.io/github.com/kobo/gaiden/status.png)](https://drone.io/github.com/kobo/gaiden/latest)
+
 Gaiden is a tool that makes it easy to create documentation with Markdown.
 It assumes familiarity with the command-line.
 The [Groovy](http://groovy.codehaus.org/ "Groovy - Home") language is the base of the tool.
