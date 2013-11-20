@@ -22,7 +22,7 @@ apply plugin: 'codenarc'
 apply plugin: 'idea'
 
 
-version = '0.3'
+version = '0.4'
 mainClassName = 'gaiden.GaidenMain'
 
 sourceCompatibility = 1.6
