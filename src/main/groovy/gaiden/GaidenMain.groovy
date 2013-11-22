@@ -58,6 +58,12 @@ class GaidenMain {
         def configFile = new File(CONFIG_FILE_NAME)
         Holders.config = new GaidenConfigLoader().load(configFile)
 
+        def options = getOptions(args)
+        if (options.v) {
+            executeCommand("version", configFile, options.arguments())
+            return
+        }
+
         executeCommand(args.first(), configFile, args.tail() as List)
     }
 
@@ -73,6 +79,14 @@ class GaidenMain {
 
     protected void setCommandFactory(CommandFactory commandFactory) {
         this.commandFactory = commandFactory
+    }
+
+    private OptionAccessor getOptions(String[] args) {
+        def cliBuilder = new CliBuilder()
+        cliBuilder.with {
+            v longOpt: 'version', 'show version'
+        }
+        cliBuilder.parse(args)
     }
 
     private GaidenCommand createCommand(String commandName) {

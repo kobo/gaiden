@@ -53,7 +53,7 @@ class CommandFactory {
     }
 
     private String getCommandClassName(String command) {
-        if (!command) {
+        if (!command || command.startsWith("-")) {
             return command
         }
 
