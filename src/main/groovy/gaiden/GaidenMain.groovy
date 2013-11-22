@@ -86,8 +86,7 @@ class GaidenMain {
         cliBuilder.with {
             v longOpt: 'version', 'show version'
         }
-        def options = cliBuilder.parse(args)
-        options
+        cliBuilder.parse(args)
     }
 
     private GaidenCommand createCommand(String commandName) {
