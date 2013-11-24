@@ -17,33 +17,42 @@
 package gaiden
 
 import gaiden.context.PageBuildContext
-import gaiden.markdown.GaidenMarkdownProcessor
-import spock.lang.Specification
 
-class PageBuilderSpec extends Specification {
+class PageBuilderSpec extends GaidenSpec {
 
     def "'build' should build a page"() {
         setup:
-        def templateEngine = Mock(TemplateEngine)
-        def markdownProcessor = Mock(GaidenMarkdownProcessor)
+        def templateEngine = new TemplateEngine('''
+            |<html>
+            |<head>
+            |    <title>$title</title>
+            |</head>
+            |<body>
+            |$content
+            |</body>
+            |</html>
+            '''.stripMargin())
 
         and:
-        def builder = new PageBuilder(templateEngine, markdownProcessor)
-
-        and:
-        def pageSource = new PageSource(path: "test.md", content: "SOURCE_CONTENT")
+        def pageSource = new PageSource(path: "test.md", content: "# Test")
         def documentSource = new DocumentSource(pageSources: [pageSource])
-        def context = new PageBuildContext(documentSource: documentSource)
+        def context = new PageBuildContext(documentSource: documentSource, toc: new Toc(tocNodes: []))
 
         when:
-        def page = builder.build(context, pageSource)
+        def page = new PageBuilder(templateEngine).build(context, pageSource)
 
         then:
-        1 * markdownProcessor.markdownToHtml(pageSource) >> "PROCESSED_CONTENT"
-        1 * templateEngine.make([content: "PROCESSED_CONTENT", outputPath: "test.html"])
-
-        and:
-        page.source.path == "test.md"
+        page.path == "test.html"
+        page.content == '''
+            |<html>
+            |<head>
+            |    <title>Test Title</title>
+            |</head>
+            |<body>
+            |<h1>Test</h1>
+            |</body>
+            |</html>
+            '''.stripMargin()
     }
 
 }

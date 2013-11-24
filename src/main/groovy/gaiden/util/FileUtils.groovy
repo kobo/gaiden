@@ -44,7 +44,7 @@ class FileUtils {
      * @return the removed filename
      */
     static String removeExtension(String filename) {
-        filename.replaceFirst(/\.[^.]+$/, "")
+        filename.replaceFirst(/\.[^.\/]+$/, "")
     }
 
     /**
@@ -59,6 +59,17 @@ class FileUtils {
             return null
         }
         filename.substring(index + 1)
+    }
+
+    /**
+     * Returns the relative path of the base path from the target path.
+     *
+     * @param from the base path
+     * @param to the target path
+     * @return the relative path
+     */
+    static String getRelativePathForFileToFile(String from, String to) {
+        getRelativePathForFileToFile(new File("/", from), new File("/", to))
     }
 
     /**

@@ -14,36 +14,22 @@
  * limitations under the License.
  */
 
-package gaiden
+package gaiden.groovy
+
+import org.apache.commons.lang3.StringEscapeUtils
 
 /**
- * A table of contents.
+ * An extension class for the String class.
  *
- * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class Toc {
-
-    /** A root node of TOC */
-    TocNode root
-
-    /** A list of TOC node */
-    List<TocNode> tocNodes
-
-    /** A relative path from the output directory */
-    String path
-
-    /** A output content */
-    String content
+class StringExtension {
 
     /**
-     * Finds TOC node which matches the specified page reference.
-     *
-     * @param pageReference the page reference
-     * @return TOC node found
+     * Encodes the string as HTML.
      */
-    TocNode findTocNode(PageReference pageReference) {
-        tocNodes.find { it.pageSource?.matches(pageReference) }
+    static String encodeAsHtml(String self) {
+        StringEscapeUtils.escapeHtml4 self
     }
 
 }

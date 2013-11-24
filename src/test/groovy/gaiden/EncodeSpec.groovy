@@ -16,34 +16,21 @@
 
 package gaiden
 
-/**
- * A table of contents.
- *
- * @author Hideki IGARASHI
- * @author Kazuki YAMAMOTO
- */
-class Toc {
+import spock.lang.Specification
 
-    /** A root node of TOC */
-    TocNode root
+class EncodeSpec extends Specification {
 
-    /** A list of TOC node */
-    List<TocNode> tocNodes
+    def "'encodeAsHtml' should encode a string as HTML"() {
+        expect:
+        text.encodeAsHtml() == expected
 
-    /** A relative path from the output directory */
-    String path
-
-    /** A output content */
-    String content
-
-    /**
-     * Finds TOC node which matches the specified page reference.
-     *
-     * @param pageReference the page reference
-     * @return TOC node found
-     */
-    TocNode findTocNode(PageReference pageReference) {
-        tocNodes.find { it.pageSource?.matches(pageReference) }
+        where:
+        text   | expected
+        "test" | "test"
+        "&"    | "&amp;"
+        "<"    | "&lt;"
+        ">"    | "&gt;"
+        '"'    | "&quot;"
+        " "    | " "
     }
-
 }

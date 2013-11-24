@@ -43,4 +43,28 @@ class PageSource {
         FileUtils.replaceExtension(path, OUTPUT_EXTENSION)
     }
 
+    /**
+     * Returns the abstract relative path from the pages directory.
+     * <p>
+     * The path doesn't contain a file extension.
+     *
+     * @return the abstract relative path
+     */
+    String getAbstractPath() {
+        FileUtils.removeExtension(path)
+    }
+
+    /**
+     * Checks the path matches the specified page reference.
+     *
+     * @param pageReference the page reference
+     * @return {@code true} if the path matches the specified page reference
+     */
+    boolean matches(PageReference pageReference) {
+        if (pageReference.extension) {
+            path == pageReference.path || outputPath == pageReference.path
+        } else {
+            abstractPath == pageReference.abstractPath
+        }
+    }
 }
