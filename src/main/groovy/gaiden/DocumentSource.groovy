@@ -24,4 +24,14 @@ package gaiden
  */
 class DocumentSource {
     List<PageSource> pageSources
+
+    /**
+     * Finds the page source which matches the specified link reference.
+     *
+     * @param pageReference the page reference
+     * @return the page source
+     */
+    PageSource findPageSource(PageReference pageReference) {
+        pageSources.find { it.matches(pageReference) }
+    }
 }
