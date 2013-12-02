@@ -16,7 +16,6 @@
 
 package gaiden
 
-import gaiden.util.FileUtils
 import groovy.text.SimpleTemplateEngine
 import groovy.text.Template
 
@@ -29,19 +28,14 @@ import groovy.text.Template
 class TemplateEngine {
 
     private Template template
-    private Map baseBinding
-    private File outputDirectory
 
     /**
      * Creates a new {@link TemplateEngine} instance by the given template text and the base binding variables.
      *
      * @param templateText a template text
-     * @param baseBinding base binding variables
      */
-    TemplateEngine(File outputDirectory, String templateText, Map baseBinding) {
-        this.outputDirectory = outputDirectory
+    TemplateEngine(String templateText) {
         template = new SimpleTemplateEngine().createTemplate(templateText)
-        this.baseBinding = baseBinding
     }
 
     /**
@@ -51,32 +45,7 @@ class TemplateEngine {
      * @return a result produced
      */
     String make(Map binding) {
-        def mergedBinding = baseBinding + binding
-
-        mergedBinding.resource = createResourceMethod(mergedBinding.outputPath)
-        mergedBinding.tocPath = createTocPathProperty(mergedBinding.outputPath, mergedBinding.tocPath)
-
-        template.make(mergedBinding)
-    }
-
-    private Closure createResourceMethod(String outputPath) {
-        return { String resourcePath ->
-            if (!resourcePath.startsWith("/")) {
-                return resourcePath
-            }
-
-            def outputFile = new File(outputDirectory, outputPath)
-            def resourceFile = new File(outputDirectory, resourcePath)
-
-            FileUtils.getRelativePathForFileToFile(outputFile, resourceFile)
-        }
-    }
-
-    private String createTocPathProperty(String outputPath, String tocPath) {
-        def outputFile = new File(outputDirectory, outputPath)
-        def tocFile = new File(outputDirectory, tocPath)
-
-        FileUtils.getRelativePathForFileToFile(outputFile, tocFile)
+        template.make(binding)
     }
 
 }

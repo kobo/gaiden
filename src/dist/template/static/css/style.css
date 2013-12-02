@@ -69,3 +69,13 @@ footer {
 .container .credit {
   margin-top: 20px;
 }
+
+.page-nav .nav > li > a {
+    padding: 10px 0;
+}
+.page-nav .nav .prev {
+    float: left;
+}
+.page-nav .nav .next {
+    float: right;
+}

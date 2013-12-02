@@ -17,33 +17,36 @@
 package gaiden
 
 /**
- * A table of contents.
+ * A node of TOC.
  *
- * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class Toc {
+class TocNode {
 
-    /** A root node of TOC */
-    TocNode root
-
-    /** A list of TOC node */
-    List<TocNode> tocNodes
-
-    /** A relative path from the output directory */
+    /** The path of the page source */
     String path
+    /** The title of the page */
+    String title
 
-    /** A output content */
-    String content
+    /** The page source */
+    PageSource pageSource
+
+    /** The previous TOC node */
+    TocNode previous
+    /** The next TOC node */
+    TocNode next
+    /** The parent TOC node */
+    TocNode parent
+
+    /** The {@code List} of TOC nodes children */
+    List<TocNode> children
 
     /**
-     * Finds TOC node which matches the specified page reference.
+     * Returns The page reference of the path.
      *
-     * @param pageReference the page reference
-     * @return TOC node found
+     * @return The page reference
      */
-    TocNode findTocNode(PageReference pageReference) {
-        tocNodes.find { it.pageSource?.matches(pageReference) }
+    PageReference getPageReference() {
+        new PageReference(path)
     }
-
 }

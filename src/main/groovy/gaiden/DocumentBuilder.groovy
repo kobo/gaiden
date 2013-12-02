@@ -37,10 +37,6 @@ class DocumentBuilder {
 
     DocumentBuilder() {
         this.templateFile = Holders.config.templateFile
-        this.baseBinding = [
-            title: Holders.config.title,
-            tocPath: Holders.config.tocOutputFilePath,
-        ]
         this.outputDirectory = Holders.config.outputDirectory
 
         def templateEngine = createTemplateEngine()
@@ -79,7 +75,7 @@ class DocumentBuilder {
     }
 
     private TemplateEngine createTemplateEngine() {
-        new TemplateEngine(outputDirectory, templateFile.text, baseBinding)
+        new TemplateEngine(templateFile.text)
     }
 
 }

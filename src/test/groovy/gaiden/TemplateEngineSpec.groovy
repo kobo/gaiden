@@ -16,39 +16,57 @@
 
 package gaiden
 
-import spock.lang.Specification
+import gaiden.context.PageBuildContext
 
-class TemplateEngineSpec extends Specification {
+class TemplateEngineSpec extends GaidenSpec {
 
     def "'make' should make a page with a template"() {
         setup:
-        def templateText = new File("src/test/resources/templates/simple-template.html").text
-        def templateEngine = new TemplateEngine(new File("/output"), templateText, [title: "Gaiden", tocPath: "toc.html"])
+        def templateEngine = new TemplateEngine('''
+            |<html>
+            |<head>
+            |    <title>$title</title>
+            |</head>
+            |<body>
+            |$content
+            |</body>
+            |</html>
+            '''.stripMargin())
+
+        and:
         def binding = [
-            content: "<h1>Hello</h1>",
-            outputPath: "aaa.html"
+            title: "Test Title",
+            content: "<h1>Hello</h1>"
         ]
 
-        expect:
-        templateEngine.make(binding) == '''<html>
-                     |<head>
-                     |    <title>Gaiden</title>
-                     |</head>
-                     |<body>
-                     |<h1>Hello</h1>
-                     |</body>
-                     |</html>
-                     |'''.stripMargin()
+        when:
+        def content = templateEngine.make(binding)
+
+        then:
+        content == '''
+            |<html>
+            |<head>
+            |    <title>Test Title</title>
+            |</head>
+            |<body>
+            |<h1>Hello</h1>
+            |</body>
+            |</html>
+            '''.stripMargin()
     }
 
     def "'make' should evaluate the 'resource'"() {
         setup:
-        def templateText = '${resource("' + resourcePath + '")}'
-        def templateEngine = new TemplateEngine(new File("/output"), templateText, [title: "Gaiden", tocPath: "toc.html"])
-        def binding = [outputPath: outputPath]
+        def templateEngine = new TemplateEngine('${resource("' + resourcePath + '")}')
 
-        expect:
-        templateEngine.make(binding) == expected
+        and:
+        def binding = new BindingBuilder().setOutputPath(outputPath).build()
+
+        when:
+        def content = templateEngine.make(binding)
+
+        then:
+        content == expected
 
         where:
         resourcePath   | outputPath     | expected
@@ -59,9 +77,11 @@ class TemplateEngineSpec extends Specification {
 
     def "'make' should evaluate the 'tocPath'"() {
         setup:
-        def templateText = '${tocPath}'
-        def templateEngine = new TemplateEngine(new File("/output"), templateText, [title: "Gaiden", tocPath: "toc.html"])
-        def binding = [outputPath: outputPath]
+        config.tocOutputFilePath = "toc.html"
+
+        and:
+        def templateEngine = new TemplateEngine('${tocPath}')
+        def binding = new BindingBuilder().setOutputPath(outputPath).build()
 
         expect:
         templateEngine.make(binding) == expected

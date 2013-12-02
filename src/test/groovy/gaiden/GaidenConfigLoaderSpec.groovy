@@ -38,8 +38,8 @@ class GaidenConfigLoaderSpec extends Specification {
             pagesDirectoryPath == "test/pages"
             staticDirectoryPath == "test/static"
             outputDirectoryPath == "test/build/html"
-            inputEncoding == "Test Input Encoding"
-            outputEncoding == "Test Output Encoding"
+            inputEncoding == "UTF-8"
+            outputEncoding == "UTF-8"
         }
     }
 

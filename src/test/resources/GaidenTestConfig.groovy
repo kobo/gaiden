@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-"first-1"(title: "First 1")
-"first-2"(title: "First 2")
-
-second(title: "Second") {
-    "second-1"(title: "Second 1")
-    "second-2"(title: "Second 2")
-    "second-3"(title: "Second 3")
-
-    third(title: "Third") {
-        "third-1"(title: "Third 1")
-        "third-2"(title: "Third 2")
-    }
-}
-
+title = "Gaiden"
+tocTitle = "Table of contents"
+templateFilePath = "templates/layout.html"
+tocFilePath = "pages/toc.groovy"
+tocOutputFilePath = "toc.html"
+pagesDirectoryPath = "pages"
+staticDirectoryPath = "static"
+outputDirectoryPath = "build"
+inputEncoding = "UTF-8"
+outputEncoding = "UTF-8"

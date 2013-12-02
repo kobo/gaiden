@@ -17,7 +17,6 @@
 package gaiden
 
 import gaiden.context.BuildContext
-import gaiden.util.FileUtils
 import groovy.xml.MarkupBuilder
 
 /**
@@ -36,11 +35,13 @@ class TocBuilder {
     private String tocTitle
     private String inputEncoding
 
-    TocBuilder(TemplateEngine templateEngine) {
-        this(templateEngine, Holders.config.tocFile, Holders.config.tocOutputFilePath, Holders.config.tocTitle, Holders.config.inputEncoding)
-    }
+    private List<TocNode> tocNodes = []
 
-    TocBuilder(TemplateEngine templateEngine, File tocFile, String tocOutputFilePath, String tocTitle, String inputEncoding) {
+    TocBuilder(TemplateEngine templateEngine,
+               File tocFile = Holders.config.tocFile,
+               String tocOutputFilePath = Holders.config.tocOutputFilePath,
+               String tocTitle = Holders.config.tocTitle,
+               String inputEncoding = Holders.config.inputEncoding) {
         this.templateEngine = templateEngine
         this.tocFile = tocFile
         this.tocOutputFilePath = tocOutputFilePath
@@ -58,10 +59,17 @@ class TocBuilder {
             return null
         }
 
-        Node tocNode = parseTocFile()
-        def content = templateEngine.make(content: buildContent(context, tocNode), outputPath: tocOutputFilePath)
+        def tocSourceNode = parseTocFile()
+        def tocNode = toTocNodes(context, tocSourceNode.children())
+        def tocContent = buildContent(context, tocNode)
 
-        new Toc(path: tocOutputFilePath, content: content, node: tocNode)
+        def binding = new BindingBuilder()
+            .setContent(tocContent)
+            .setOutputPath(tocOutputFilePath)
+            .build()
+
+        def content = templateEngine.make(binding)
+        new Toc(path: tocOutputFilePath, content: content, tocNodes: tocNodes)
     }
 
     private Node parseTocFile() {
@@ -69,27 +77,27 @@ class TocBuilder {
         tocBuilder.toc(new GroovyShell().evaluate("{ -> ${tocFile.getText(inputEncoding)} }"))
     }
 
-    private void buildContentOfToc(BuildContext context, builder, nodes) {
-        if (!nodes) {
+    private void buildContentOfToc(BuildContext context, MarkupBuilder builder, List<TocNode> tocNodes) {
+        if (!tocNodes) {
             return
         }
 
         builder.ul {
-            nodes.each { Node node ->
-                if (node.name().startsWith("#")) {
-                    li(node.attributes().title) {
-                        buildContentOfToc(context, builder, node.value())
+            tocNodes.each { TocNode tocNode ->
+                if (tocNode.path.startsWith("#")) {
+                    li(tocNode.title) {
+                        buildContentOfToc(context, builder, tocNode.children)
                     }
                 } else {
-                    def outputPath = resolveOutputPath(context, node.name() as String)
+                    def outputPath = resolveOutputPath(context, tocNode.path)
                     if (outputPath) {
                         li {
-                            a(href: outputPath, node.attributes().title)
-                            buildContentOfToc(context, builder, node.value())
+                            a(href: outputPath, tocNode.title)
+                            buildContentOfToc(context, builder, tocNode.children)
                         }
                     } else {
-                        li(node.attributes().title) {
-                            buildContentOfToc(context, builder, node.value())
+                        li(tocNode.title) {
+                            buildContentOfToc(context, builder, tocNode.children)
                         }
                     }
                 }
@@ -97,7 +105,7 @@ class TocBuilder {
         }
     }
 
-    private String buildContent(BuildContext context, Node tocNode) {
+    private String buildContent(BuildContext context, List<TocNode> tocNodes) {
         def writer = new StringWriter()
         def printer = new IndentPrinter(writer, WHITESPACE * 4)
         def builder = new MarkupBuilder(printer)
@@ -106,29 +114,45 @@ class TocBuilder {
 
         builder.h1(tocTitle)
 
-        buildContentOfToc(context, builder, tocNode.value())
+        buildContentOfToc(context, builder, tocNodes)
 
         writer.toString()
     }
 
-    private static String resolveOutputPath(BuildContext context, String abstractPath) {
-        def hasFragment = abstractPath.contains("#")
-        def targetPath = hasFragment ? abstractPath.substring(0, abstractPath.lastIndexOf("#")) : abstractPath
-        def fragment = hasFragment ? abstractPath.substring(abstractPath.lastIndexOf("#")) : ""
-
-        def extension = FileUtils.getExtension(new File(targetPath).name)
-        if (extension != null && extension != "md") {
-            return abstractPath
+    private static String resolveOutputPath(BuildContext context, String path) {
+        def pageReference = new PageReference(path)
+        if (pageReference.extension != null && pageReference.extension != "md") {
+            return path
         }
 
-        def pageSource = context.documentSource.pageSources.find { PageSource pageSource ->
-            targetPath ==~ /${FileUtils.removeExtension(pageSource.path)}(\.md)?/
-        }
+        def pageSource = context.documentSource.findPageSource(pageReference)
         if (!pageSource) {
-            System.err.println("WARNING: " + Holders.getMessage("toc.page.reference.not.exists.message", [abstractPath]))
+            System.err.println("WARNING: " + Holders.getMessage("toc.page.reference.not.exists.message", [path]))
             return null
         }
-        return pageSource.outputPath + fragment
+        return pageSource.outputPath + pageReference.fragment
     }
 
+    private List<TocNode> toTocNodes(BuildContext context, List<Node> nodes) {
+        nodes.collect { Node node ->
+            def tocNode = new TocNode()
+            tocNode.path = node.name()
+            tocNode.title = node.attributes().title
+            tocNode.pageSource = context.documentSource.findPageSource(new PageReference(tocNode.path))
+
+            if (!tocNodes.empty) {
+                def previous = tocNodes.last()
+                tocNode.previous = previous
+                previous.next = tocNode
+            }
+            tocNodes << tocNode
+
+            def children = toTocNodes(context, node.children())
+            children.each { TocNode child ->
+                child.parent = tocNode
+            }
+            tocNode.children = children
+            tocNode
+        }
+    }
 }

@@ -17,255 +17,181 @@
 package gaiden
 
 import gaiden.context.BuildContext
-import gaiden.message.MessageSource
-import spock.lang.Specification
 
+class TocBuilderSpec extends GaidenSpec {
 
-class TocBuilderSpec extends Specification {
-
-    def savedSystemOut
-    def savedSystemErr
-    def savedSystemSecurityManager
+    TocBuilder tocBuilder
+    TemplateEngine templateEngine
 
     def setup() {
-        savedSystemOut = System.out
-        savedSystemErr = System.err
-        savedSystemSecurityManager = System.securityManager
-
-        Holders.messageSource = new MessageSource()
-    }
-
-    def cleanup() {
-        System.out = savedSystemOut
-        System.err = savedSystemErr
-        System.securityManager = savedSystemSecurityManager
+        templateEngine = new TemplateEngine('''
+            |<html>
+            |<head>
+            |    <title>$title</title>
+            |</head>
+            |<body>
+            |$content
+            |</body>
+            |</html>
+            '''.stripMargin())
+        tocBuilder = new TocBuilder(this.templateEngine)
     }
 
     def "'build' should return a toc"() {
         setup:
-        def tocInputFile = GroovyMock(File)
-        tocInputFile.getText("UTF-8") >> """
-            "first"(title: 'first title')
-            "second.md"(title: 'second title')
-            "third.html"(title: 'third title')
-        """
-        tocInputFile.exists() >> true
+        tocFile.write """
+            |"first"(title: 'first title')
+            |"second.md"(title: 'second title')
+            |"third.html"(title: 'third title')
+            """.stripMargin()
 
         and:
-        def tocOutputFilePath = "toc.html"
-        def tocTitle = "Test TocBuilder Title"
-
-        and:
-        def templateEngine = new TemplateEngine(new File("/output"),
-            new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
-
-        and:
-        def pageSources = [
-            new PageSource(path: "first.md"),
-            new PageSource(path: "second.md"),
-        ]
-        def documentSource = new DocumentSource(pageSources: pageSources)
-        def context = new BuildContext(documentSource: documentSource)
+        def context = createBuildContext([[path: "first.md"], [path: "second.md"]])
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "UTF-8").build(context)
+        Toc toc = tocBuilder.build(context)
 
         then:
-        toc.path == "toc.html"
-        toc.content == """<html>
-                         |<head>
-                         |    <title>Gaiden</title>
-                         |</head>
-                         |<body>
-                         |<h1>$tocTitle</h1>
-                         |<ul>
-                         |    <li>
-                         |        <a href="first.html">first title</a>
-                         |    </li>
-                         |    <li>
-                         |        <a href="second.html">second title</a>
-                         |    </li>
-                         |    <li>
-                         |        <a href="third.html">third title</a>
-                         |    </li>
-                         |</ul>
-                         |</body>
-                         |</html>
-                         |""".stripMargin()
-
-        toMap(toc.node) == [
-            "first": [title: "first title"],
-            "second.md": [title: "second title"],
-            "third.html": [title: "third title"],
-        ]
+        toc.path == "test/toc.html"
+        toc.content == """
+            |<html>
+            |<head>
+            |    <title>Test Title</title>
+            |</head>
+            |<body>
+            |<h1>Test TOC Title</h1>
+            |<ul>
+            |    <li>
+            |        <a href="first.html">first title</a>
+            |    </li>
+            |    <li>
+            |        <a href="second.html">second title</a>
+            |    </li>
+            |    <li>
+            |        <a href="third.html">third title</a>
+            |    </li>
+            |</ul>
+            |</body>
+            |</html>
+            """.stripMargin()
     }
 
     def "'build' should not make a link if not found a page source"() {
         setup:
-        def tocInputFile = GroovyMock(File)
-        tocInputFile.getText("UTF-8") >> """
-            "first"(title: 'first title')
-            "second.md"(title: 'second title')
-            "third.html"(title: 'third title')
-        """
-        tocInputFile.exists() >> true
+        tocFile.write """
+            |"first"(title: 'first title')
+            |"second.md"(title: 'second title')
+            |"third.html"(title: 'third title')
+            """.stripMargin()
 
         and:
-        def printStream = Mock(PrintStream)
-        System.err = printStream
-
-        and:
-        def tocOutputFilePath = "toc.html"
-        def tocTitle = "Test TocBuilder Title"
-
-        and:
-        def templateEngine = new TemplateEngine(new File("/output"),
-            new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
+        def systemErr = Mock(PrintStream)
+        System.err = systemErr
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "UTF-8").build(contextOfEmptyPageSource)
+        Toc toc = tocBuilder.build(emptyContext)
 
         then:
-        toc.path == "toc.html"
-        toc.content == """<html>
-                         |<head>
-                         |    <title>Gaiden</title>
-                         |</head>
-                         |<body>
-                         |<h1>$tocTitle</h1>
-                         |<ul>
-                         |    <li>first title</li>
-                         |    <li>second title</li>
-                         |    <li>
-                         |        <a href="third.html">third title</a>
-                         |    </li>
-                         |</ul>
-                         |</body>
-                         |</html>
-                         |""".stripMargin()
+        toc.path == "test/toc.html"
+        toc.content == """
+            |<html>
+            |<head>
+            |    <title>Test Title</title>
+            |</head>
+            |<body>
+            |<h1>Test TOC Title</h1>
+            |<ul>
+            |    <li>first title</li>
+            |    <li>second title</li>
+            |    <li>
+            |        <a href="third.html">third title</a>
+            |    </li>
+            |</ul>
+            |</body>
+            |</html>
+            """.stripMargin()
 
         and:
-        1 * printStream.println("WARNING: 'second.md' in the Table of Contents refers to non-existent page")
-        1 * printStream.println("WARNING: 'first' in the Table of Contents refers to non-existent page")
+        1 * systemErr.println("WARNING: 'second.md' in the Table of Contents refers to non-existent page")
+        1 * systemErr.println("WARNING: 'first' in the Table of Contents refers to non-existent page")
     }
 
     def "'build' should return a hierarchy toc"() {
         setup:
-        def tocInputFile = GroovyMock(File)
-        tocInputFile.getText("UTF-8") >> """
-            "first"(title: 'first title')
-            "second/"(title: 'second title') {
-                "second/second1"(title: 'second 1 title')
-            }
-        """
-        tocInputFile.exists() >> true
+        tocFile.write """
+            |"first"(title: 'first title')
+            |"second/"(title: 'second title') {
+            |    "second/second1"(title: 'second 1 title')
+            |}
+            """.stripMargin()
 
         and:
-        def tocOutputFilePath = "toc.html"
-        def tocTitle = "Test TocBuilder Title"
-
-        and:
-        def templateEngine = new TemplateEngine(new File("/output"),
-            new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
-
-        and:
-        def pageSources = [
-            new PageSource(path: "first.md"),
-            new PageSource(path: "second/second1.md"),
-        ]
-        def documentSource = new DocumentSource(pageSources: pageSources)
-        def context = new BuildContext(documentSource: documentSource)
+        def context = createBuildContext([[path: "first.md"], [path: "second/second1.md"]])
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "UTF-8").build(context)
+        Toc toc = tocBuilder.build(context)
 
         then:
-        toc.path == "toc.html"
-        toc.content == """<html>
-                         |<head>
-                         |    <title>Gaiden</title>
-                         |</head>
-                         |<body>
-                         |<h1>$tocTitle</h1>
-                         |<ul>
-                         |    <li>
-                         |        <a href="first.html">first title</a>
-                         |    </li>
-                         |    <li>second title
-                         |        <ul>
-                         |            <li>
-                         |                <a href="second/second1.html">second 1 title</a>
-                         |            </li>
-                         |        </ul>
-                         |    </li>
-                         |</ul>
-                         |</body>
-                         |</html>
-                         |""".stripMargin()
-
-        toMap(toc.node) == [
-            "first": [title: "first title"],
-            "second/": [title: "second title", children: [
-                "second/second1": [title: "second 1 title"]
-            ]],
-        ]
+        toc.path == "test/toc.html"
+        toc.content == """
+            |<html>
+            |<head>
+            |    <title>Test Title</title>
+            |</head>
+            |<body>
+            |<h1>Test TOC Title</h1>
+            |<ul>
+            |    <li>
+            |        <a href="first.html">first title</a>
+            |    </li>
+            |    <li>second title
+            |        <ul>
+            |            <li>
+            |                <a href="second/second1.html">second 1 title</a>
+            |            </li>
+            |        </ul>
+            |    </li>
+            |</ul>
+            |</body>
+            |</html>
+            """.stripMargin()
     }
 
     def "'build' should return a toc which contains a fragment"() {
         setup:
-        def tocInputFile = GroovyMock(File)
-        tocInputFile.getText("UTF-8") >> """
-            "first#fragment"(title: 'first title')
-        """
-        tocInputFile.exists() >> true
+        tocFile.write "'first#fragment'(title: 'first title')"
 
         and:
-        def tocOutputFilePath = "toc.html"
-        def tocTitle = "Test TocBuilder Title"
-
-        and:
-        def templateEngine = new TemplateEngine(new File("/output"),
-            new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
-
-        and:
-        def pageSources = [
-            new PageSource(path: "first.md"),
-        ]
-        def documentSource = new DocumentSource(pageSources: pageSources)
-        def context = new BuildContext(documentSource: documentSource)
+        def context = createBuildContext([[path: "first.md"]])
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "UTF-8").build(context)
+        Toc toc = tocBuilder.build(context)
 
         then:
-        toc.path == "toc.html"
-        toc.content == """<html>
-                         |<head>
-                         |    <title>Gaiden</title>
-                         |</head>
-                         |<body>
-                         |<h1>$tocTitle</h1>
-                         |<ul>
-                         |    <li>
-                         |        <a href="first.html#fragment">first title</a>
-                         |    </li>
-                         |</ul>
-                         |</body>
-                         |</html>
-                         |""".stripMargin()
-
-        toMap(toc.node) == [
-            "first#fragment": [title: "first title"],
-        ]
+        toc.path == "test/toc.html"
+        toc.content == """
+            |<html>
+            |<head>
+            |    <title>Test Title</title>
+            |</head>
+            |<body>
+            |<h1>Test TOC Title</h1>
+            |<ul>
+            |    <li>
+            |        <a href="first.html#fragment">first title</a>
+            |    </li>
+            |</ul>
+            |</body>
+            |</html>
+            """.stripMargin()
     }
 
     def "'build' should return the null when the toc file does not exist"() {
         setup:
-        def tocFile = Mock(File)
-        tocFile.exists() >> false
+        assert tocFile.delete()
 
         when:
-        def toc = new TocBuilder(null, tocFile, null, null, null).build(contextOfEmptyPageSource)
+        def toc = tocBuilder.build(emptyContext)
 
         then:
         toc == null
@@ -273,110 +199,68 @@ class TocBuilderSpec extends Specification {
 
     def "'build' should not link a path with '#'"() {
         setup:
-        def tocInputFile = GroovyMock(File)
-        tocInputFile.getText("UTF-8") >> """
-            "#first.html"(title: 'first title')
-            "#second/"(title: 'second title') {
-                "second/second1.html"(title: 'second 1 title')
-            }
-        """
-        tocInputFile.exists() >> true
-
-        and:
-        def tocOutputFilePath = "toc.html"
-        def tocTitle = "Test TocBuilder Title"
-
-        and:
-        def templateEngine = new TemplateEngine(new File("/output"),
-            new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
+        tocFile.write """
+            |"#first.html"(title: 'first title')
+            |"#second/"(title: 'second title') {
+            |    "second/second1.html"(title: 'second 1 title')
+            |}
+            """.stripMargin()
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "UTF-8").build(contextOfEmptyPageSource)
+        Toc toc = tocBuilder.build(emptyContext)
 
         then:
-        toc.path == "toc.html"
-        toc.content == """<html>
-                         |<head>
-                         |    <title>Gaiden</title>
-                         |</head>
-                         |<body>
-                         |<h1>$tocTitle</h1>
-                         |<ul>
-                         |    <li>first title</li>
-                         |    <li>second title
-                         |        <ul>
-                         |            <li>
-                         |                <a href="second/second1.html">second 1 title</a>
-                         |            </li>
-                         |        </ul>
-                         |    </li>
-                         |</ul>
-                         |</body>
-                         |</html>
-                         |""".stripMargin()
-
-        toMap(toc.node) == [
-            "#first.html": [title: "first title"],
-            "#second/": [title: "second title", children: [
-                "second/second1.html": [title: "second 1 title"]
-            ]],
-        ]
+        toc.path == "test/toc.html"
+        toc.content == """
+            |<html>
+            |<head>
+            |    <title>Test Title</title>
+            |</head>
+            |<body>
+            |<h1>Test TOC Title</h1>
+            |<ul>
+            |    <li>first title</li>
+            |    <li>second title
+            |        <ul>
+            |            <li>
+            |                <a href="second/second1.html">second 1 title</a>
+            |            </li>
+            |        </ul>
+            |    </li>
+            |</ul>
+            |</body>
+            |</html>
+            """.stripMargin()
     }
 
     def "'build' should read a specified encoding"() {
         setup:
-        def tocInputFile = new File("src/test/resources/toc/shiftjis-toc.groovy")
+        tocFile << new File("src/test/resources/toc/shiftjis-toc.groovy").bytes
 
         and:
-        def tocOutputFilePath = "toc.html"
-        def tocTitle = "Test TocBuilder Title"
-
-        and:
-        def templateEngine = new TemplateEngine(new File("/output"),
-            new File("src/test/resources/templates/simple-template.html").text, [title: "Gaiden", tocPath: "toc.html"])
+        Holders.config.inputEncoding = "Shift_JIS"
 
         when:
-        Toc toc = new TocBuilder(templateEngine, tocInputFile, tocOutputFilePath, tocTitle, "Shift_JIS").build(contextOfEmptyPageSource)
+        Toc toc = new TocBuilder(templateEngine).build(emptyContext)
 
         then:
-        toc.path == "toc.html"
-        toc.content == """<html>
-                         |<head>
-                         |    <title>Gaiden</title>
-                         |</head>
-                         |<body>
-                         |<h1>$tocTitle</h1>
-                         |<ul>
-                         |    <li>Shift_JISのタイトルです</li>
-                         |</ul>
-                         |</body>
-                         |</html>
-                         |""".stripMargin()
-
-        toMap(toc.node) == ["shiftjis": [title: "Shift_JISのタイトルです"]]
+        toc.path == "test/toc.html"
+        toc.content == """
+            |<html>
+            |<head>
+            |    <title>Test Title</title>
+            |</head>
+            |<body>
+            |<h1>Test TOC Title</h1>
+            |<ul>
+            |    <li>Shift_JISのタイトルです</li>
+            |</ul>
+            |</body>
+            |</html>
+            """.stripMargin()
     }
 
-    private Map toMap(Node node) {
-        def processNode = { Node currentNode ->
-            def currentNodeValues = [:]
-
-            if (currentNode.attributes()) {
-                currentNodeValues.putAll(currentNode.attributes())
-            }
-
-            if (currentNode.value()) {
-                currentNodeValues.children = (currentNode.value() as List).collectEntries { Node childNode ->
-                    [(childNode.name()): owner.call(childNode)]
-                }
-            }
-
-            return currentNodeValues
-        }
-
-        processNode(node).children
-    }
-
-    private BuildContext getContextOfEmptyPageSource() {
+    private BuildContext getEmptyContext() {
         def documentSource = new DocumentSource(pageSources: [])
         new BuildContext(documentSource: documentSource)
     }
