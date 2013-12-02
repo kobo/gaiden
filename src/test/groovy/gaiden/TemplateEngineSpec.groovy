@@ -16,8 +16,6 @@
 
 package gaiden
 
-import gaiden.context.PageBuildContext
-
 class TemplateEngineSpec extends GaidenSpec {
 
     def "'make' should make a page with a template"() {
