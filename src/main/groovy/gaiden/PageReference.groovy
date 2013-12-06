@@ -36,14 +36,8 @@ class PageReference {
     String fragment
 
     PageReference(String url) {
-        def index = url.lastIndexOf("#")
-        if (index == -1) {
-            path = url
-            fragment = ""
-        } else {
-            path = url.substring(0, index)
-            fragment = url.substring(index)
-        }
+        (path, fragment) = url.split("#") as List
+        fragment = fragment ? "#${fragment}" : ""
     }
 
     /**
