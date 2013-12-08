@@ -58,11 +58,7 @@ class GaidenLinkRenderer extends LinkRenderer {
     protected LinkRenderer.Rendering render(String url, String title, String text) {
         def pageRef = new PageReference(url)
 
-        if (pageRef.isUrl()) {
-            return createRendering(url, title, text)
-        }
-
-        if (!pageRef.isPageSourceExtension()) {
+        if (pageRef.isUrl() || !pageRef.isPageSourceExtension()) {
             return createRendering(url, title, text)
         }
 
@@ -78,7 +74,8 @@ class GaidenLinkRenderer extends LinkRenderer {
 
     private PageSource findPageSource(PageReference pageRef) {
         if (pageRef.isAbsolutePath()) {
-            def fullPathPageRef = pageRef.toFullPathPageReference(pagesDirectory, new File(pagesDirectory, pageSource.path).parentFile)
+            def pageSourceParentDirectory = new File(pagesDirectory, pageSource.path).parentFile
+            def fullPathPageRef = pageRef.toFullPathPageReference(pagesDirectory, pageSourceParentDirectory)
             context.documentSource.findPageSource(fullPathPageRef)
         } else {
             context.documentSource.findPageSource(pageRef)

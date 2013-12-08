@@ -165,7 +165,7 @@ class GaidenLinkRendererSpec extends GaidenSpec {
             "http://www.example.com/test.md",
             "https://www.example.com/test.md",
             "ftp://www.example.com/test.md",
-            "file://www.example.com/test.md",
+            "file:///www.example.com/test.md",
         ]
     }
 
