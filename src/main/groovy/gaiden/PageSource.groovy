@@ -62,9 +62,11 @@ class PageSource {
      */
     boolean matches(PageReference pageReference) {
         if (pageReference.extension) {
-            path == pageReference.path || outputPath == pageReference.path
+            def pageReferencePath = pageReference.path.replaceFirst("^/", "")
+            path == pageReferencePath || outputPath == pageReferencePath
         } else {
-            abstractPath == pageReference.abstractPath
+            def pageReferencePath = pageReference.abstractPath.replaceFirst("^/", "")
+            abstractPath == pageReferencePath
         }
     }
 }
