@@ -37,7 +37,7 @@ class BindingBuilder {
 
     private PageBuildContext pageBuildContext
 
-    BindingBuilder(String title = Holders.config.title, String tocOutputFilePath = Holders.config.tocOutputFilePath) {
+    BindingBuilder(String title, String tocOutputFilePath) {
         this.title = title
         this.tocOutputFilePath = tocOutputFilePath
     }

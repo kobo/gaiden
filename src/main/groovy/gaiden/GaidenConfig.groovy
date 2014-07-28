@@ -16,43 +16,61 @@
 
 package gaiden
 
+import gaiden.message.MessageSource
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+
+import javax.annotation.PostConstruct
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+
 /**
  * The Gaiden configuration.
  *
  * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
  */
+@Component
+@CompileStatic
 class GaidenConfig {
 
+    @Autowired
+    MessageSource messageSource
+
+    static final Path CONFIG_PATH = Paths.get("GaidenConfig.groovy")
+
     /** The base title of page */
-    String title
+    String title = "Gaiden"
 
     /** The title of TOC */
-    String tocTitle
+    String tocTitle = "Table of contents"
 
     /** The path of template file */
-    String templateFilePath
+    String templateFilePath = "templates/layout.html"
 
     /** The path of TOC file */
-    String tocFilePath
+    String tocFilePath = "pages/toc.groovy"
 
     /** The path of TOC output file */
-    String tocOutputFilePath
+    String tocOutputFilePath = "toc.html"
 
     /** The path of page source files directory */
-    String pagesDirectoryPath
+    String pagesDirectoryPath = "pages"
 
     /** The path of static files directory */
-    String staticDirectoryPath
+    String staticDirectoryPath = "static"
 
     /** The path of directory to be outputted a document */
-    String outputDirectoryPath
+    String outputDirectoryPath = "build"
 
     /** The input encoding of files */
-    String inputEncoding
+    String inputEncoding = "UTF-8"
 
     /** The output encoding of files */
-    String outputEncoding
+    String outputEncoding = "UTF-8"
 
     /** Returns the {@link #templateFilePath} as {@link File} */
     File getTemplateFile() {
@@ -79,16 +97,47 @@ class GaidenConfig {
         new File(outputDirectoryPath)
     }
 
+    /** Returns the application home directory as {@link Path} */
+    Path getAppHome() {
+        Paths.get(System.properties["app.home"] as String)
+    }
+
+    /** Returns the user directory as {@link Path} */
+    Path getUserDirectory() {
+        Paths.get(System.properties["user.dir"] as String)
+    }
+
+    /** Returns the default template directory as {@link Path} */
+    Path getDefaultTemplateDirectory() {
+        appHome.resolve("template")
+    }
+
+    @PostConstruct
+    void loadConfigFile() {
+        if (Files.notExists(CONFIG_PATH)) {
+            return
+        }
+
+        def configObject = new ConfigSlurper().parse(CONFIG_PATH.toUri().toURL())
+        configObject.each { Map.Entry entry ->
+            def key = entry.key as String
+            if (this.hasProperty(key)) {
+                this.setProperty(key, entry.value)
+            }
+        }
+    }
+
     /**
      * Replaces a deprecated parameter with new one.
      *
      * @param name a property name
      * @param value a property value
      */
+    @CompileStatic(TypeCheckingMode.SKIP)
     def propertyMissing(String name, value) {
         def deprecatedMapping = [
-            templatePath: "templateFilePath",
-            tocPath: "tocFilePath",
+            templatePath : "templateFilePath",
+            tocPath      : "tocFilePath",
             tocOutputPath: "tocOutputFilePath",
         ]
 
@@ -122,7 +171,7 @@ class GaidenConfig {
     }
 
     private void printDeprecatedWarning(String deprecatedName, String insteadName) {
-        System.err.println("WARNING: ${Holders.messageSource.getMessage("config.deprecated.parameter.message", [deprecatedName, insteadName])}")
+        System.err.println("WARNING: ${messageSource.getMessage("config.deprecated.parameter.message", [deprecatedName, insteadName] as Object[], Locale.default)}")
     }
 
 }

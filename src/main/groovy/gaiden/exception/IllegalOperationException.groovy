@@ -16,8 +16,6 @@
 
 package gaiden.exception
 
-import gaiden.Holders
-
 /**
  * Thrown when an operation is illegal.
  *
@@ -29,10 +27,4 @@ class IllegalOperationException extends GaidenException {
     IllegalOperationException() {
         super("usage")
     }
-
-    @Override
-    String getMessage() {
-        return Holders.getMessage(key, arguments)
-    }
-
 }

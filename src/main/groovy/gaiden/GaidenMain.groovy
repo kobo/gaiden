@@ -16,11 +16,10 @@
 
 package gaiden
 
-import gaiden.command.CommandFactory
-import gaiden.command.GaidenCommand
 import gaiden.exception.GaidenException
-import gaiden.exception.IllegalOperationException
 import gaiden.message.MessageSource
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 
 /**
  * A command line to execute Gaiden.
@@ -30,57 +29,43 @@ import gaiden.message.MessageSource
  */
 class GaidenMain {
 
-    private static final String CONFIG_FILE_NAME = "GaidenConfig.groovy"
-
-    private CommandFactory commandFactory = new CommandFactory()
-
     /**
      * A main command line interface.
      *
      * @param args all command line args
      */
     static void main(String... args) {
+        new GaidenMain().run(args)
+    }
+
+    private void run(String... args) {
+        def gaidenApplication = new GaidenApplication()
+
+        def options = getOptions(args)
+        def commandName = getCommandName(args, options)
+        def commandResolver = gaidenApplication.applicationContext.getBean(CommandResolver)
+        def command = commandResolver.resolve(commandName)
+
         try {
-            new GaidenMain().run(args)
+            command.execute(options.arguments() ? options.arguments().tail() : options.arguments())
         } catch (GaidenException e) {
-            System.err.println(e.message)
+            def messageSource = gaidenApplication.applicationContext.getBean(MessageSource)
+            System.err.println(messageSource.getMessage(e.code, e.arguments as Object[], Locale.default))
             System.exit(1)
         }
     }
 
-    void run(String... args) {
-        Holders.messageSource = new MessageSource()
-
-        if (!args) {
-            throw new IllegalOperationException()
-        }
-
-        def configFile = new File(CONFIG_FILE_NAME)
-        Holders.config = new GaidenConfigLoader().load(configFile)
-
-        def options = getOptions(args)
+    @CompileStatic(TypeCheckingMode.SKIP)
+    private String getCommandName(String[] args, OptionAccessor options) {
         if (options.v) {
-            executeCommand("version", configFile, options.arguments())
-            return
+            return "version"
+        } else if (args) {
+            return args.first()
         }
-
-        executeCommand(args.first(), configFile, args.tail() as List)
+        null
     }
 
-    void executeCommand(String commandName, File configFile, List args) {
-        GaidenCommand command = createCommand(commandName)
-
-        if (command.onlyGaidenProject && !configFile.exists()) {
-            throw new GaidenException("not.gaiden.project.error", [configFile.name])
-        }
-
-        command.execute(args)
-    }
-
-    protected void setCommandFactory(CommandFactory commandFactory) {
-        this.commandFactory = commandFactory
-    }
-
+    @CompileStatic(TypeCheckingMode.SKIP)
     private OptionAccessor getOptions(String[] args) {
         def cliBuilder = new CliBuilder()
         cliBuilder.with {
@@ -88,9 +73,4 @@ class GaidenMain {
         }
         cliBuilder.parse(args)
     }
-
-    private GaidenCommand createCommand(String commandName) {
-        commandFactory.createCommand(commandName)
-    }
-
 }

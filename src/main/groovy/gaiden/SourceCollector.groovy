@@ -17,6 +17,9 @@
 package gaiden
 
 import gaiden.util.FileUtils
+import groovy.transform.CompileStatic
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
 /**
  * A source collector collects {@link PageSource} and builds {@link DocumentSource}.
@@ -24,17 +27,14 @@ import gaiden.util.FileUtils
  * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
  */
+@Component
+@CompileStatic
 class SourceCollector {
 
-    static final PAGE_SOURCE_EXTENSIONS = ['md', 'markdown']
+    static final List<String> PAGE_SOURCE_EXTENSIONS = ['md', 'markdown']
 
-    private File pagesDirectory
-    private String inputEncoding
-
-    SourceCollector(File pagesDirectory = Holders.config.pagesDirectory, String inputEncoding = Holders.config.inputEncoding) {
-        this.pagesDirectory = pagesDirectory
-        this.inputEncoding = inputEncoding
-    }
+    @Autowired
+    private GaidenConfig gaidenConfig
 
     /**
      * Collect {@link PageSource} and then returns {@link DocumentSource}.
@@ -47,7 +47,7 @@ class SourceCollector {
 
     private List<PageSource> collectPageSources() {
         def pageSources = []
-        pagesDirectory.eachFileRecurse { file ->
+        gaidenConfig.pagesDirectory.eachFileRecurse { File file ->
             if (isPageSourceFile(file)) {
                 pageSources << createPageSource(file)
             }
@@ -61,8 +61,8 @@ class SourceCollector {
 
     private PageSource createPageSource(File file) {
         new PageSource(
-            path: FileUtils.getRelativePathForDirectoryToFile(pagesDirectory, file),
-            content: file.getText(inputEncoding),
+            path: FileUtils.getRelativePathForDirectoryToFile(gaidenConfig.pagesDirectory, file),
+            content: file.getText(gaidenConfig.inputEncoding),
         )
     }
 

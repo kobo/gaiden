@@ -18,7 +18,9 @@ package gaiden
 
 import gaiden.context.PageBuildContext
 import gaiden.markdown.GaidenMarkdownProcessor
-import org.pegdown.Extensions
+import groovy.transform.CompileStatic
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
 /**
  * A markdown page builder builds from a markdown to a HTML.
@@ -26,19 +28,18 @@ import org.pegdown.Extensions
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@Component
+@CompileStatic
 class PageBuilder {
 
-    private TemplateEngine templateEngine
-    private GaidenMarkdownProcessor markdownProcessor
+    @Autowired
+    GaidenMarkdownProcessor markdownProcessor
 
-    PageBuilder(TemplateEngine templateEngine) {
-        this(templateEngine, new GaidenMarkdownProcessor(Extensions.ALL - Extensions.HARDWRAPS))
-    }
+    @Autowired
+    TemplateEngine templateEngine
 
-    PageBuilder(TemplateEngine templateEngine, GaidenMarkdownProcessor markdownProcessor) {
-        this.templateEngine = templateEngine
-        this.markdownProcessor = markdownProcessor
-    }
+    @Autowired
+    GaidenConfig gaidenConfig
 
     /**
      * Build from a page source to a page.
@@ -57,7 +58,7 @@ class PageBuilder {
     private String buildPage(PageBuildContext context, PageSource pageSource) {
         def content = markdownProcessor.markdownToHtml(context, pageSource)
 
-        def binding = new BindingBuilder()
+        def binding = new BindingBuilder(gaidenConfig.title, gaidenConfig.tocOutputFilePath)
             .setContent(content)
             .setPageBuildContext(context)
             .setOutputPath(pageSource.outputPath)

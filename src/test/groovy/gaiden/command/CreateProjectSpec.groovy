@@ -40,7 +40,7 @@ class CreateProjectSpec extends Specification {
         newProjectName = "newProject"
         outputDirectory = File.createTempDir()
         newProjectDirectory = new File(outputDirectory, newProjectName)
-        command = new CreateProject(appHome, outputDirectory.path)
+        command = new CreateProjectCommand(appHome, outputDirectory.path)
     }
 
     def cleanup() {
@@ -69,7 +69,7 @@ class CreateProjectSpec extends Specification {
 
         then:
         def e = thrown(GaidenException)
-        e.key == "command.create.project.already.exists.error"
+        e.code == "command.create.project.already.exists.error"
 
         and:
         collectFilePathRecurse(newProjectDirectory).size() == 0
@@ -80,14 +80,14 @@ class CreateProjectSpec extends Specification {
 
     def "'execute' should output error message when project name is not given"() {
         setup:
-        def command = new CreateProject(null, null)
+        def command = new CreateProjectCommand(null, null)
 
         when:
         command.execute([])
 
         then:
         def e = thrown(GaidenException)
-        e.key == "command.create.project.name.required.error"
+        e.code == "command.create.project.name.required.error"
     }
 
     private Set collectFilePathRecurse(File directory) {

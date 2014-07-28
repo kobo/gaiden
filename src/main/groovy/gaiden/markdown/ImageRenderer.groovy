@@ -16,9 +16,10 @@
 
 package gaiden.markdown
 
-import gaiden.Holders
 import gaiden.PageSource
+import gaiden.message.MessageSource
 import gaiden.util.FileUtils
+import groovy.transform.CompileStatic
 
 /**
  * A Renderer for image node.
@@ -26,14 +27,17 @@ import gaiden.util.FileUtils
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class ImageRenderer {
 
     private PageSource pageSource
     private File staticDirectory
+    private MessageSource messageSource
 
-    ImageRenderer(PageSource pageSource, File staticDirectory = Holders.config.staticDirectory) {
+    ImageRenderer(PageSource pageSource, File staticDirectory, MessageSource messageSource) {
         this.pageSource = pageSource
         this.staticDirectory = staticDirectory
+        this.messageSource = messageSource
     }
 
     /**
@@ -79,8 +83,9 @@ class ImageRenderer {
     }
 
     private void checkFileExists(File resourceFile, String imagePath) {
-        if (!resourceFile.canonicalFile.exists()) { // It is required to normalize path such as '/path/to/../images/sample.png'.
-            System.err.println("WARNING: " + Holders.getMessage("image.reference.not.exists.message", [imagePath, pageSource.path]))
+        if (!resourceFile.canonicalFile.exists()) {
+            // It is required to normalize path such as '/path/to/../images/sample.png'.
+            System.err.println("WARNING: " + messageSource.getMessage("image.reference.not.exists.message", [imagePath, pageSource.path]))
         }
     }
 

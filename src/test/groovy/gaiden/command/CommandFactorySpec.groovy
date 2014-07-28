@@ -38,9 +38,9 @@ class CommandFactorySpec extends Specification {
 
         where:
         commandName      | commandClass
-        "build"          | Build
-        "clean"          | Clean
-        "create-project" | CreateProject
+        "build"          | BuildCommand
+        "clean"          | CleanCommand
+        "create-project" | CreateProjectCommand
     }
 
     def "'createCommand' should throw an exception when a command is invalid"() {
@@ -53,7 +53,7 @@ class CommandFactorySpec extends Specification {
 
         then:
         def e = thrown(IllegalOperationException)
-        e.key == "usage"
+        e.code == "usage"
 
         where:
         commandName << ["", "invalid"]

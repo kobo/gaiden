@@ -16,31 +16,40 @@
 
 package gaiden.command
 
-import gaiden.context.BuildContext
-import gaiden.Document
-import gaiden.DocumentBuilder
-import gaiden.DocumentWriter
-import gaiden.SourceCollector
+import gaiden.GaidenConfig
+import gaiden.message.MessageSource
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
 /**
- * The 'build' command.
+ * The 'clean' command.
  *
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class Build implements GaidenCommand {
+@Component
+@CompileStatic
+class CleanCommand extends AbstractCommand {
+
+    @Autowired
+    GaidenConfig gaidenConfig
+
+    @Autowired
+    MessageSource messageSource
+
+    final String name = "clean"
 
     final boolean onlyGaidenProject = true
 
     /**
-     * Executes building.
+     * Executes cleaning.
      */
+    @CompileStatic(TypeCheckingMode.SKIP)
     @Override
-    void execute(List args = []) {
-        def documentSource = new SourceCollector().collect()
-        def context = new BuildContext(documentSource: documentSource)
-        Document document = new DocumentBuilder().build(context)
-        new DocumentWriter().write(document)
+    void execute(List<String> arguments, OptionAccessor optionAccessor) {
+        new AntBuilder().delete(dir: gaidenConfig.outputDirectory)
+        println messageSource.getMessage("command.clean.success.message")
     }
-
 }

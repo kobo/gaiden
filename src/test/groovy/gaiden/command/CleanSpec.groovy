@@ -27,7 +27,7 @@ class CleanSpec extends Specification {
         assert buildDirectory.exists()
 
         and:
-        def command = new Clean(buildDirectory)
+        def command = new CleanCommand(buildDirectory)
 
         when:
         command.execute()

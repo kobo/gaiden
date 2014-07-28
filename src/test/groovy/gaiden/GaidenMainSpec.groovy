@@ -123,7 +123,7 @@ class GaidenMainSpec extends Specification {
 
         then:
         def e = thrown(IllegalOperationException)
-        e.key == "usage"
+        e.code == "usage"
     }
 
     def "'executeCommand' should output usage if invalid command"() {
@@ -132,7 +132,7 @@ class GaidenMainSpec extends Specification {
 
         then:
         def e = thrown(GaidenException)
-        e.key == "usage"
+        e.code == "usage"
     }
 
     def "'executeCommand' should not execute command if GaidenConfig.groovy doesn't exist"() {
@@ -150,7 +150,7 @@ class GaidenMainSpec extends Specification {
 
         then:
         def e = thrown(GaidenException)
-        e.key == "not.gaiden.project.error"
+        e.code == "not.gaiden.project.error"
     }
 
 }

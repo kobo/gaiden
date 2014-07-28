@@ -16,7 +16,9 @@
 
 package gaiden.message
 
-import java.text.MessageFormat
+import groovy.transform.CompileStatic
+import org.springframework.context.support.ResourceBundleMessageSource
+import org.springframework.stereotype.Component
 
 /**
  * MessageSource is a message resolver which supports
@@ -25,28 +27,15 @@ import java.text.MessageFormat
  * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
  */
-class MessageSource {
+@Component
+@CompileStatic
+class MessageSource extends ResourceBundleMessageSource {
 
-    private ResourceBundle resource
-
-    MessageSource(String bundleName = "messages") {
-        resource = ResourceBundle.getBundle(bundleName)
+    MessageSource() {
+        basename = "messages"
     }
 
-    /**
-     * Returns a message for the given key.
-     *
-     * @param key the key for message
-     * @param arguments the list of objects to be bound into the message
-     * @return resolved message, {@code key} if cannot resolve the message
-     */
-    String getMessage(String key, List<Object> arguments = []) {
-        try {
-            MessageFormat.format(resource.getString(key), arguments as Object[])
-        } catch (MissingResourceException e) {
-            // NOOP
-            return key
-        }
+    String getMessage(String code, List<?> args = []) {
+        getMessage(code, args as Object[], Locale.default)
     }
-
 }

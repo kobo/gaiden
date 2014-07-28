@@ -41,7 +41,6 @@ class GaidenToHtmlSerializer extends ToHtmlSerializer {
         this.printer = printer
     }
 
-    @Override
     protected void printImageTag(SuperNode imageNode, String url) {
         def rendering = imageRenderer.render(url, printChildrenToString(imageNode))
         printer

@@ -16,10 +16,10 @@
 
 package gaiden.markdown
 
-import gaiden.Holders
 import gaiden.PageReference
 import gaiden.PageSource
 import gaiden.context.PageBuildContext
+import gaiden.message.MessageSource
 import gaiden.util.FileUtils
 import org.pegdown.LinkRenderer
 import org.pegdown.ast.ExpLinkNode
@@ -38,11 +38,13 @@ class GaidenLinkRenderer extends LinkRenderer {
     private PageBuildContext context
     private PageSource pageSource
     private File pagesDirectory
+    private MessageSource messageSource
 
-    GaidenLinkRenderer(PageBuildContext context, PageSource pageSource, File pagesDirectory = Holders.config.pagesDirectory) {
+    GaidenLinkRenderer(PageBuildContext context, PageSource pageSource, File pagesDirectory, MessageSource messageSource) {
         this.context = context
         this.pageSource = pageSource
         this.pagesDirectory = pagesDirectory
+        this.messageSource = messageSource
     }
 
     @Override
@@ -64,7 +66,7 @@ class GaidenLinkRenderer extends LinkRenderer {
 
         def targetPageSource = findPageSource(pageRef)
         if (!targetPageSource) {
-            System.err.println("WARNING: " + Holders.getMessage("output.page.reference.not.exists.message", [url, pageSource.path]))
+            System.err.println("WARNING: " + messageSource.getMessage("output.page.reference.not.exists.message", [url, pageSource.path]))
             return createRendering(url, title, text)
         }
 

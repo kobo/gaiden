@@ -14,39 +14,48 @@
  * limitations under the License.
  */
 
-package gaiden
+package gaiden.command
 
-import groovy.text.SimpleTemplateEngine
-import groovy.text.Template
+import gaiden.Document
+import gaiden.DocumentBuilder
+import gaiden.DocumentWriter
+import gaiden.SourceCollector
+import gaiden.context.BuildContext
 import groovy.transform.CompileStatic
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 /**
- * Substitutes variables in a template source text.
+ * The 'build' command.
  *
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
 @Component
 @CompileStatic
-class TemplateEngine {
+class BuildCommand extends AbstractCommand {
 
-    private Template template
+    final String name = "build"
+
+    final boolean onlyGaidenProject = true
 
     @Autowired
-    GaidenConfig gaidenConfig
+    private SourceCollector sourceCollector
+
+    @Autowired
+    private DocumentBuilder documentBuilder
+
+    @Autowired
+    private DocumentWriter documentWriter
 
     /**
-     * Produces a result from a template.
-     *
-     * @param binding variables of placeholder, this variables overwrite a base binding variables
-     * @return a result produced
+     * Executes building.
      */
-    String make(Map binding) {
-        if (!template) {
-            template = new SimpleTemplateEngine().createTemplate(gaidenConfig.templateFile.text)
-        }
-        template.make(binding)
+    @Override
+    void execute(List<String> arguments, OptionAccessor optionAccessor) {
+        def documentSource = sourceCollector.collect()
+        def context = new BuildContext(documentSource: documentSource)
+        Document document = documentBuilder.build(context)
+        documentWriter.write(document)
     }
 }

@@ -40,7 +40,7 @@ class BuildSpec extends Specification {
         1 * new DocumentWriter() >> documentWriter
 
         and:
-        def command = new Build()
+        def command = new BuildCommand()
 
         when:
         command.execute()
