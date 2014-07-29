@@ -28,8 +28,8 @@ apply plugin: 'idea'
 version = '0.4'
 mainClassName = 'gaiden.GaidenMain'
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 repositories {
     mavenCentral()
