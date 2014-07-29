@@ -21,34 +21,27 @@ import gaiden.DocumentWriter
 import gaiden.SourceCollector
 import spock.lang.Specification
 
-class BuildSpec extends Specification {
+class BuildCommandSpec extends Specification {
 
     def "'execute' should build a document"() {
         setup:
-        def sourceCollector = Mock(SourceCollector)
-        GroovyMock(SourceCollector, global: true)
-        1 * new SourceCollector() >> sourceCollector
+            def sourceCollector = Mock(SourceCollector)
+            def documentBuilder = Mock(DocumentBuilder)
+            def documentWriter = Mock(DocumentWriter)
 
         and:
-        def documentBuilder = Mock(DocumentBuilder)
-        GroovyMock(DocumentBuilder, global: true)
-        1 * new DocumentBuilder() >> documentBuilder
-
-        and:
-        def documentWriter = Mock(DocumentWriter)
-        GroovyMock(DocumentWriter, global: true)
-        1 * new DocumentWriter() >> documentWriter
-
-        and:
-        def command = new BuildCommand()
+            def command = new BuildCommand()
+            command.sourceCollector = sourceCollector
+            command.documentBuilder = documentBuilder
+            command.documentWriter = documentWriter
 
         when:
-        command.execute()
+            command.execute([], null)
 
         then:
-        1 * sourceCollector.collect()
-        1 * documentBuilder.build(_)
-        1 * documentWriter.write(_)
+            1 * sourceCollector.collect()
+            1 * documentBuilder.build(_)
+            1 * documentWriter.write(_)
     }
 
 }

@@ -16,78 +16,69 @@
 
 package gaiden.command
 
+import gaiden.GaidenApplication
+import gaiden.GaidenConfig
 import gaiden.exception.GaidenException
 import spock.lang.Specification
 
-class CreateProjectSpec extends Specification {
+class CreateProjectCommandSpec extends Specification {
 
-    def savedSystemOut
-    def savedSystemErr
-    def savedSystemSecurityManager
-
-    String appHome
+    GaidenConfig gaidenConfig
     String newProjectName
-    File outputDirectory
     File newProjectDirectory
-    GaidenCommand command
+    File outputDirectory
+
+    CreateProjectCommand command
 
     def setup() {
-        savedSystemOut = System.out
-        savedSystemErr = System.err
-        savedSystemSecurityManager = System.securityManager
+        GaidenApplication gaidenApplication = new GaidenApplication()
+        command = gaidenApplication.applicationContext.getBean(CreateProjectCommand)
 
-        appHome = "src/dist"
-        newProjectName = "newProject"
         outputDirectory = File.createTempDir()
+
+        gaidenConfig = gaidenApplication.applicationContext.getBean(GaidenConfig)
+        gaidenConfig.appHomePath = "src/dist"
+        gaidenConfig.userDirectoryPath = outputDirectory.canonicalPath
+
+        newProjectName = "newProject"
         newProjectDirectory = new File(outputDirectory, newProjectName)
-        command = new CreateProjectCommand(appHome, outputDirectory.path)
     }
 
     def cleanup() {
-        System.out = savedSystemOut
-        System.err = savedSystemErr
-        System.securityManager = savedSystemSecurityManager
-
-        outputDirectory.deleteDir()
+        assert outputDirectory.deleteDir()
     }
 
     def "'execute' should create the Gaiden project directory"() {
         when:
-        command.execute([newProjectName])
+            command.execute([newProjectName])
 
         then:
-        newProjectDirectory.exists()
-        collectFilePathRecurse(newProjectDirectory) == collectFilePathRecurse(new File("$appHome/template"))
+            newProjectDirectory.exists()
+            collectFilePathRecurse(newProjectDirectory) == collectFilePathRecurse(gaidenConfig.defaultTemplateDirectory.toFile())
     }
 
     def "'execute' should not create the project directory when the directory already exists"() {
         setup:
-        newProjectDirectory.mkdir()
+            newProjectDirectory.mkdir()
 
         when:
-        command.execute([newProjectName])
+            command.execute([newProjectName])
 
         then:
-        def e = thrown(GaidenException)
-        e.code == "command.create.project.already.exists.error"
+            def e = thrown(GaidenException)
+            e.code == "command.create.project.already.exists.error"
 
         and:
-        collectFilePathRecurse(newProjectDirectory).size() == 0
-
-        cleanup:
-        outputDirectory.deleteDir()
+            collectFilePathRecurse(newProjectDirectory).size() == 0
     }
 
     def "'execute' should output error message when project name is not given"() {
-        setup:
-        def command = new CreateProjectCommand(null, null)
-
         when:
-        command.execute([])
+            command.execute([])
 
         then:
-        def e = thrown(GaidenException)
-        e.code == "command.create.project.name.required.error"
+            def e = thrown(GaidenException)
+            e.code == "command.create.project.name.required.error"
     }
 
     private Set collectFilePathRecurse(File directory) {
@@ -97,5 +88,4 @@ class CreateProjectSpec extends Specification {
         }
         fileset
     }
-
 }

@@ -19,7 +19,7 @@ package gaiden.command
 import gaiden.GaidenMain
 import spock.lang.Specification
 
-class VersionSpec extends Specification {
+class VersionCommandSpec extends Specification {
 
     def savedSystemOut
 
@@ -33,16 +33,16 @@ class VersionSpec extends Specification {
 
     def "'version' command should display a version"() {
         setup:
-        def printStream = Mock(PrintStream)
-        System.out = printStream
+            def printStream = Mock(PrintStream)
+            System.out = printStream
 
         when:
-        new GaidenMain().run([command] as String[])
+            GaidenMain.main(command)
 
         then:
-        1 * printStream.println({ it =~ /Version:/ })
+            1 * printStream.println({ it =~ /Version:/ })
 
         where:
-        command << ["-v", "--version", "version"]
+            command << ["-v", "--version", "version"]
     }
 }

@@ -29,30 +29,34 @@ import groovy.transform.TypeCheckingMode
  */
 class GaidenMain {
 
+    private GaidenApplication gaidenApplication = new GaidenApplication()
+
     /**
      * A main command line interface.
      *
      * @param args all command line args
      */
     static void main(String... args) {
-        new GaidenMain().run(args)
+        new GaidenMain().executeCommand(args)
     }
 
-    private void run(String... args) {
-        def gaidenApplication = new GaidenApplication()
-
-        def options = getOptions(args)
-        def commandName = getCommandName(args, options)
-        def commandResolver = gaidenApplication.applicationContext.getBean(CommandResolver)
-        def command = commandResolver.resolve(commandName)
-
+    protected void run(String... args) {
         try {
-            command.execute(options.arguments() ? options.arguments().tail() : options.arguments())
+            executeCommand(args)
         } catch (GaidenException e) {
             def messageSource = gaidenApplication.applicationContext.getBean(MessageSource)
             System.err.println(messageSource.getMessage(e.code, e.arguments as Object[], Locale.default))
             System.exit(1)
         }
+    }
+
+    protected void executeCommand(String... args) {
+        def options = getOptions(args)
+        def commandName = getCommandName(args, options)
+        def commandResolver = gaidenApplication.applicationContext.getBean(CommandResolver)
+        def command = commandResolver.resolve(commandName)
+
+        command.execute(options.arguments() ? options.arguments().tail() : options.arguments())
     }
 
     @CompileStatic(TypeCheckingMode.SKIP)

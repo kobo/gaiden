@@ -19,262 +19,302 @@ package gaiden
 import gaiden.context.PageBuildContext
 import gaiden.util.FileUtils
 
+import java.nio.file.Files
+import java.nio.file.Path
+
 class PrevNextLinkSpec extends GaidenSpec {
 
-    def prevLinkTemplateEngine = new TemplateEngine('$prevLink')
-    def nextLinkTemplateEngine = new TemplateEngine('$nextLink')
+    GaidenConfig gaidenConfig
+
+    Path tocFile
+    Path prevLinkTemplateFile
+    Path nextLinkTemplateFile
+
+    def prevLinkTemplateEngine
+    def nextLinkTemplateEngine
+
+    def setup() {
+        tocFile = Files.createTempFile("toc", "groovy")
+
+        prevLinkTemplateEngine = new TemplateEngine()
+        prevLinkTemplateFile = Files.createTempFile("prevLinkTemplate", "html")
+        prevLinkTemplateFile << '$prevLink'
+
+        prevLinkTemplateEngine.gaidenConfig = new GaidenConfig()
+        prevLinkTemplateEngine.gaidenConfig.templateFilePath = prevLinkTemplateFile
+        prevLinkTemplateEngine.gaidenConfig.tocFilePath = tocFile
+
+        nextLinkTemplateEngine = new TemplateEngine()
+        nextLinkTemplateFile = Files.createTempFile("nextLinkTemplate", "html")
+        nextLinkTemplateFile << '$nextLink'
+
+        nextLinkTemplateEngine.gaidenConfig = new GaidenConfig()
+        nextLinkTemplateEngine.gaidenConfig.templateFilePath = nextLinkTemplateFile
+        nextLinkTemplateEngine.gaidenConfig.tocFilePath = tocFile
+    }
+
+    def cleanup() {
+        Files.delete(prevLinkTemplateFile)
+        Files.delete(nextLinkTemplateFile)
+        Files.delete(tocFile)
+    }
 
     def "make a previous link"() {
         setup:
-        tocFile.write """
+            tocFile.write """
             |"first.md"(title: 'first title')
             |"second.md"(title: 'second title')
             """.stripMargin()
 
         when:
-        def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
+            def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-        firstContent == ""
+            firstContent == ""
 
         when:
-        def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
+            def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-        secondContent == "<a href='first.html' class='prev'>&lt;&lt; first title</a>"
+            secondContent == "<a href='first.html' class='prev'>&lt;&lt; first title</a>"
     }
 
     def "make a previous link with a TOC which file an extension is not specified"() {
         setup:
-        tocFile.write """
+            tocFile.write """
             |"first"(title: 'first title')
             |"second"(title: 'second title')
             """.stripMargin()
 
         when:
-        def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
+            def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-        firstContent == ""
+            firstContent == ""
 
         when:
-        def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
+            def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-        secondContent == "<a href='first.html' class='prev'>&lt;&lt; first title</a>"
+            secondContent == "<a href='first.html' class='prev'>&lt;&lt; first title</a>"
     }
 
     def "make a previous link with a TOC which an output file path is specified"() {
         setup:
-        tocFile.write """
+            tocFile.write """
             |"first.html"(title: 'first title')
             |"second.html"(title: 'second title')
             """.stripMargin()
 
         when:
-        def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
+            def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-        firstContent == ""
+            firstContent == ""
 
         when:
-        def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
+            def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-        secondContent == "<a href='first.html' class='prev'>&lt;&lt; first title</a>"
+            secondContent == "<a href='first.html' class='prev'>&lt;&lt; first title</a>"
     }
 
     def "make a previous link with TOC which a missing file is specified"() {
         setup:
-        tocFile.write """
+            tocFile.write """
             |"missing.md"(title: 'first title')
             |"second.md"(title: 'second title')
             """.stripMargin()
 
         when:
-        def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
+            def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-        firstContent == ""
+            firstContent == ""
 
         when:
-        def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
+            def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-        secondContent == "&lt;&lt; first title"
+            secondContent == "&lt;&lt; first title"
     }
 
     def "make a previous link with TOC which a fragment is specified"() {
         setup:
-        tocFile.write """
+            tocFile.write """
             |"first.md#fragment"(title: 'first title')
             |"second.md#fragment"(title: 'second title')
             """.stripMargin()
 
         when:
-        def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
+            def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-        firstContent == ""
+            firstContent == ""
 
         when:
-        def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
+            def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-        secondContent == "<a href='first.html#fragment' class='prev'>&lt;&lt; first title</a>"
+            secondContent == "<a href='first.html#fragment' class='prev'>&lt;&lt; first title</a>"
     }
 
     def "make a previous link with TOC which a nested pages is specified"() {
         setup:
-        tocFile.write """
+            tocFile.write """
             |"first.md"(title: 'first title') {
             |   "second.md"(title: 'second title')
             |}
             """.stripMargin()
 
         when:
-        def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
+            def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-        firstContent == ""
+            firstContent == ""
 
         when:
-        def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
+            def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-        secondContent == "<a href='first.html' class='prev'>&lt;&lt; first title</a>"
+            secondContent == "<a href='first.html' class='prev'>&lt;&lt; first title</a>"
     }
 
     def "make a next link"() {
         setup:
-        tocFile.write """
+            tocFile.write """
             |"first.md"(title: 'first title')
             |"second.md"(title: 'second title')
             """.stripMargin()
 
         when:
-        def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
+            def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-        firstContent == "<a href='second.html' class='next'>second title &gt;&gt;</a>"
+            firstContent == "<a href='second.html' class='next'>second title &gt;&gt;</a>"
 
         when:
-        def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
+            def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-        secondContent == ""
+            secondContent == ""
     }
 
     def "make a next link with a TOC which file an extension is not specified"() {
         setup:
-        tocFile.write """
+            tocFile.write """
             |"first"(title: 'first title')
             |"second"(title: 'second title')
             """.stripMargin()
 
         when:
-        def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
+            def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-        firstContent == "<a href='second.html' class='next'>second title &gt;&gt;</a>"
+            firstContent == "<a href='second.html' class='next'>second title &gt;&gt;</a>"
 
         when:
-        def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
+            def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-        secondContent == ""
+            secondContent == ""
     }
 
     def "make a next link with a TOC which an output file path is specified"() {
         setup:
-        tocFile.write """
+            tocFile.write """
             |"first.html"(title: 'first title')
             |"second.html"(title: 'second title')
             """.stripMargin()
 
         when:
-        def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
+            def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-        firstContent == "<a href='second.html' class='next'>second title &gt;&gt;</a>"
+            firstContent == "<a href='second.html' class='next'>second title &gt;&gt;</a>"
 
         when:
-        def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
+            def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-        secondContent == ""
+            secondContent == ""
     }
 
     def "make a next link with TOC which a missing file is specified"() {
         setup:
-        tocFile.write """
+            tocFile.write """
             |"first.md"(title: 'first title')
             |"missing.md"(title: 'second title')
             """.stripMargin()
 
         when:
-        def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
+            def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-        firstContent == "second title &gt;&gt;"
+            firstContent == "second title &gt;&gt;"
 
         when:
-        def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
+            def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-        secondContent == ""
+            secondContent == ""
     }
 
     def "make a next link with TOC which a fragment is specified"() {
         setup:
-        tocFile.write """
+            tocFile.write """
             |"first.md#fragment"(title: 'first title')
             |"second.md#fragment"(title: 'second title')
             """.stripMargin()
 
         when:
-        def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
+            def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-        firstContent == "<a href='second.html#fragment' class='next'>second title &gt;&gt;</a>"
+            firstContent == "<a href='second.html#fragment' class='next'>second title &gt;&gt;</a>"
 
         when:
-        def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
+            def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-        secondContent == ""
+            secondContent == ""
     }
 
     def "make a next link with TOC which a nested pages is specified"() {
         setup:
-        tocFile.write """
+            tocFile.write """
             |"first.md"(title: 'first title') {
             |   "second.md"(title: 'second title')
             |}
             """.stripMargin()
 
         when:
-        def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
+            def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-        firstContent == "<a href='second.html' class='next'>second title &gt;&gt;</a>"
+            firstContent == "<a href='second.html' class='next'>second title &gt;&gt;</a>"
 
         when:
-        def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
+            def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-        secondContent == ""
+            secondContent == ""
     }
 
     private Map<String, Object> bindingOf(String sourcePath) {
         def context = createBuildContext([[path: "first.md"], [path: "second.md"]])
-        Toc toc = new TocBuilder(prevLinkTemplateEngine).build(context)
+
+        def tocBuilder = new TocBuilder()
+        tocBuilder.templateEngine = prevLinkTemplateEngine
+        tocBuilder.gaidenConfig = prevLinkTemplateEngine.gaidenConfig
+        tocBuilder.messageSource = messageSource
+        def toc = tocBuilder.build(context)
 
         def pageBuildContext = new PageBuildContext()
         pageBuildContext.toc = toc
         pageBuildContext.documentSource = context.documentSource
 
-        new BindingBuilder()
+        new BindingBuilder("Test title", "toc.html")
             .setSourcePath(sourcePath)
             .setPageBuildContext(pageBuildContext)
             .setOutputPath(FileUtils.replaceExtension(sourcePath, "html"))

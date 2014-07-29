@@ -16,7 +16,6 @@
 
 package gaiden.command
 
-import gaiden.GaidenConfig
 import gaiden.exception.GaidenException
 import gaiden.message.MessageSource
 import groovy.transform.CompileStatic
@@ -41,10 +40,7 @@ class CreateProjectCommand extends AbstractCommand {
     final boolean onlyGaidenProject = false
 
     @Autowired
-    private GaidenConfig gaidenConfig
-
-    @Autowired
-    private MessageSource messageSource
+    MessageSource messageSource
 
     @Override
     void execute(List<String> arguments, OptionAccessor optionAccessor) {

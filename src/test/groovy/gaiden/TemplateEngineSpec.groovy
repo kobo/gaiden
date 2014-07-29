@@ -16,11 +16,34 @@
 
 package gaiden
 
+import java.nio.file.Files
+import java.nio.file.Path
+
 class TemplateEngineSpec extends GaidenSpec {
+
+    GaidenConfig gaidenConfig
+
+    Path templateFile
+
+    TemplateEngine templateEngine = new TemplateEngine()
+
+    def setup() {
+        templateFile = Files.createTempFile("layout", "html")
+
+        gaidenConfig = new GaidenConfig()
+        gaidenConfig.templateFilePath = templateFile
+
+        templateEngine = new TemplateEngine()
+        templateEngine.gaidenConfig = gaidenConfig
+    }
+
+    def cleanup() {
+        Files.delete(templateFile)
+    }
 
     def "'make' should make a page with a template"() {
         setup:
-        def templateEngine = new TemplateEngine('''
+            templateFile.write '''
             |<html>
             |<head>
             |    <title>$title</title>
@@ -29,19 +52,19 @@ class TemplateEngineSpec extends GaidenSpec {
             |$content
             |</body>
             |</html>
-            '''.stripMargin())
+            '''.stripMargin()
 
         and:
-        def binding = [
-            title: "Test Title",
-            content: "<h1>Hello</h1>"
-        ]
+            def binding = [
+                title  : "Test Title",
+                content: "<h1>Hello</h1>"
+            ]
 
         when:
-        def content = templateEngine.make(binding)
+            def content = templateEngine.make(binding)
 
         then:
-        content == '''
+            content == '''
             |<html>
             |<head>
             |    <title>Test Title</title>
@@ -55,39 +78,36 @@ class TemplateEngineSpec extends GaidenSpec {
 
     def "'make' should evaluate the 'resource'"() {
         setup:
-        def templateEngine = new TemplateEngine('${resource("' + resourcePath + '")}')
+            templateFile.write '${resource("' + resourcePath + '")}'
 
         and:
-        def binding = new BindingBuilder().setOutputPath(outputPath).build()
+            def binding = new BindingBuilder("Test Title", "toc.html").setOutputPath(outputPath).build()
 
         when:
-        def content = templateEngine.make(binding)
+            def content = templateEngine.make(binding)
 
         then:
-        content == expected
+            content == expected
 
         where:
-        resourcePath   | outputPath     | expected
-        "/aaa/bbb.txt" | "ccc/ddd.html" | "../aaa/bbb.txt"
-        "aaa/bbb.txt"  | "ccc/ddd.html" | "aaa/bbb.txt"
-        ""             | "ccc/ddd.html" | ""
+            resourcePath   | outputPath     | expected
+            "/aaa/bbb.txt" | "ccc/ddd.html" | "../aaa/bbb.txt"
+            "aaa/bbb.txt"  | "ccc/ddd.html" | "aaa/bbb.txt"
+            ""             | "ccc/ddd.html" | ""
     }
 
     def "'make' should evaluate the 'tocPath'"() {
         setup:
-        config.tocOutputFilePath = "toc.html"
-
-        and:
-        def templateEngine = new TemplateEngine('${tocPath}')
-        def binding = new BindingBuilder().setOutputPath(outputPath).build()
+            templateFile.write '${tocPath}'
+            def binding = new BindingBuilder("Test Title", "toc.html").setOutputPath(outputPath).build()
 
         expect:
-        templateEngine.make(binding) == expected
+            templateEngine.make(binding) == expected
 
         where:
-        outputPath     | expected
-        "ddd.html"     | "toc.html"
-        "ccc/ddd.html" | "../toc.html"
+            outputPath     | expected
+            "ddd.html"     | "toc.html"
+            "ccc/ddd.html" | "../toc.html"
     }
 
 }

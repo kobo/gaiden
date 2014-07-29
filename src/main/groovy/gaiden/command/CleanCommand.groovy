@@ -16,7 +16,6 @@
 
 package gaiden.command
 
-import gaiden.GaidenConfig
 import gaiden.message.MessageSource
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
@@ -34,9 +33,6 @@ import org.springframework.stereotype.Component
 class CleanCommand extends AbstractCommand {
 
     @Autowired
-    GaidenConfig gaidenConfig
-
-    @Autowired
     MessageSource messageSource
 
     final String name = "clean"
@@ -49,7 +45,7 @@ class CleanCommand extends AbstractCommand {
     @CompileStatic(TypeCheckingMode.SKIP)
     @Override
     void execute(List<String> arguments, OptionAccessor optionAccessor) {
-        new AntBuilder().delete(dir: gaidenConfig.outputDirectory)
+        new AntBuilder().delete(dir: gaidenConfig.userDirectory.resolve(gaidenConfig.outputDirectoryPath))
         println messageSource.getMessage("command.clean.success.message")
     }
 }

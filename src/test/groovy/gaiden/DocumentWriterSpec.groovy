@@ -24,119 +24,130 @@ class DocumentWriterSpec extends Specification {
 
     def outputDirectory = new File("build/gaiden-test-doc")
 
+    GaidenConfig gaidenConfig
+
     def setup() {
         outputDirectory.deleteDir()
+
+        gaidenConfig = new GaidenConfig()
+        gaidenConfig.outputDirectoryPath = outputDirectory.path
+        gaidenConfig.staticDirectoryPath = "src/test/resources/static-files"
     }
 
     def "'write' should write a document to files"() {
         setup:
-        def page1 = createPage("document1.md")
-        def page2 = createPage("document2.md")
-        def page3 = createPage("sub/document3.md")
+            def page1 = createPage("document1.md")
+            def page2 = createPage("document2.md")
+            def page3 = createPage("sub/document3.md")
 
         and:
-        def toc = new Toc(path: "toc.html", content: "<h1>table of contents</h1>")
+            def toc = new Toc(path: "toc.html", content: "<h1>table of contents</h1>")
 
         and:
-        def document = new Document(pages: [page1, page2, page3], toc: toc)
-        def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory, "UTF-8")
+            def document = new Document(pages: [page1, page2, page3], toc: toc)
+            def documentWriter = new DocumentWriter()
+            documentWriter.gaidenConfig = gaidenConfig
 
         and:
-        def saved = System.out
-        def printStream = Mock(PrintStream)
-        System.out = printStream
+            def saved = System.out
+            def printStream = Mock(PrintStream)
+            System.out = printStream
 
         when:
-        documentWriter.write(document)
+            documentWriter.write(document)
 
         then:
-        getFiles(outputDirectory) == [
-            "document1.html",
-            "document2.html",
-            "sub/document3.html",
-            "images/dummy.png",
-            "css/main.css",
-            "js/test.js",
-            "toc.html",
-        ] as Set
+            getFiles(outputDirectory) == [
+                "document1.html",
+                "document2.html",
+                "sub/document3.html",
+                "images/dummy.png",
+                "css/main.css",
+                "js/test.js",
+                "toc.html",
+            ] as Set
 
         and:
-        new File("build/gaiden-test-doc/document1.html").text == page1.content
-        new File("build/gaiden-test-doc/document2.html").text == page2.content
-        new File("build/gaiden-test-doc/sub/document3.html").text == page3.content
+            new File("build/gaiden-test-doc/document1.html").text == page1.content
+            new File("build/gaiden-test-doc/document2.html").text == page2.content
+            new File("build/gaiden-test-doc/sub/document3.html").text == page3.content
 
         and:
-        new File("build/gaiden-test-doc/toc.html").text == toc.content
+            new File("build/gaiden-test-doc/toc.html").text == toc.content
 
         and:
-        1 * printStream.println("Built document at ${outputDirectory.canonicalPath}")
+            1 * printStream.println("Built document at ${outputDirectory.canonicalPath}")
 
         cleanup:
-        System.out = saved
+            System.out = saved
     }
 
     def "'write' should overwrite when file already exists"() {
         setup:
-        def page = createPage("document1.md")
-        def toc = new Toc(path: "toc.html", content: "<h1>table of contents</h1>")
-        def document = new Document(pages: [page], toc: toc)
+            def page = createPage("document1.md")
+            def toc = new Toc(path: "toc.html", content: "<h1>table of contents</h1>")
+            def document = new Document(pages: [page], toc: toc)
 
         and:
-        def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory, "UTF-8")
-        documentWriter.write(document)
+            def documentWriter = new DocumentWriter()
+            documentWriter.gaidenConfig = gaidenConfig
+            documentWriter.write(document)
 
         when:
-        documentWriter.write(document)
+            documentWriter.write(document)
 
         then:
-        new File("build/gaiden-test-doc/document1.html").text == page.content
-        new File("build/gaiden-test-doc/toc.html").text == toc.content
+            new File("build/gaiden-test-doc/document1.html").text == page.content
+            new File("build/gaiden-test-doc/toc.html").text == toc.content
     }
 
     def "'write' should write a specified encoding"() {
         setup:
-        def page = createPage("document.md", "これはShift_JISのドキュメントです。")
+            def page = createPage("document.md", "これはShift_JISのドキュメントです。")
 
         and:
-        def toc = new Toc(path: "toc.html", content: "<h1>これはShift_JISのTOCです</h1>")
+            def toc = new Toc(path: "toc.html", content: "<h1>これはShift_JISのTOCです</h1>")
 
         and:
-        def document = new Document(pages: [page], toc: toc)
-        def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory, "Shift_JIS")
+            def document = new Document(pages: [page], toc: toc)
+            def documentWriter = new DocumentWriter()
+            documentWriter.gaidenConfig = gaidenConfig
+            documentWriter.gaidenConfig.outputEncoding = "Shift_JIS"
 
         when:
-        documentWriter.write(document)
+            documentWriter.write(document)
 
         then:
-        getFiles(outputDirectory) == [
-            "document.html",
-            "images/dummy.png",
-            "css/main.css",
-            "js/test.js",
-            "toc.html",
-        ] as Set
+            getFiles(outputDirectory) == [
+                "document.html",
+                "images/dummy.png",
+                "css/main.css",
+                "js/test.js",
+                "toc.html",
+            ] as Set
 
         and:
-        new File("build/gaiden-test-doc/document.html").getText("Shift_JIS") == page.content
+            new File("build/gaiden-test-doc/document.html").getText("Shift_JIS") == page.content
 
         and:
-        new File("build/gaiden-test-doc/toc.html").getText("Shift_JIS") == toc.content
+            new File("build/gaiden-test-doc/toc.html").getText("Shift_JIS") == toc.content
     }
 
     def "'write' should not write anything if toc file doesn't exist"() {
         setup:
-        def document = new Document(pages: [], toc: null)
-        def documentWriter = new DocumentWriter(new File("src/test/resources/static-files"), outputDirectory, "UTF-8")
+            def document = new Document(pages: [], toc: null)
+            def documentWriter = new DocumentWriter()
+            documentWriter.gaidenConfig = gaidenConfig
 
         when:
-        documentWriter.write(document)
+            documentWriter.write(document)
 
         then:
-        getFiles(outputDirectory) == [
-            "images/dummy.png",
-            "css/main.css",
-            "js/test.js",
-        ] as Set
+            getFiles(outputDirectory) == [
+                "images/dummy.png",
+                "css/main.css",
+                "js/test.js",
+            ] as Set
     }
 
     private Page createPage(String path, String content = null) {

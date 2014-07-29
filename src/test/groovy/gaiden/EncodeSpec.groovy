@@ -22,15 +22,15 @@ class EncodeSpec extends Specification {
 
     def "'encodeAsHtml' should encode a string as HTML"() {
         expect:
-        text.encodeAsHtml() == expected
+            text.encodeAsHtml() == expected
 
         where:
-        text   | expected
-        "test" | "test"
-        "&"    | "&amp;"
-        "<"    | "&lt;"
-        ">"    | "&gt;"
-        '"'    | "&quot;"
-        " "    | " "
+            text   | expected
+            "test" | "test"
+            "&"    | "&amp;"
+            "<"    | "&lt;"
+            ">"    | "&gt;"
+            '"'    | "&quot;"
+            " "    | " "
     }
 }

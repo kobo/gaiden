@@ -17,12 +17,22 @@
 package gaiden
 
 import gaiden.context.PageBuildContext
+import gaiden.markdown.GaidenMarkdownProcessor
+
+import java.nio.file.Files
+import java.nio.file.Path
 
 class PageBuilderSpec extends GaidenSpec {
 
-    def "'build' should build a page"() {
-        setup:
-        def templateEngine = new TemplateEngine('''
+    Path templateFile
+
+    GaidenConfig gaidenConfig
+    TemplateEngine templateEngine
+    GaidenMarkdownProcessor gaidenMarkdownProcessor
+
+    def setup() {
+        templateFile = Files.createTempFile("layout", "html")
+        templateFile << '''
             |<html>
             |<head>
             |    <title>$title</title>
@@ -31,19 +41,40 @@ class PageBuilderSpec extends GaidenSpec {
             |$content
             |</body>
             |</html>
-            '''.stripMargin())
+            '''.stripMargin()
 
-        and:
-        def pageSource = new PageSource(path: "test.md", content: "# Test")
-        def documentSource = new DocumentSource(pageSources: [pageSource])
-        def context = new PageBuildContext(documentSource: documentSource, toc: new Toc(tocNodes: []))
+        gaidenConfig = new GaidenConfig()
+        gaidenConfig.templateFilePath = templateFile
+        gaidenConfig.title = "Test Title"
+
+        templateEngine = new TemplateEngine()
+        templateEngine.gaidenConfig = gaidenConfig
+
+        gaidenMarkdownProcessor = new GaidenMarkdownProcessor()
+        gaidenMarkdownProcessor.gaidenConfig = gaidenConfig
+        gaidenMarkdownProcessor.messageSource = messageSource
+    }
+
+    def cleanup() {
+        Files.delete(templateFile)
+    }
+
+    def "'build' should build a page"() {
+        setup:
+            def pageSource = new PageSource(path: "test.md", content: "# Test")
+            def documentSource = new DocumentSource(pageSources: [pageSource])
+            def context = new PageBuildContext(documentSource: documentSource, toc: new Toc(tocNodes: []))
 
         when:
-        def page = new PageBuilder(templateEngine).build(context, pageSource)
+            def pageBuilder = new PageBuilder()
+            pageBuilder.templateEngine = templateEngine
+            pageBuilder.gaidenConfig = gaidenConfig
+            pageBuilder.markdownProcessor = gaidenMarkdownProcessor
+            def page = pageBuilder.build(context, pageSource)
 
         then:
-        page.path == "test.html"
-        page.content == '''
+            page.path == "test.html"
+            page.content == '''
             |<html>
             |<head>
             |    <title>Test Title</title>

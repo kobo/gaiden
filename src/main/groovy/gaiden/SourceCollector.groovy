@@ -34,7 +34,7 @@ class SourceCollector {
     static final List<String> PAGE_SOURCE_EXTENSIONS = ['md', 'markdown']
 
     @Autowired
-    private GaidenConfig gaidenConfig
+    GaidenConfig gaidenConfig
 
     /**
      * Collect {@link PageSource} and then returns {@link DocumentSource}.

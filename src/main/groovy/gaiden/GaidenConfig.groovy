@@ -72,6 +72,12 @@ class GaidenConfig {
     /** The output encoding of files */
     String outputEncoding = "UTF-8"
 
+    /** The path of application home directory */
+    String appHomePath = System.properties["app.home"] as String
+
+    /** The path of user directory */
+    String userDirectoryPath = System.properties["user.dir"] as String
+
     /** Returns the {@link #templateFilePath} as {@link File} */
     File getTemplateFile() {
         new File(templateFilePath)
@@ -99,12 +105,12 @@ class GaidenConfig {
 
     /** Returns the application home directory as {@link Path} */
     Path getAppHome() {
-        Paths.get(System.properties["app.home"] as String)
+        Paths.get(appHomePath)
     }
 
     /** Returns the user directory as {@link Path} */
     Path getUserDirectory() {
-        Paths.get(System.properties["user.dir"] as String)
+        Paths.get(userDirectoryPath)
     }
 
     /** Returns the default template directory as {@link Path} */
@@ -112,18 +118,24 @@ class GaidenConfig {
         appHome.resolve("template")
     }
 
+    Path getGaidenConfig() {
+        userDirectory.resolve(CONFIG_PATH)
+    }
+
     @PostConstruct
-    void loadConfigFile() {
-        if (Files.notExists(CONFIG_PATH)) {
+    void initialize() {
+        initialize(CONFIG_PATH)
+    }
+
+    @CompileStatic(TypeCheckingMode.SKIP)
+    void initialize(Path configFile) {
+        if (Files.notExists(configFile)) {
             return
         }
 
-        def configObject = new ConfigSlurper().parse(CONFIG_PATH.toUri().toURL())
+        def configObject = new ConfigSlurper().parse(configFile.toUri().toURL())
         configObject.each { Map.Entry entry ->
-            def key = entry.key as String
-            if (this.hasProperty(key)) {
-                this.setProperty(key, entry.value)
-            }
+            this."$entry.key" = entry.value
         }
     }
 
@@ -171,7 +183,7 @@ class GaidenConfig {
     }
 
     private void printDeprecatedWarning(String deprecatedName, String insteadName) {
-        System.err.println("WARNING: ${messageSource.getMessage("config.deprecated.parameter.message", [deprecatedName, insteadName] as Object[], Locale.default)}")
+        System.err.println("WARNING: ${messageSource.getMessage("config.deprecated.parameter.message", [deprecatedName, insteadName])}")
     }
 
 }

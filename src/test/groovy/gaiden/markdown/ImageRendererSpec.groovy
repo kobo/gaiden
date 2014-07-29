@@ -16,19 +16,15 @@
 
 package gaiden.markdown
 
-import gaiden.Holders
+import gaiden.GaidenSpec
 import gaiden.PageSource
-import gaiden.message.MessageSource
-import spock.lang.Specification
 
-class ImageRendererSpec extends Specification {
+class ImageRendererSpec extends GaidenSpec {
 
     def savedSystemErr
 
     def setup() {
         savedSystemErr = System.err
-
-        Holders.messageSource = new MessageSource()
     }
 
     def cleanup() {
@@ -37,95 +33,94 @@ class ImageRendererSpec extends Specification {
 
     def "'render' should return a rendering object which has replaced image path"() {
         setup:
-        def pageSource = new PageSource(path: pageSourcePath)
-        def renderer = new ImageRenderer(pageSource, new File("non-existent-static"))
+            def pageSource = new PageSource(path: pageSourcePath)
+            def renderer = new ImageRenderer(pageSource, new File("non-existent-static"), messageSource)
 
         and:
-        def printStream = Mock(PrintStream)
-        System.err = printStream
+            def printStream = Mock(PrintStream)
+            System.err = printStream
 
         when:
-        def rendering = renderer.render(imagePath, "TEST_ALT")
+            def rendering = renderer.render(imagePath, "TEST_ALT")
 
         then:
-        rendering.src == renderingSrc
-        rendering.alt == "TEST_ALT"
+            rendering.src == renderingSrc
+            rendering.alt == "TEST_ALT"
 
         and: "output a warning message when a image file doesn't exist"
-        1 * printStream.println("WARNING: '${imagePath}' in the '${pageSource.path}' refers to non-existent file")
+            1 * printStream.println("WARNING: '${imagePath}' in the '${pageSource.path}' refers to non-existent file")
 
         where:
-        pageSourcePath | imagePath        | renderingSrc
-        "test.md"      | "/img/test.png"  | "img/test.png"
-        "test.md"      | "/test.png"      | "test.png"
-        "path/test.md" | "/img/test.png"  | "../img/test.png"
-        "path/test.md" | "/test.png"      | "../test.png"
-        "path/test.md" | "/path/test.png" | "test.png"
+            pageSourcePath | imagePath        | renderingSrc
+            "test.md"      | "/img/test.png"  | "img/test.png"
+            "test.md"      | "/test.png"      | "test.png"
+            "path/test.md" | "/img/test.png"  | "../img/test.png"
+            "path/test.md" | "/test.png"      | "../test.png"
+            "path/test.md" | "/path/test.png" | "test.png"
     }
 
     def "'render' should not replace an image path if doesn't start with a slash"() {
         setup:
-        def renderer = new ImageRenderer(new PageSource(path: "test.md"), new File("test/resources/static-files"))
+            def renderer = new ImageRenderer(new PageSource(path: "test.md"), new File("test/resources/static-files"), messageSource)
 
         when:
-        def rendering = renderer.render("img/test.png", "TEST_ALT")
+            def rendering = renderer.render("img/test.png", "TEST_ALT")
 
         then:
-        rendering.src == "img/test.png"
-        rendering.alt == "TEST_ALT"
+            rendering.src == "img/test.png"
+            rendering.alt == "TEST_ALT"
     }
 
     def "'render' should not output a warning message when a image file exists"() {
         setup:
-        def renderer = new ImageRenderer(new PageSource(path: pageSourcePath), new File("src/test/resources/static-files"))
+            def renderer = new ImageRenderer(new PageSource(path: pageSourcePath), new File("src/test/resources/static-files"), messageSource)
 
         and:
-        def printStream = Mock(PrintStream)
-        System.err = printStream
+            def printStream = Mock(PrintStream)
+            System.err = printStream
 
         when:
-        def rendering = renderer.render(imagePath, "TEST_ALT")
+            def rendering = renderer.render(imagePath, "TEST_ALT")
 
         then:
-        rendering.src == renderingSrc
-        rendering.alt == "TEST_ALT"
+            rendering.src == renderingSrc
+            rendering.alt == "TEST_ALT"
 
         and:
-        0 * printStream.println(_)
+            0 * printStream.println(_)
 
         where:
-        pageSourcePath | imagePath             | renderingSrc
-        "test.md"      | "/images/dummy.png"   | "images/dummy.png"
-        "test.md"      | "images/dummy.png"    | "images/dummy.png"
-        "path/test.md" | "/images/dummy.png"   | "../images/dummy.png"
-        "path/test.md" | "../images/dummy.png" | "../images/dummy.png"
+            pageSourcePath | imagePath             | renderingSrc
+            "test.md"      | "/images/dummy.png"   | "images/dummy.png"
+            "test.md"      | "images/dummy.png"    | "images/dummy.png"
+            "path/test.md" | "/images/dummy.png"   | "../images/dummy.png"
+            "path/test.md" | "../images/dummy.png" | "../images/dummy.png"
     }
 
     def "'render' should not output a warning message when a image path is URL"() {
         setup:
-        def renderer = new ImageRenderer(new PageSource(path: "test.md"), new File("src/test/resources/static-files"))
+            def renderer = new ImageRenderer(new PageSource(path: "test.md"), new File("src/test/resources/static-files"), messageSource)
 
         and:
-        def printStream = Mock(PrintStream)
-        System.err = printStream
+            def printStream = Mock(PrintStream)
+            System.err = printStream
 
         when:
-        def rendering = renderer.render(imagePath, "TEST_ALT")
+            def rendering = renderer.render(imagePath, "TEST_ALT")
 
         then:
-        rendering.src == imagePath
-        rendering.alt == "TEST_ALT"
+            rendering.src == imagePath
+            rendering.alt == "TEST_ALT"
 
         and:
-        0 * printStream.println(_)
+            0 * printStream.println(_)
 
         where:
-        imagePath << [
-            "http://www.example.com/test.png",
-            "https://www.example.com/test.png",
-            "ftp://www.example.com/test.png",
-            "file:///path/to/test.png",
-        ]
+            imagePath << [
+                "http://www.example.com/test.png",
+                "https://www.example.com/test.png",
+                "ftp://www.example.com/test.png",
+                "file:///path/to/test.png",
+            ]
     }
-
 }

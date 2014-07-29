@@ -60,6 +60,9 @@ class DocumentWriter {
     }
 
     private void writeToc(Toc toc) {
+        if (!toc) {
+            return
+        }
         writeToFile(toc.path, toc.content)
     }
 

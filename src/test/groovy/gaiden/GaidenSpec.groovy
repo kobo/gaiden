@@ -19,6 +19,7 @@ package gaiden
 import gaiden.context.BuildContext
 import gaiden.message.MessageSource
 import spock.lang.AutoCleanup
+import spock.lang.Shared
 import spock.lang.Specification
 
 abstract class GaidenSpec extends Specification {
@@ -27,37 +28,24 @@ abstract class GaidenSpec extends Specification {
     def savedSystemErr
     def savedSystemSecurityManager
 
-    @AutoCleanup("delete")
-    def tocFile = File.createTempFile("toc", "groovy")
+    @Shared
+    MessageSource messageSource = new MessageSource()
 
     @AutoCleanup("deleteDir")
     def pagesDirectory = File.createTempDir()
 
     def setup() {
         saveSystemProperties()
-        setupMessageSource()
-        setupConfig()
     }
 
     def cleanup() {
         restoreSystemProperties()
     }
 
-    GaidenConfig getConfig() {
-        Holders.config
-    }
-
     BuildContext createBuildContext(List<Map> pageSourceMaps) {
         def pageSources = pageSourceMaps.collect { new PageSource(it) }
         def documentSource = new DocumentSource(pageSources: pageSources)
         new BuildContext(documentSource: documentSource)
-    }
-
-    private setupConfig() {
-        def configFile = new File("src/test/resources/config/ValidConfig.groovy")
-        assert configFile.exists()
-        Holders.config = new GaidenConfigLoader().load(configFile)
-        Holders.config.tocFilePath = tocFile.canonicalPath
     }
 
     private saveSystemProperties() {
@@ -70,9 +58,5 @@ abstract class GaidenSpec extends Specification {
         System.out = savedSystemOut
         System.err = savedSystemErr
         System.securityManager = savedSystemSecurityManager
-    }
-
-    private setupMessageSource() {
-        Holders.messageSource = new MessageSource()
     }
 }

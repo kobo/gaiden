@@ -40,13 +40,13 @@ class BuildCommand extends AbstractCommand {
     final boolean onlyGaidenProject = true
 
     @Autowired
-    private SourceCollector sourceCollector
+    SourceCollector sourceCollector
 
     @Autowired
-    private DocumentBuilder documentBuilder
+    DocumentBuilder documentBuilder
 
     @Autowired
-    private DocumentWriter documentWriter
+    DocumentWriter documentWriter
 
     /**
      * Executes building.
