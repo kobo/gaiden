@@ -49,9 +49,9 @@ class BindingBuilder {
      */
     Map<String, Object> build() {
         [
-            title: title,
-            content: content,
-            tocPath: tocPath,
+            title   : title,
+            content : content,
+            tocPath : tocPath,
             resource: resourceMethod,
             prevLink: prevLink,
             nextLink: nextLink,

@@ -27,6 +27,7 @@ import groovy.transform.TypeCheckingMode
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class GaidenMain {
 
     private GaidenApplication gaidenApplication = new GaidenApplication()

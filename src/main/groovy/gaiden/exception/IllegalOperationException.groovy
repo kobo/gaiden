@@ -16,12 +16,15 @@
 
 package gaiden.exception
 
+import groovy.transform.CompileStatic
+
 /**
  * Thrown when an operation is illegal.
  *
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class IllegalOperationException extends GaidenException {
 
     IllegalOperationException() {

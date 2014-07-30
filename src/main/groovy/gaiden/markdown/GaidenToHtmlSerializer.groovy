@@ -16,6 +16,7 @@
 
 package gaiden.markdown
 
+import groovy.transform.CompileStatic
 import org.pegdown.LinkRenderer
 import org.pegdown.Printer
 import org.pegdown.ToHtmlSerializer
@@ -27,6 +28,7 @@ import org.pegdown.ast.SuperNode
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class GaidenToHtmlSerializer extends ToHtmlSerializer {
 
     private ImageRenderer imageRenderer

@@ -16,12 +16,15 @@
 
 package gaiden
 
+import groovy.transform.CompileStatic
+
 /**
  * A document is aggregate of pages.
  *
  * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
  */
+@CompileStatic
 class Document {
     List<Page> pages
     Toc toc

@@ -16,11 +16,14 @@
 
 package gaiden
 
+import groovy.transform.CompileStatic
+
 /**
  * A node of TOC.
  *
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class TocNode {
 
     /** The path of the page source */

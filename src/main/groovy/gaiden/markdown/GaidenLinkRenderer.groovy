@@ -21,6 +21,7 @@ import gaiden.PageSource
 import gaiden.context.PageBuildContext
 import gaiden.message.MessageSource
 import gaiden.util.FileUtils
+import groovy.transform.CompileStatic
 import org.pegdown.LinkRenderer
 import org.pegdown.ast.ExpLinkNode
 import org.pegdown.ast.RefLinkNode
@@ -33,6 +34,7 @@ import static org.pegdown.FastEncoder.*
  * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
  */
+@CompileStatic
 class GaidenLinkRenderer extends LinkRenderer {
 
     private PageBuildContext context

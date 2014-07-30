@@ -61,7 +61,7 @@ class GaidenLinkRendererSpec extends GaidenSpec {
 
     def "'render' should not replace path if not found a page source"() {
         setup:
-            def context = new PageBuildContext(documentSource: new DocumentSource())
+            def context = new PageBuildContext(documentSource: new DocumentSource(pageSources: []))
             def pageSource = new PageSource(path: pageSourcePath)
             def linkRenderer = new GaidenLinkRenderer(context, pageSource, pagesDirectory, messageSource)
             createFile(pageSourcePath)

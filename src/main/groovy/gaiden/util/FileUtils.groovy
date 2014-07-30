@@ -16,12 +16,16 @@
 
 package gaiden.util
 
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
+
 /**
  * File manipulation utilities.
  *
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class FileUtils {
 
     private static final String NORMALIZED_SEPARATOR = "/"
@@ -106,7 +110,7 @@ class FileUtils {
         normalizedPath + NORMALIZED_SEPARATOR
     }
 
-    private static normalize(String path) {
+    private static String normalize(String path) {
         if (File.separator == NORMALIZED_SEPARATOR) {
             return path
         }
@@ -121,6 +125,7 @@ class FileUtils {
         baseDirectory.replaceAll("[^$NORMALIZED_SEPARATOR]+$NORMALIZED_SEPARATOR", "..$NORMALIZED_SEPARATOR") + replacedTo
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     private static String getCommonBaseDirectory(String from, String to) {
         def result = []
         def splitPathToken = { getBaseDirectory(it).split(NORMALIZED_SEPARATOR) }

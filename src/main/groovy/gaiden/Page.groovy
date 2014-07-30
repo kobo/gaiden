@@ -16,12 +16,15 @@
 
 package gaiden
 
+import groovy.transform.CompileStatic
+
 /**
  * A holder for a content and the meta information.
  *
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class Page {
 
     /** A page source */

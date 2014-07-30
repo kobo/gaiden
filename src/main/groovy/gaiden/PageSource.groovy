@@ -17,6 +17,7 @@
 package gaiden
 
 import gaiden.util.FileUtils
+import groovy.transform.CompileStatic
 
 /**
  * A holder for a content of source and the meta information.
@@ -24,6 +25,7 @@ import gaiden.util.FileUtils
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class PageSource {
 
     private static final String OUTPUT_EXTENSION = "html"

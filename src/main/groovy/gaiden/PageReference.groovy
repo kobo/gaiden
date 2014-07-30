@@ -17,12 +17,15 @@
 package gaiden
 
 import gaiden.util.FileUtils
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 
 /**
  * A reference of page.
  *
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class PageReference {
 
     /**
@@ -35,6 +38,7 @@ class PageReference {
     /** The fragment of path */
     String fragment
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     PageReference(String url) {
         (path, fragment) = url.split("#") as List
         fragment = fragment ? "#${fragment}" : ""

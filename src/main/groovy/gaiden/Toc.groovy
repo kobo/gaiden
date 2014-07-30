@@ -16,12 +16,15 @@
 
 package gaiden
 
+import groovy.transform.CompileStatic
+
 /**
  * A table of contents.
  *
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class Toc {
 
     /** A root node of TOC */
