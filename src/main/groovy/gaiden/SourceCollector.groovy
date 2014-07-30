@@ -16,10 +16,13 @@
 
 package gaiden
 
-import gaiden.util.FileUtils
+import gaiden.util.PathUtils
 import groovy.transform.CompileStatic
+import org.apache.commons.io.FilenameUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+
+import java.nio.file.Path
 
 /**
  * A source collector collects {@link PageSource} and builds {@link DocumentSource}.
@@ -47,23 +50,25 @@ class SourceCollector {
 
     private List<PageSource> collectPageSources() {
         def pageSources = []
-        gaidenConfig.pagesDirectory.eachFileRecurse { File file ->
-            if (isPageSourceFile(file)) {
-                pageSources << createPageSource(file)
+        gaidenConfig.pagesDirectory.eachFileRecurse { Path path ->
+            if (isPageSourceFile(path)) {
+                pageSources << createPageSource(path)
             }
         }
         pageSources
     }
 
-    private boolean isPageSourceFile(File file) {
-        file.name ==~ /.*\.(?:${PAGE_SOURCE_EXTENSIONS.join('|')})/
+    private static boolean isPageSourceFile(Path path) {
+        FilenameUtils.getExtension(path.toString()) in PAGE_SOURCE_EXTENSIONS
     }
 
-    private PageSource createPageSource(File file) {
+    private PageSource createPageSource(Path path) {
+        def relativePath = gaidenConfig.pagesDirectory.relativize(path)
+        def outputPath = gaidenConfig.outputDirectory.resolve(PathUtils.replaceExtension(relativePath, "html"))
         new PageSource(
-            path: FileUtils.getRelativePathForDirectoryToFile(gaidenConfig.pagesDirectory, file),
-            content: file.getText(gaidenConfig.inputEncoding),
+            path: path,
+            outputPath: outputPath,
+            intputEncoding: gaidenConfig.inputEncoding,
         )
     }
-
 }

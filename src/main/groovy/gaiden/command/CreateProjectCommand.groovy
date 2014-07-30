@@ -48,7 +48,7 @@ class CreateProjectCommand extends AbstractCommand {
             throw new GaidenException("command.create.project.name.required.error")
         }
 
-        def projectDirectory = gaidenConfig.userDirectory.resolve(arguments.first())
+        def projectDirectory = gaidenConfig.projectDirectory.resolve(arguments.first())
         if (Files.exists(projectDirectory)) {
             throw new GaidenException("command.create.project.already.exists.error", [projectDirectory])
         }

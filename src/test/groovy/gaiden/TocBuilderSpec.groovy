@@ -23,17 +23,16 @@ import java.nio.file.Path
 
 class TocBuilderSpec extends GaidenSpec {
 
-    GaidenConfig gaidenConfig
-
     TocBuilder tocBuilder
     TemplateEngine templateEngine
 
     Path tocFile
-    Path templateFile
 
     def setup() {
-        templateFile = Files.createTempFile("layout", "html")
-        this.templateFile.write '''
+        if (Files.notExists(gaidenConfig.templateFile.parent)) {
+            Files.createDirectories(gaidenConfig.templateFile.parent)
+        }
+        gaidenConfig.templateFile.write '''
             |<html>
             |<head>
             |    <title>$title</title>
@@ -44,12 +43,10 @@ class TocBuilderSpec extends GaidenSpec {
             |</html>
             '''.stripMargin()
 
-        tocFile = Files.createTempFile("Toc", "html")
-
-        gaidenConfig = new GaidenConfig()
-        gaidenConfig.templateFilePath = templateFile
-        gaidenConfig.tocOutputFilePath = "test/toc.html"
-        gaidenConfig.tocFilePath = tocFile
+        tocFile = gaidenConfig.tocFile
+        if (Files.notExists(tocFile.parent)) {
+            Files.createDirectories(tocFile.parent)
+        }
         gaidenConfig.title = "Test Title"
         gaidenConfig.tocTitle = "Test TOC Title"
 
@@ -60,11 +57,7 @@ class TocBuilderSpec extends GaidenSpec {
         tocBuilder.gaidenConfig = gaidenConfig
         tocBuilder.templateEngine = templateEngine
         tocBuilder.messageSource = messageSource
-    }
-
-    def clean() {
-        Files.delete(templateFile)
-        Files.delete(tocFile)
+        tocBuilder.pageReferenceFactory = new PageReferenceFactory(gaidenConfig: gaidenConfig)
     }
 
     def "'build' should return a toc"() {
@@ -82,7 +75,7 @@ class TocBuilderSpec extends GaidenSpec {
             Toc toc = tocBuilder.build(context)
 
         then:
-            toc.path == "test/toc.html"
+            toc.path == gaidenConfig.outputDirectory.resolve("toc.html")
             toc.content == """
             |<html>
             |<head>
@@ -122,7 +115,7 @@ class TocBuilderSpec extends GaidenSpec {
             Toc toc = tocBuilder.build(emptyContext)
 
         then:
-            toc.path == "test/toc.html"
+            toc.path == gaidenConfig.outputDirectory.resolve("toc.html")
             toc.content == """
             |<html>
             |<head>
@@ -162,7 +155,7 @@ class TocBuilderSpec extends GaidenSpec {
             Toc toc = tocBuilder.build(context)
 
         then:
-            toc.path == "test/toc.html"
+            toc.path == gaidenConfig.outputDirectory.resolve("toc.html")
             toc.content == """
             |<html>
             |<head>
@@ -198,7 +191,7 @@ class TocBuilderSpec extends GaidenSpec {
             Toc toc = tocBuilder.build(context)
 
         then:
-            toc.path == "test/toc.html"
+            toc.path == gaidenConfig.outputDirectory.resolve("toc.html")
             toc.content == """
             |<html>
             |<head>
@@ -218,7 +211,7 @@ class TocBuilderSpec extends GaidenSpec {
 
     def "'build' should return the null when the toc file does not exist"() {
         setup:
-            Files.delete(tocFile)
+            assert Files.notExists(tocFile)
 
         when:
             def toc = tocBuilder.build(emptyContext)
@@ -240,7 +233,7 @@ class TocBuilderSpec extends GaidenSpec {
             Toc toc = tocBuilder.build(emptyContext)
 
         then:
-            toc.path == "test/toc.html"
+            toc.path == gaidenConfig.outputDirectory.resolve("toc.html")
             toc.content == """
             |<html>
             |<head>
@@ -276,7 +269,7 @@ class TocBuilderSpec extends GaidenSpec {
             Toc toc = tocBuilder.build(emptyContext)
 
         then:
-            toc.path == "test/toc.html"
+            toc.path == gaidenConfig.outputDirectory.resolve("toc.html")
             toc.content == """
             |<html>
             |<head>
@@ -292,9 +285,8 @@ class TocBuilderSpec extends GaidenSpec {
             """.stripMargin()
     }
 
-    private BuildContext getEmptyContext() {
+    private static BuildContext getEmptyContext() {
         def documentSource = new DocumentSource(pageSources: [])
         new BuildContext(documentSource: documentSource)
     }
-
 }

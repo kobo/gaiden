@@ -35,6 +35,10 @@ class DocumentSource {
      * @return the page source
      */
     PageSource findPageSource(PageReference pageReference) {
-        pageSources.find { it.matches(pageReference) }
+        pageSources.find {
+            if (pageReference.path in [it.path, it.outputPath]) {
+                return true
+            }
+        }
     }
 }

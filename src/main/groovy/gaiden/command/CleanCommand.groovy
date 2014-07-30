@@ -45,7 +45,7 @@ class CleanCommand extends AbstractCommand {
     @CompileStatic(TypeCheckingMode.SKIP)
     @Override
     void execute(List<String> arguments, OptionAccessor optionAccessor) {
-        new AntBuilder().delete(dir: gaidenConfig.userDirectory.resolve(gaidenConfig.outputDirectoryPath))
+        new AntBuilder().delete(dir: gaidenConfig.projectDirectory.resolve(gaidenConfig.outputDirectoryPath))
         println messageSource.getMessage("command.clean.success.message")
     }
 }

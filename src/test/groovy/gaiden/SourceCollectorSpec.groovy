@@ -40,7 +40,9 @@ class SourceCollectorSpec extends Specification {
             documentSource.pageSources.size() == 2
 
         and:
-            documentSource.pageSources*.path as Set == ['flat-1.md', 'flat-2.md'] as Set
+            documentSource.pageSources.collect {
+                gaidenConfig.pagesDirectory.relativize(it.path).toString()
+            } as Set == ['flat-1.md', 'flat-2.md'] as Set
 
         and:
             documentSource.pageSources.collect { it.content.trim() } as Set == ['# Flat 1', '# Flat 2'] as Set
@@ -57,7 +59,9 @@ class SourceCollectorSpec extends Specification {
             documentSource.pageSources.size() == 2
 
         and:
-            documentSource.pageSources*.path as Set == ['short-extension.md', 'long-extension.markdown'] as Set
+            documentSource.pageSources.collect {
+                gaidenConfig.pagesDirectory.relativize(it.path).toString()
+            } as Set == ['short-extension.md', 'long-extension.markdown'] as Set
     }
 
     def "'collect' should return markdown files recursively"() {
@@ -71,7 +75,9 @@ class SourceCollectorSpec extends Specification {
             documentSource.pageSources.size() == 7
 
         and:
-            documentSource.pageSources*.path as Set == [
+            documentSource.pageSources.collect {
+                gaidenConfig.pagesDirectory.relativize(it.path).toString()
+            } as Set == [
                 "first-1.md", "first-2.md",
                 "second/second-1.md", "second/second-2.md", "second/second-3.md",
                 "second/third/third-1.md", "second/third/third-2.md",
@@ -93,5 +99,4 @@ class SourceCollectorSpec extends Specification {
             def pageSource = documentSource.pageSources.first()
             pageSource.content == "これはShift_JISで書かれた文章です\n"
     }
-
 }

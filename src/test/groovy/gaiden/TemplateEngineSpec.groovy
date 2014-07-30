@@ -22,10 +22,9 @@ import java.nio.file.Path
 class TemplateEngineSpec extends GaidenSpec {
 
     GaidenConfig gaidenConfig
-
     Path templateFile
-
-    TemplateEngine templateEngine = new TemplateEngine()
+    TemplateEngine templateEngine
+    PageReferenceFactory pageReferenceFactory
 
     def setup() {
         templateFile = Files.createTempFile("layout", "html")
@@ -35,6 +34,8 @@ class TemplateEngineSpec extends GaidenSpec {
 
         templateEngine = new TemplateEngine()
         templateEngine.gaidenConfig = gaidenConfig
+
+        pageReferenceFactory = new PageReferenceFactory(gaidenConfig: gaidenConfig)
     }
 
     def cleanup() {
@@ -81,7 +82,7 @@ class TemplateEngineSpec extends GaidenSpec {
             templateFile.write '${resource("' + resourcePath + '")}'
 
         and:
-            def binding = new BindingBuilder("Test Title", "toc.html").setOutputPath(outputPath).build()
+            def binding = new BindingBuilder("Test Title", gaidenConfig.outputDirectory, gaidenConfig.tocOutputFile, pageReferenceFactory).setOutputPath(gaidenConfig.outputDirectory.resolve(outputPath)).build()
 
         when:
             def content = templateEngine.make(binding)
@@ -99,7 +100,7 @@ class TemplateEngineSpec extends GaidenSpec {
     def "'make' should evaluate the 'tocPath'"() {
         setup:
             templateFile.write '${tocPath}'
-            def binding = new BindingBuilder("Test Title", "toc.html").setOutputPath(outputPath).build()
+            def binding = new BindingBuilder("Test Title", gaidenConfig.outputDirectory, gaidenConfig.tocOutputFile, pageReferenceFactory).setOutputPath(gaidenConfig.outputDirectory.resolve(outputPath)).build()
 
         expect:
             templateEngine.make(binding) == expected
@@ -109,5 +110,4 @@ class TemplateEngineSpec extends GaidenSpec {
             "ddd.html"     | "toc.html"
             "ccc/ddd.html" | "../toc.html"
     }
-
 }

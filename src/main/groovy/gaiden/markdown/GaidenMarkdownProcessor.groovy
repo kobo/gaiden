@@ -17,6 +17,7 @@
 package gaiden.markdown
 
 import gaiden.GaidenConfig
+import gaiden.PageReferenceFactory
 import gaiden.PageSource
 import gaiden.context.PageBuildContext
 import gaiden.message.MessageSource
@@ -43,6 +44,9 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
     @Autowired
     MessageSource messageSource
 
+    @Autowired
+    PageReferenceFactory pageReferenceFactory
+
     GaidenMarkdownProcessor() {
         super(Extensions.ALL - Extensions.HARDWRAPS)
     }
@@ -58,9 +62,8 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
     String markdownToHtml(PageBuildContext context, PageSource pageSource) throws ParsingTimeoutException {
         def astRoot = parseMarkdown(pageSource.content.toCharArray())
 
-        def linkRenderer = new GaidenLinkRenderer(context, pageSource, gaidenConfig.pagesDirectory, messageSource)
-        def imageRenderer = new ImageRenderer(pageSource, gaidenConfig.staticDirectory, messageSource)
+        def linkRenderer = new GaidenLinkRenderer(context, pageSource, gaidenConfig.pagesDirectory, messageSource, pageReferenceFactory)
+        def imageRenderer = new ImageRenderer(pageSource, gaidenConfig.staticDirectory, gaidenConfig.outputDirectory, messageSource)
         new GaidenToHtmlSerializer(linkRenderer, imageRenderer).toHtml(astRoot)
     }
-
 }

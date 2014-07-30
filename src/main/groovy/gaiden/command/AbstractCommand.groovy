@@ -14,8 +14,8 @@ abstract class AbstractCommand implements GaidenCommand {
     GaidenConfig gaidenConfig
 
     void execute(List<String> arguments = []) {
-        if (onlyGaidenProject && !Files.exists(gaidenConfig.gaidenConfig)) {
-            throw new GaidenException("not.gaiden.project.error", [gaidenConfig.gaidenConfig])
+        if (onlyGaidenProject && !Files.exists(gaidenConfig.gaidenConfigFile)) {
+            throw new GaidenException("not.gaiden.project.error", [gaidenConfig.gaidenConfigFile])
         }
 
         def cliBuilder = new CliBuilder()
@@ -24,7 +24,4 @@ abstract class AbstractCommand implements GaidenCommand {
     }
 
     abstract void execute(List<String> arguments, OptionAccessor optionAccessor)
-
-    void parseOptions(CliBuilder cliBuilder) {
-    }
 }

@@ -16,22 +16,16 @@
 
 package gaiden
 
-import gaiden.util.FileUtils
+import gaiden.util.PathUtils
 import groovy.io.FileType
-import spock.lang.Specification
 
-class DocumentWriterSpec extends Specification {
+import java.nio.file.Path
+import java.nio.file.Paths
 
-    def outputDirectory = new File("build/gaiden-test-doc")
-
-    GaidenConfig gaidenConfig
+class DocumentWriterSpec extends GaidenSpec {
 
     def setup() {
-        outputDirectory.deleteDir()
-
-        gaidenConfig = new GaidenConfig()
-        gaidenConfig.outputDirectoryPath = outputDirectory.path
-        gaidenConfig.staticDirectoryPath = "src/test/resources/static-files"
+        PathUtils.copyFiles(Paths.get("src/test/resources/static-files"), gaidenConfig.staticDirectory)
     }
 
     def "'write' should write a document to files"() {
@@ -41,7 +35,7 @@ class DocumentWriterSpec extends Specification {
             def page3 = createPage("sub/document3.md")
 
         and:
-            def toc = new Toc(path: "toc.html", content: "<h1>table of contents</h1>")
+            def toc = new Toc(path: gaidenConfig.tocOutputFile, content: "<h1>table of contents</h1>")
 
         and:
             def document = new Document(pages: [page1, page2, page3], toc: toc)
@@ -49,7 +43,6 @@ class DocumentWriterSpec extends Specification {
             documentWriter.gaidenConfig = gaidenConfig
 
         and:
-            def saved = System.out
             def printStream = Mock(PrintStream)
             System.out = printStream
 
@@ -57,7 +50,7 @@ class DocumentWriterSpec extends Specification {
             documentWriter.write(document)
 
         then:
-            getFiles(outputDirectory) == [
+            getFiles(gaidenConfig.outputDirectory) == [
                 "document1.html",
                 "document2.html",
                 "sub/document3.html",
@@ -68,24 +61,21 @@ class DocumentWriterSpec extends Specification {
             ] as Set
 
         and:
-            new File("build/gaiden-test-doc/document1.html").text == page1.content
-            new File("build/gaiden-test-doc/document2.html").text == page2.content
-            new File("build/gaiden-test-doc/sub/document3.html").text == page3.content
+            gaidenConfig.outputDirectory.resolve("document1.html").text == page1.content
+            gaidenConfig.outputDirectory.resolve("document2.html").text == page2.content
+            gaidenConfig.outputDirectory.resolve("sub/document3.html").text == page3.content
 
         and:
-            new File("build/gaiden-test-doc/toc.html").text == toc.content
+            gaidenConfig.outputDirectory.resolve("toc.html").text == toc.content
 
         and:
-            1 * printStream.println("Built document at ${outputDirectory.canonicalPath}")
-
-        cleanup:
-            System.out = saved
+            1 * printStream.println("Built document at ${gaidenConfig.outputDirectory}")
     }
 
     def "'write' should overwrite when file already exists"() {
         setup:
             def page = createPage("document1.md")
-            def toc = new Toc(path: "toc.html", content: "<h1>table of contents</h1>")
+            def toc = new Toc(path: gaidenConfig.tocOutputFile, content: "<h1>table of contents</h1>")
             def document = new Document(pages: [page], toc: toc)
 
         and:
@@ -97,8 +87,8 @@ class DocumentWriterSpec extends Specification {
             documentWriter.write(document)
 
         then:
-            new File("build/gaiden-test-doc/document1.html").text == page.content
-            new File("build/gaiden-test-doc/toc.html").text == toc.content
+            gaidenConfig.outputDirectory.resolve("document1.html").text == page.content
+            gaidenConfig.outputDirectory.resolve("toc.html").text == toc.content
     }
 
     def "'write' should write a specified encoding"() {
@@ -106,7 +96,7 @@ class DocumentWriterSpec extends Specification {
             def page = createPage("document.md", "これはShift_JISのドキュメントです。")
 
         and:
-            def toc = new Toc(path: "toc.html", content: "<h1>これはShift_JISのTOCです</h1>")
+            def toc = new Toc(path: gaidenConfig.tocOutputFile, content: "<h1>これはShift_JISのTOCです</h1>")
 
         and:
             def document = new Document(pages: [page], toc: toc)
@@ -118,7 +108,7 @@ class DocumentWriterSpec extends Specification {
             documentWriter.write(document)
 
         then:
-            getFiles(outputDirectory) == [
+            getFiles(gaidenConfig.outputDirectory) == [
                 "document.html",
                 "images/dummy.png",
                 "css/main.css",
@@ -127,10 +117,8 @@ class DocumentWriterSpec extends Specification {
             ] as Set
 
         and:
-            new File("build/gaiden-test-doc/document.html").getText("Shift_JIS") == page.content
-
-        and:
-            new File("build/gaiden-test-doc/toc.html").getText("Shift_JIS") == toc.content
+            gaidenConfig.outputDirectory.resolve("document.html").getText("Shift_JIS") == page.content
+            gaidenConfig.outputDirectory.resolve("toc.html").getText("Shift_JIS") == toc.content
     }
 
     def "'write' should not write anything if toc file doesn't exist"() {
@@ -143,7 +131,7 @@ class DocumentWriterSpec extends Specification {
             documentWriter.write(document)
 
         then:
-            getFiles(outputDirectory) == [
+            getFiles(gaidenConfig.outputDirectory) == [
                 "images/dummy.png",
                 "css/main.css",
                 "js/test.js",
@@ -151,16 +139,15 @@ class DocumentWriterSpec extends Specification {
     }
 
     private Page createPage(String path, String content = null) {
-        def source = new PageSource(path: path)
+        def source = createPageSource(path)
         new Page(source: source, content: content ?: "<title>Document</title><p>${source.outputPath} content</p>")
     }
 
-    private Set getFiles(File directory) {
+    private Set getFiles(Path directory) {
         def files = []
-        directory.eachFileRecurse(FileType.FILES) {
-            files << FileUtils.getRelativePathForDirectoryToFile(directory, it)
+        directory.eachFileRecurse(FileType.FILES) { Path file ->
+            files << directory.relativize(file).toString()
         }
-        files
+        files as Set
     }
-
 }

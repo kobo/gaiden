@@ -61,7 +61,7 @@ class GaidenMain {
     }
 
     @CompileStatic(TypeCheckingMode.SKIP)
-    private String getCommandName(String[] args, OptionAccessor options) {
+    private static String getCommandName(String[] args, OptionAccessor options) {
         if (options.v) {
             return "version"
         } else if (args) {

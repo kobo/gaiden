@@ -38,7 +38,7 @@ class CreateProjectCommandSpec extends Specification {
 
         gaidenConfig = gaidenApplication.applicationContext.getBean(GaidenConfig)
         gaidenConfig.appHomePath = "src/dist"
-        gaidenConfig.userDirectoryPath = outputDirectory.canonicalPath
+        gaidenConfig.projectDirectoryPath = outputDirectory.canonicalPath
 
         newProjectName = "newProject"
         newProjectDirectory = new File(outputDirectory, newProjectName)
@@ -81,7 +81,7 @@ class CreateProjectCommandSpec extends Specification {
             e.code == "command.create.project.name.required.error"
     }
 
-    private Set collectFilePathRecurse(File directory) {
+    private static Set collectFilePathRecurse(File directory) {
         def fileset = []
         directory.eachFileRecurse {
             fileset << it.path.replaceFirst(directory.path, "")

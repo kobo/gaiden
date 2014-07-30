@@ -18,16 +18,15 @@ package gaiden
 
 import gaiden.context.BuildContext
 import gaiden.context.PageBuildContext
-import spock.lang.Specification
 
-class DocumentBuilderSpec extends Specification {
+class DocumentBuilderSpec extends GaidenSpec {
 
     def "'build' should builds document"() {
         setup:
             def documentSource = new DocumentSource()
             documentSource.pageSources = [
-                new PageSource(path: "source1.md", content: "# markdown1"),
-                new PageSource(path: "source2.md", content: "# markdown2"),
+                createPageSource("source1.md"),
+                createPageSource("source2.md"),
             ]
             def context = new BuildContext(documentSource: documentSource)
 
@@ -50,5 +49,4 @@ class DocumentBuilderSpec extends Specification {
         and:
             document
     }
-
 }

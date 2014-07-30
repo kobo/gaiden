@@ -20,18 +20,17 @@ import gaiden.context.PageBuildContext
 import gaiden.markdown.GaidenMarkdownProcessor
 
 import java.nio.file.Files
-import java.nio.file.Path
 
 class PageBuilderSpec extends GaidenSpec {
 
-    Path templateFile
-
-    GaidenConfig gaidenConfig
     TemplateEngine templateEngine
     GaidenMarkdownProcessor gaidenMarkdownProcessor
 
     def setup() {
-        templateFile = Files.createTempFile("layout", "html")
+        def templateFile = gaidenConfig.templateFile
+        if (Files.notExists(templateFile.parent)) {
+            Files.createDirectories(templateFile.parent)
+        }
         templateFile << '''
             |<html>
             |<head>
@@ -43,8 +42,6 @@ class PageBuilderSpec extends GaidenSpec {
             |</html>
             '''.stripMargin()
 
-        gaidenConfig = new GaidenConfig()
-        gaidenConfig.templateFilePath = templateFile
         gaidenConfig.title = "Test Title"
 
         templateEngine = new TemplateEngine()
@@ -55,13 +52,9 @@ class PageBuilderSpec extends GaidenSpec {
         gaidenMarkdownProcessor.messageSource = messageSource
     }
 
-    def cleanup() {
-        Files.delete(templateFile)
-    }
-
     def "'build' should build a page"() {
         setup:
-            def pageSource = new PageSource(path: "test.md", content: "# Test")
+            def pageSource = createPageSource("test.md", "# Test")
             def documentSource = new DocumentSource(pageSources: [pageSource])
             def context = new PageBuildContext(documentSource: documentSource, toc: new Toc(tocNodes: []))
 
@@ -73,7 +66,7 @@ class PageBuilderSpec extends GaidenSpec {
             def page = pageBuilder.build(context, pageSource)
 
         then:
-            page.path == "test.html"
+            page.path == gaidenConfig.outputDirectory.resolve("test.html")
             page.content == '''
             |<html>
             |<head>
@@ -85,5 +78,4 @@ class PageBuilderSpec extends GaidenSpec {
             |</html>
             '''.stripMargin()
     }
-
 }

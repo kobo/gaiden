@@ -76,50 +76,54 @@ class GaidenConfig {
     String appHomePath = System.properties["app.home"] as String
 
     /** The path of user directory */
-    String userDirectoryPath = System.properties["user.dir"] as String
+    String projectDirectoryPath = System.properties["user.dir"] as String
 
-    /** Returns the {@link #templateFilePath} as {@link File} */
-    File getTemplateFile() {
-        new File(templateFilePath)
+    /** Returns the {@link #templateFilePath} as {@link Path} */
+    Path getTemplateFile() {
+        projectDirectory.resolve(templateFilePath)
     }
 
-    /** Returns the {@link #tocFilePath} as {@link File} */
-    File getTocFile() {
-        new File(tocFilePath)
+    /** Returns the {@link #tocFilePath} as {@link Path} */
+    Path getTocFile() {
+        projectDirectory.resolve(tocFilePath)
     }
 
-    /** Returns the {@link #pagesDirectoryPath} as {@link File} */
-    File getPagesDirectory() {
-        new File(pagesDirectoryPath)
+    /** Returns the {@link #pagesDirectoryPath} as {@link Path} */
+    Path getPagesDirectory() {
+        projectDirectory.resolve(pagesDirectoryPath)
     }
 
-    /** Returns the {@link #staticDirectoryPath} as {@link File} */
-    File getStaticDirectory() {
-        new File(staticDirectoryPath)
+    /** Returns the {@link #staticDirectoryPath} as {@link Path} */
+    Path getStaticDirectory() {
+        projectDirectory.resolve(staticDirectoryPath)
     }
 
-    /** Returns the {@link #outputDirectoryPath} as {@link File} */
-    File getOutputDirectory() {
-        new File(outputDirectoryPath)
+    /** Returns the {@link #outputDirectoryPath} as {@link Path} */
+    Path getOutputDirectory() {
+        projectDirectory.resolve(outputDirectoryPath)
     }
 
     /** Returns the application home directory as {@link Path} */
-    Path getAppHome() {
+    Path getAppHomeDirectory() {
         Paths.get(appHomePath)
     }
 
     /** Returns the user directory as {@link Path} */
-    Path getUserDirectory() {
-        Paths.get(userDirectoryPath)
+    Path getProjectDirectory() {
+        Paths.get(projectDirectoryPath)
     }
 
     /** Returns the default template directory as {@link Path} */
     Path getDefaultTemplateDirectory() {
-        appHome.resolve("template")
+        appHomeDirectory.resolve("template")
     }
 
-    Path getGaidenConfig() {
-        userDirectory.resolve(CONFIG_PATH)
+    Path getTocOutputFile() {
+        outputDirectory.resolve(tocOutputFilePath)
+    }
+
+    Path getGaidenConfigFile() {
+        projectDirectory.resolve(CONFIG_PATH)
     }
 
     @PostConstruct

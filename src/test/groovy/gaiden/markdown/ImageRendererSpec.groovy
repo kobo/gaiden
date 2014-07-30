@@ -17,7 +17,8 @@
 package gaiden.markdown
 
 import gaiden.GaidenSpec
-import gaiden.PageSource
+
+import java.nio.file.Files
 
 class ImageRendererSpec extends GaidenSpec {
 
@@ -33,8 +34,41 @@ class ImageRendererSpec extends GaidenSpec {
 
     def "'render' should return a rendering object which has replaced image path"() {
         setup:
-            def pageSource = new PageSource(path: pageSourcePath)
-            def renderer = new ImageRenderer(pageSource, new File("non-existent-static"), messageSource)
+            def pageSource = createPageSource(pageSourcePath)
+            def renderer = new ImageRenderer(pageSource, gaidenConfig.staticDirectory, gaidenConfig.outputDirectory, messageSource)
+
+        and:
+            createStaticResources("test.png", "img/test.png", "path/test.png")
+
+        and:
+            def printStream = Mock(PrintStream)
+            System.err = printStream
+
+        when:
+            def rendering = renderer.render(imagePath, "TEST_ALT")
+
+        then:
+            rendering.src == renderingSrc
+            rendering.alt == "TEST_ALT"
+
+        where:
+            pageSourcePath | imagePath          | renderingSrc
+            "test.md"      | "/img/test.png"    | "img/test.png"
+            "test.md"      | "/test.png"        | "test.png"
+            "path/test.md" | "/img/test.png"    | "../img/test.png"
+            "path/test.md" | "/test.png"        | "../test.png"
+            "path/test.md" | "/path/test.png"   | "test.png"
+            "test.md"      | "img/test.png"     | "img/test.png"
+            "test.md"      | "test.png"         | "test.png"
+            "path/test.md" | "../img/test.png"  | "../img/test.png"
+            "path/test.md" | "../test.png"      | "../test.png"
+            "path/test.md" | "../path/test.png" | "test.png"
+    }
+
+    def "'render' should output a warning message when an image file is not found"() {
+        setup:
+            def pageSource = createPageSource(pageSourcePath)
+            def renderer = new ImageRenderer(pageSource, gaidenConfig.staticDirectory, gaidenConfig.outputDirectory, messageSource)
 
         and:
             def printStream = Mock(PrintStream)
@@ -51,55 +85,16 @@ class ImageRendererSpec extends GaidenSpec {
             1 * printStream.println("WARNING: '${imagePath}' in the '${pageSource.path}' refers to non-existent file")
 
         where:
-            pageSourcePath | imagePath        | renderingSrc
-            "test.md"      | "/img/test.png"  | "img/test.png"
-            "test.md"      | "/test.png"      | "test.png"
-            "path/test.md" | "/img/test.png"  | "../img/test.png"
-            "path/test.md" | "/test.png"      | "../test.png"
-            "path/test.md" | "/path/test.png" | "test.png"
-    }
-
-    def "'render' should not replace an image path if doesn't start with a slash"() {
-        setup:
-            def renderer = new ImageRenderer(new PageSource(path: "test.md"), new File("test/resources/static-files"), messageSource)
-
-        when:
-            def rendering = renderer.render("img/test.png", "TEST_ALT")
-
-        then:
-            rendering.src == "img/test.png"
-            rendering.alt == "TEST_ALT"
-    }
-
-    def "'render' should not output a warning message when a image file exists"() {
-        setup:
-            def renderer = new ImageRenderer(new PageSource(path: pageSourcePath), new File("src/test/resources/static-files"), messageSource)
-
-        and:
-            def printStream = Mock(PrintStream)
-            System.err = printStream
-
-        when:
-            def rendering = renderer.render(imagePath, "TEST_ALT")
-
-        then:
-            rendering.src == renderingSrc
-            rendering.alt == "TEST_ALT"
-
-        and:
-            0 * printStream.println(_)
-
-        where:
             pageSourcePath | imagePath             | renderingSrc
-            "test.md"      | "/images/dummy.png"   | "images/dummy.png"
+            "test.md"      | "/images/dummy.png"   | "/images/dummy.png"
             "test.md"      | "images/dummy.png"    | "images/dummy.png"
-            "path/test.md" | "/images/dummy.png"   | "../images/dummy.png"
+            "path/test.md" | "/images/dummy.png"   | "/images/dummy.png"
             "path/test.md" | "../images/dummy.png" | "../images/dummy.png"
     }
 
-    def "'render' should not output a warning message when a image path is URL"() {
+    def "'render' should not output a warning message when an image path is URL"() {
         setup:
-            def renderer = new ImageRenderer(new PageSource(path: "test.md"), new File("src/test/resources/static-files"), messageSource)
+            def renderer = new ImageRenderer(createPageSource("test.md"), gaidenConfig.staticDirectory, gaidenConfig.outputDirectory, messageSource)
 
         and:
             def printStream = Mock(PrintStream)
@@ -122,5 +117,15 @@ class ImageRendererSpec extends GaidenSpec {
                 "ftp://www.example.com/test.png",
                 "file:///path/to/test.png",
             ]
+    }
+
+    private void createStaticResources(String... paths) {
+        paths.each { String path ->
+            def file = gaidenConfig.staticDirectory.resolve(path)
+            if (Files.notExists(file.parent)) {
+                Files.createDirectories(file.parent)
+            }
+            Files.createFile(file)
+        }
     }
 }

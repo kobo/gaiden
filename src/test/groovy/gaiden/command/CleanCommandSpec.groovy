@@ -35,10 +35,10 @@ class CleanCommandSpec extends Specification {
         gaidenConfig = gaidenApplication.applicationContext.getBean(GaidenConfig)
 
         gaidenProjectDirectory = Files.createTempDirectory("project-dir")
-        gaidenConfig.userDirectoryPath = gaidenProjectDirectory.toString()
-        Files.createFile(gaidenConfig.gaidenConfig)
+        gaidenConfig.projectDirectoryPath = gaidenProjectDirectory.toString()
+        Files.createFile(gaidenConfig.gaidenConfigFile)
 
-        assert Files.exists(gaidenConfig.gaidenConfig)
+        assert Files.exists(gaidenConfig.gaidenConfigFile)
 
         command = gaidenApplication.applicationContext.getBean(CleanCommand)
     }
@@ -49,7 +49,7 @@ class CleanCommandSpec extends Specification {
 
     def "'execute' should clean the build directory"() {
         given:
-            def buildDirectory = gaidenConfig.userDirectory.resolve(gaidenConfig.outputDirectoryPath)
+            def buildDirectory = gaidenConfig.projectDirectory.resolve(gaidenConfig.outputDirectoryPath)
             Files.createDirectory(buildDirectory)
             assert Files.exists(buildDirectory)
 

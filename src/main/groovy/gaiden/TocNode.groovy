@@ -18,6 +18,8 @@ package gaiden
 
 import groovy.transform.CompileStatic
 
+import java.nio.file.Path
+
 /**
  * A node of TOC.
  *
@@ -27,7 +29,7 @@ import groovy.transform.CompileStatic
 class TocNode {
 
     /** The path of the page source */
-    String path
+    Path path
     /** The title of the page */
     String title
 
@@ -44,12 +46,5 @@ class TocNode {
     /** The {@code List} of TOC nodes children */
     List<TocNode> children
 
-    /**
-     * Returns The page reference of the path.
-     *
-     * @return The page reference
-     */
-    PageReference getPageReference() {
-        new PageReference(path)
-    }
+    PageReference pageReference
 }

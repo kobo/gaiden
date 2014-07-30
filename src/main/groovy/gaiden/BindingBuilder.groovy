@@ -17,29 +17,41 @@
 package gaiden
 
 import gaiden.context.PageBuildContext
-import gaiden.util.FileUtils
+import groovy.transform.CompileStatic
+
+import java.nio.file.Path
+import java.nio.file.Paths
+
+import static org.apache.commons.lang3.StringEscapeUtils.*
 
 /**
  * Builder for binding to be passed to a template engine.
  *
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class BindingBuilder {
 
     private static final String EMPTY_STRING = ""
 
     private String title
-    private String tocOutputFilePath
+    private Path tocOutputFilePath
+
+    private Path outputDirectory
 
     private String content
-    private String sourcePath
-    private String outputPath
+    private Path sourcePath
+    private Path outputPath
 
     private PageBuildContext pageBuildContext
 
-    BindingBuilder(String title, String tocOutputFilePath) {
+    private PageReferenceFactory pageReferenceFactory
+
+    BindingBuilder(String title, Path outputDirectory, Path tocOutputFilePath, PageReferenceFactory pageReferenceFactory) {
         this.title = title
+        this.outputDirectory = outputDirectory
         this.tocOutputFilePath = tocOutputFilePath
+        this.pageReferenceFactory = pageReferenceFactory
     }
 
     /**
@@ -53,8 +65,8 @@ class BindingBuilder {
             content : content,
             tocPath : tocPath,
             resource: resourceMethod,
-            prevLink: prevLink,
-            nextLink: nextLink,
+            prevPage: prevPage,
+            nextPage: nextPage,
         ]
     }
 
@@ -69,7 +81,7 @@ class BindingBuilder {
     /**
      * Sets the output path.
      */
-    BindingBuilder setOutputPath(String outputPath) {
+    BindingBuilder setOutputPath(Path outputPath) {
         this.outputPath = outputPath
         this
     }
@@ -77,7 +89,7 @@ class BindingBuilder {
     /**
      * Sets the page path.
      */
-    BindingBuilder setSourcePath(String sourcePath) {
+    BindingBuilder setSourcePath(Path sourcePath) {
         this.sourcePath = sourcePath
         this
     }
@@ -90,63 +102,81 @@ class BindingBuilder {
         this
     }
 
-    private String getPrevLink() {
+    private Map getPrevPage() {
         if (!sourcePath || !pageBuildContext) {
-            return EMPTY_STRING
+            return [
+                path : EMPTY_STRING,
+                title: EMPTY_STRING,
+            ]
         }
 
-        def previousTocNode = pageBuildContext.toc.findTocNode(new PageReference(sourcePath))?.previous
+        def previousTocNode = pageBuildContext.toc.findTocNode(sourcePath)?.previous
         if (!previousTocNode) {
-            return EMPTY_STRING
+            return [
+                path : EMPTY_STRING,
+                title: EMPTY_STRING,
+            ]
         }
 
         if (!previousTocNode.pageSource) {
-            return "<< $previousTocNode.title".encodeAsHtml()
+            return [
+                path : EMPTY_STRING,
+                title: escapeHtml4(previousTocNode.title),
+            ]
         }
 
-        def relativePath = FileUtils.getRelativePathForFileToFile(outputPath, previousTocNode.pageSource.outputPath)
-
-        def sb = new StringBuilder()
-        sb << "<a href='${relativePath + previousTocNode.pageReference.fragment}' class='prev'>"
-        sb << "<< $previousTocNode.title".encodeAsHtml()
-        sb << "</a>"
-        return sb.toString()
+        def relativePath = outputPath.parent.relativize(previousTocNode.pageSource.outputPath)
+        return [
+            path : relativePath.toString() + previousTocNode.pageReference.hash,
+            title: escapeHtml4(previousTocNode.title)
+        ]
     }
 
-    private String getNextLink() {
+    private Map getNextPage() {
         if (!sourcePath || !pageBuildContext) {
-            return EMPTY_STRING
+            return [
+                path : EMPTY_STRING,
+                title: EMPTY_STRING,
+            ]
         }
 
-        def nextTocNode = pageBuildContext.toc.findTocNode(new PageReference(sourcePath))?.next
+        def nextTocNode = pageBuildContext.toc.findTocNode(sourcePath)?.next
         if (!nextTocNode) {
-            return EMPTY_STRING
+            return [
+                path : EMPTY_STRING,
+                title: EMPTY_STRING,
+            ]
         }
 
         if (!nextTocNode.pageSource) {
-            return "$nextTocNode.title >>".encodeAsHtml()
+            return [
+                path : EMPTY_STRING,
+                title: escapeHtml4(nextTocNode.title),
+            ]
         }
 
-        def relativePath = FileUtils.getRelativePathForFileToFile(outputPath, nextTocNode.pageSource.outputPath)
-
-        def sb = new StringBuilder()
-        sb << "<a href='${relativePath + nextTocNode.pageReference.fragment}' class='next'>"
-        sb << "$nextTocNode.title >>".encodeAsHtml()
-        sb << "</a>"
-        return sb.toString()
+        def relativePath = outputPath.parent.relativize(nextTocNode.pageSource.outputPath)
+        return [
+            path : relativePath.toString() + nextTocNode.pageReference.hash,
+            title: escapeHtml4(nextTocNode.title)
+        ]
     }
 
     private Closure getResourceMethod() {
         return { String resourceFilePath ->
-            if (!resourceFilePath.startsWith("/")) {
+            def resourceFile = Paths.get(resourceFilePath)
+            if (!resourceFile.absolute) {
                 return resourceFilePath
             }
-            FileUtils.getRelativePathForFileToFile(outputPath, resourceFilePath)
+
+            def src = outputDirectory.resolve(outputPath)
+            def dest = outputDirectory.resolve(resourceFile.toString().substring(1))
+
+            return src.parent.relativize(dest).toString()
         }
     }
 
     private String getTocPath() {
-        FileUtils.getRelativePathForFileToFile(outputPath, tocOutputFilePath)
+        outputPath.parent.relativize(tocOutputFilePath).toString()
     }
-
 }

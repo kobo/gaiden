@@ -18,8 +18,7 @@ package gaiden.markdown
 
 import gaiden.DocumentSource
 import gaiden.GaidenSpec
-import gaiden.PageSource
-import gaiden.SourceCollector
+import gaiden.PageReferenceFactory
 import gaiden.context.PageBuildContext
 
 class GaidenLinkRendererSpec extends GaidenSpec {
@@ -27,13 +26,14 @@ class GaidenLinkRendererSpec extends GaidenSpec {
     def "'render' should return a rendering object which has replaced link url"() {
         setup:
             def documentSource = new DocumentSource(pageSources: [
-                new PageSource(path: "first.md"),
-                new PageSource(path: "path/second.md"),
+                createPageSource("first.md"),
+                createPageSource("path/second.md")
             ])
             createFiles("first.md", "path/second.md", pageSourcePath)
             def context = new PageBuildContext(documentSource: documentSource)
-            def pageSource = new PageSource(path: pageSourcePath)
-            def linkRenderer = new GaidenLinkRenderer(context, pageSource, pagesDirectory, messageSource)
+            def pageSource = createPageSource(pageSourcePath)
+            def pageReferenceFactory = new PageReferenceFactory(gaidenConfig: gaidenConfig)
+            def linkRenderer = new GaidenLinkRenderer(context, pageSource, gaidenConfig.pagesDirectory, messageSource, pageReferenceFactory)
 
         when:
             def rendering = linkRenderer.render(path, "Test Title", "Test Text")
@@ -62,8 +62,9 @@ class GaidenLinkRendererSpec extends GaidenSpec {
     def "'render' should not replace path if not found a page source"() {
         setup:
             def context = new PageBuildContext(documentSource: new DocumentSource(pageSources: []))
-            def pageSource = new PageSource(path: pageSourcePath)
-            def linkRenderer = new GaidenLinkRenderer(context, pageSource, pagesDirectory, messageSource)
+            def pageSource = createPageSource(pageSourcePath)
+            def pageReferenceFactory = new PageReferenceFactory(gaidenConfig: gaidenConfig)
+            def linkRenderer = new GaidenLinkRenderer(context, pageSource, gaidenConfig.pagesDirectory, messageSource, pageReferenceFactory)
             createFile(pageSourcePath)
 
         and:
@@ -78,7 +79,7 @@ class GaidenLinkRendererSpec extends GaidenSpec {
             rendering.text == "Test Text"
 
         and:
-            (1..SourceCollector.PAGE_SOURCE_EXTENSIONS.size()) * printStream.println("WARNING: '$path' in $pageSourcePath refers to non-existent page")
+            1 * printStream.println("WARNING: '${path}' in ${pageSource.path.toString()} refers to non-existent page")
 
         where:
             pageSourcePath | path
@@ -100,9 +101,10 @@ class GaidenLinkRendererSpec extends GaidenSpec {
 
     def "'render' should not output a warning message when a path is not Markdown"() {
         setup:
-            def context = new PageBuildContext(documentSource: new DocumentSource())
-            def pageSource = new PageSource(path: "test.md")
-            def linkRenderer = new GaidenLinkRenderer(context, pageSource, pagesDirectory, messageSource)
+            def context = new PageBuildContext(documentSource: new DocumentSource(pageSources: []))
+            def pageSource = createPageSource("test.md")
+            def pageReferenceFactory = new PageReferenceFactory(gaidenConfig: gaidenConfig)
+            def linkRenderer = new GaidenLinkRenderer(context, pageSource, gaidenConfig.pagesDirectory, messageSource, pageReferenceFactory)
 
         and:
             def printStream = Mock(PrintStream)
@@ -137,9 +139,10 @@ class GaidenLinkRendererSpec extends GaidenSpec {
 
     def "'render' should not output a warning message when a path is URL"() {
         setup:
-            def context = new PageBuildContext(documentSource: new DocumentSource())
-            def pageSource = new PageSource(path: "test.md")
-            def linkRenderer = new GaidenLinkRenderer(context, pageSource, pagesDirectory, messageSource)
+            def context = new PageBuildContext(documentSource: new DocumentSource(pageSources: []))
+            def pageSource = createPageSource("test.md")
+            def pageReferenceFactory = new PageReferenceFactory(gaidenConfig: gaidenConfig)
+            def linkRenderer = new GaidenLinkRenderer(context, pageSource, gaidenConfig.pagesDirectory, messageSource, pageReferenceFactory)
 
         and:
             def printStream = Mock(PrintStream)

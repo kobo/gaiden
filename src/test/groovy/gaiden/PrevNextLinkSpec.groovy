@@ -24,29 +24,30 @@ import java.nio.file.Path
 
 class PrevNextLinkSpec extends GaidenSpec {
 
-    GaidenConfig gaidenConfig
-
     Path tocFile
     Path prevLinkTemplateFile
     Path nextLinkTemplateFile
 
-    def prevLinkTemplateEngine
-    def nextLinkTemplateEngine
+    TemplateEngine prevLinkTemplateEngine
+    TemplateEngine nextLinkTemplateEngine
 
     def setup() {
-        tocFile = Files.createTempFile("toc", "groovy")
+        tocFile = gaidenConfig.tocFile
+        if (Files.notExists(tocFile.parent)) {
+            Files.createDirectories(tocFile.parent)
+        }
 
         prevLinkTemplateEngine = new TemplateEngine()
         prevLinkTemplateFile = Files.createTempFile("prevLinkTemplate", "html")
-        prevLinkTemplateFile << '$prevLink'
+        prevLinkTemplateFile << '<a href=\'${prevPage.path}\'>${prevPage.title}</a>'
 
         prevLinkTemplateEngine.gaidenConfig = new GaidenConfig()
         prevLinkTemplateEngine.gaidenConfig.templateFilePath = prevLinkTemplateFile
-        prevLinkTemplateEngine.gaidenConfig.tocFilePath = tocFile
+        prevLinkTemplateEngine.gaidenConfig.tocFilePath = gaidenConfig
 
         nextLinkTemplateEngine = new TemplateEngine()
         nextLinkTemplateFile = Files.createTempFile("nextLinkTemplate", "html")
-        nextLinkTemplateFile << '$nextLink'
+        nextLinkTemplateFile << '<a href=\'${nextPage.path}\'>${nextPage.title}</a>'
 
         nextLinkTemplateEngine.gaidenConfig = new GaidenConfig()
         nextLinkTemplateEngine.gaidenConfig.templateFilePath = nextLinkTemplateFile
@@ -70,13 +71,13 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == ""
+            firstContent == "<a href=''></a>"
 
         when:
             def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == "<a href='first.html' class='prev'>&lt;&lt; first title</a>"
+            secondContent == "<a href='first.html'>first title</a>"
     }
 
     def "make a previous link with a TOC which file an extension is not specified"() {
@@ -90,13 +91,13 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == ""
+            firstContent == "<a href=''></a>"
 
         when:
             def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == "<a href='first.html' class='prev'>&lt;&lt; first title</a>"
+            secondContent == "<a href='first.html'>first title</a>"
     }
 
     def "make a previous link with a TOC which an output file path is specified"() {
@@ -110,13 +111,13 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == ""
+            firstContent == "<a href=''></a>"
 
         when:
             def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == "<a href='first.html' class='prev'>&lt;&lt; first title</a>"
+            secondContent == "<a href='first.html'>first title</a>"
     }
 
     def "make a previous link with TOC which a missing file is specified"() {
@@ -130,13 +131,13 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == ""
+            firstContent == "<a href=''></a>"
 
         when:
             def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == "&lt;&lt; first title"
+            secondContent == "<a href=''>first title</a>"
     }
 
     def "make a previous link with TOC which a fragment is specified"() {
@@ -150,13 +151,13 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == ""
+            firstContent == "<a href=''></a>"
 
         when:
             def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == "<a href='first.html#fragment' class='prev'>&lt;&lt; first title</a>"
+            secondContent == "<a href='first.html#fragment'>first title</a>"
     }
 
     def "make a previous link with TOC which a nested pages is specified"() {
@@ -171,13 +172,13 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == ""
+            firstContent == "<a href=''></a>"
 
         when:
             def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == "<a href='first.html' class='prev'>&lt;&lt; first title</a>"
+            secondContent == "<a href='first.html'>first title</a>"
     }
 
     def "make a next link"() {
@@ -191,13 +192,13 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == "<a href='second.html' class='next'>second title &gt;&gt;</a>"
+            firstContent == "<a href='second.html'>second title</a>"
 
         when:
             def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == ""
+            secondContent == "<a href=''></a>"
     }
 
     def "make a next link with a TOC which file an extension is not specified"() {
@@ -211,13 +212,13 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == "<a href='second.html' class='next'>second title &gt;&gt;</a>"
+            firstContent == "<a href='second.html'>second title</a>"
 
         when:
             def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == ""
+            secondContent == "<a href=''></a>"
     }
 
     def "make a next link with a TOC which an output file path is specified"() {
@@ -231,13 +232,13 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == "<a href='second.html' class='next'>second title &gt;&gt;</a>"
+            firstContent == "<a href='second.html'>second title</a>"
 
         when:
             def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == ""
+            secondContent == "<a href=''></a>"
     }
 
     def "make a next link with TOC which a missing file is specified"() {
@@ -251,13 +252,13 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == "second title &gt;&gt;"
+            firstContent == "<a href=''>second title</a>"
 
         when:
             def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == ""
+            secondContent == "<a href=''></a>"
     }
 
     def "make a next link with TOC which a fragment is specified"() {
@@ -271,13 +272,13 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == "<a href='second.html#fragment' class='next'>second title &gt;&gt;</a>"
+            firstContent == "<a href='second.html#fragment'>second title</a>"
 
         when:
             def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == ""
+            secondContent == "<a href=''></a>"
     }
 
     def "make a next link with TOC which a nested pages is specified"() {
@@ -292,33 +293,34 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = nextLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == "<a href='second.html' class='next'>second title &gt;&gt;</a>"
+            firstContent == "<a href='second.html'>second title</a>"
 
         when:
             def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == ""
+            secondContent == "<a href=''></a>"
     }
 
     private Map<String, Object> bindingOf(String sourcePath) {
         def context = createBuildContext([[path: "first.md"], [path: "second.md"]])
+        def pageReferenceFactory = new PageReferenceFactory(gaidenConfig: gaidenConfig)
 
         def tocBuilder = new TocBuilder()
         tocBuilder.templateEngine = prevLinkTemplateEngine
-        tocBuilder.gaidenConfig = prevLinkTemplateEngine.gaidenConfig
+        tocBuilder.gaidenConfig = gaidenConfig
         tocBuilder.messageSource = messageSource
+        tocBuilder.pageReferenceFactory = pageReferenceFactory
         def toc = tocBuilder.build(context)
 
         def pageBuildContext = new PageBuildContext()
         pageBuildContext.toc = toc
         pageBuildContext.documentSource = context.documentSource
 
-        new BindingBuilder("Test title", "toc.html")
-            .setSourcePath(sourcePath)
+        new BindingBuilder("Test title", gaidenConfig.outputDirectory, gaidenConfig.tocOutputFile, pageReferenceFactory)
+            .setSourcePath(gaidenConfig.pagesDirectory.resolve(sourcePath))
             .setPageBuildContext(pageBuildContext)
-            .setOutputPath(FileUtils.replaceExtension(sourcePath, "html"))
+            .setOutputPath(gaidenConfig.outputDirectory.resolve(FileUtils.removeExtension(sourcePath) + ".html"))
             .build()
     }
-
 }

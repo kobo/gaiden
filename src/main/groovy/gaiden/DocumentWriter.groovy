@@ -16,11 +16,13 @@
 
 package gaiden
 
+import gaiden.util.PathUtils
 import groovy.transform.CompileStatic
-import org.apache.commons.io.FileUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  * A document writer writes a {@link Document} to files.
@@ -41,8 +43,8 @@ class DocumentWriter {
      * @param document the document to be written
      */
     void write(Document document) {
-        if (!gaidenConfig.outputDirectory.exists()) {
-            assert gaidenConfig.outputDirectory.mkdirs()
+        if (Files.notExists(gaidenConfig.outputDirectory)) {
+            Files.createDirectories(gaidenConfig.outputDirectory)
         }
 
         writePages(document.pages)
@@ -50,7 +52,7 @@ class DocumentWriter {
 
         copyStaticFiles()
 
-        println "Built document at ${gaidenConfig.outputDirectory.canonicalPath}"
+        println "Built document at ${gaidenConfig.outputDirectory.toAbsolutePath()}"
     }
 
     private void writePages(List<Page> pages) {
@@ -66,16 +68,14 @@ class DocumentWriter {
         writeToFile(toc.path, toc.content)
     }
 
-    private void writeToFile(String path, String content) {
-        def file = new File(gaidenConfig.outputDirectory, path as String)
-        if (!file.parentFile.exists()) {
-            assert file.parentFile.mkdirs()
+    private void writeToFile(Path path, String content) {
+        if (Files.notExists(path.parent)) {
+            Files.createDirectories(path.parent)
         }
-        file.write(content, gaidenConfig.outputEncoding)
+        Files.write(path, content.getBytes(gaidenConfig.outputEncoding))
     }
 
     private void copyStaticFiles() {
-        FileUtils.copyDirectory(gaidenConfig.staticDirectory, gaidenConfig.outputDirectory)
+        PathUtils.copyFiles(gaidenConfig.staticDirectory, gaidenConfig.outputDirectory)
     }
-
 }
