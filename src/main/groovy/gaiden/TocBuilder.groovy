@@ -69,9 +69,9 @@ class TocBuilder {
         def tocNode = toTocNodes(context, tocSourceNode.children())
         def tocContent = buildContent(context, tocNode)
 
-        def binding = new BindingBuilder(gaidenConfig.title, gaidenConfig.outputDirectory, gaidenConfig.tocOutputFile, pageReferenceFactory)
+        def binding = new BindingBuilder(gaidenConfig, pageReferenceFactory)
             .setContent(tocContent)
-            .setOutputPath(gaidenConfig.tocOutputFile)
+            .setPageSource(new PageSource(path: gaidenConfig.tocFile, outputPath: gaidenConfig.tocOutputFile, intputEncoding: gaidenConfig.inputEncoding))
             .build()
 
         def content = templateEngine.make(binding)

@@ -16,30 +16,27 @@
 
 package gaiden
 
+import gaiden.context.PageBuildContext
+
 import java.nio.file.Files
 import java.nio.file.Path
 
 class TemplateEngineSpec extends GaidenSpec {
 
-    GaidenConfig gaidenConfig
     Path templateFile
     TemplateEngine templateEngine
     PageReferenceFactory pageReferenceFactory
 
     def setup() {
-        templateFile = Files.createTempFile("layout", "html")
-
-        gaidenConfig = new GaidenConfig()
-        gaidenConfig.templateFilePath = templateFile
+        if (Files.notExists(gaidenConfig.templateFile.parent)) {
+            Files.createDirectories(gaidenConfig.templateFile.parent)
+        }
+        templateFile = gaidenConfig.templateFile
 
         templateEngine = new TemplateEngine()
         templateEngine.gaidenConfig = gaidenConfig
 
         pageReferenceFactory = new PageReferenceFactory(gaidenConfig: gaidenConfig)
-    }
-
-    def cleanup() {
-        Files.delete(templateFile)
     }
 
     def "'make' should make a page with a template"() {
@@ -82,7 +79,10 @@ class TemplateEngineSpec extends GaidenSpec {
             templateFile.write '${resource("' + resourcePath + '")}'
 
         and:
-            def binding = new BindingBuilder("Test Title", gaidenConfig.outputDirectory, gaidenConfig.tocOutputFile, pageReferenceFactory).setOutputPath(gaidenConfig.outputDirectory.resolve(outputPath)).build()
+            def binding = new BindingBuilder(gaidenConfig, pageReferenceFactory)
+                .setPageSource(createPageSource(pageSource))
+                .setPageBuildContext(new PageBuildContext(toc: new Toc(tocNodes: [])))
+                .build()
 
         when:
             def content = templateEngine.make(binding)
@@ -91,23 +91,25 @@ class TemplateEngineSpec extends GaidenSpec {
             content == expected
 
         where:
-            resourcePath   | outputPath     | expected
-            "/aaa/bbb.txt" | "ccc/ddd.html" | "../aaa/bbb.txt"
-            "aaa/bbb.txt"  | "ccc/ddd.html" | "aaa/bbb.txt"
-            ""             | "ccc/ddd.html" | ""
+            resourcePath   | pageSource   | expected
+            "/aaa/bbb.txt" | "ccc/ddd.md" | "../aaa/bbb.txt"
+            "aaa/bbb.txt"  | "ccc/ddd.md" | "aaa/bbb.txt"
     }
 
     def "'make' should evaluate the 'tocPath'"() {
         setup:
             templateFile.write '${tocPath}'
-            def binding = new BindingBuilder("Test Title", gaidenConfig.outputDirectory, gaidenConfig.tocOutputFile, pageReferenceFactory).setOutputPath(gaidenConfig.outputDirectory.resolve(outputPath)).build()
+            def binding = new BindingBuilder(gaidenConfig, pageReferenceFactory)
+                .setPageSource(createPageSource(pageSource))
+                .setPageBuildContext(new PageBuildContext(toc: new Toc(tocNodes: [])))
+                .build()
 
         expect:
             templateEngine.make(binding) == expected
 
         where:
-            outputPath     | expected
-            "ddd.html"     | "toc.html"
-            "ccc/ddd.html" | "../toc.html"
+            pageSource   | expected
+            "ddd.md"     | "toc.html"
+            "ccc/ddd.md" | "../toc.html"
     }
 }

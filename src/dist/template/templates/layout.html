@@ -3,50 +3,53 @@
     <meta charset="UTF-8">
     <title>$title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="${resource('/css/bootstrap.css')}">
+    <link rel="stylesheet" href="${resource('/css/bootstrap.min.css')}">
+    <link rel="stylesheet" href="${resource('/css/font-awesome.min.css')}">
     <link rel="stylesheet" href="${resource('/css/prettify.css')}">
     <link rel="stylesheet" href="${resource('/css/style.css')}">
   </head>
   <body>
-    <div class="navbar navbar-static-top">
-      <div class="container">
-        <a class="navbar-brand" href="$tocPath">$title</a>
-        <a class="toc btn btn-primary btn-lg" href="$tocPath"><span class="glyphicon glyphicon-list"></span></a>
-      </div>
+    <div class="wrapper">
+      <% if (toc) { %>
+        <div class="header">
+          <i class="fa fa-bars toc-toggle"></i>
+          <span class="title"><a href="$tocPath">$title</a></span>
+        </div>
+        <div class="toc">
+          $toc
+        </div>
+        <div class="content content-toc-visible">
+          <div class="content-nav">
+            <% if (prevPage) { %>
+            <a class="prev-page" href="${prevPage.path}"><i class="fa fa-angle-left"></i>${prevPage.title}</a>
+            <% } %>
+            <% if (nextPage) { %>
+            <a class="next-page" href="${nextPage.path}">${nextPage.title}<i class="fa fa-angle-right"></i></a>
+            <% } %>
+          </div>
+          <div class="main-content">
+            $content
+          </div>
+          <div class="footer footer-toc-visible">
+            <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a>.</p>
+          </div>
+        </div>
+      <% } else { %>
+        <div class="header">
+            <span class="title"><a href="$tocPath">$title</a></span>
+        </div>
+        <div class="content">
+          <div class="main-content">
+            $content
+          </div>
+          <div class="footer">
+            <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a>.</p>
+          </div>
+        </div>
+      <% } %>
     </div>
-    <div class="container">
-      <nav class="page-nav">
-        <ul class="nav">
-          <li class="prev">
-            <a href="${prevPage.path}">${prevPage.title}</a>
-          </li>
-          <li class="next">
-            <a href="${nextPage.path}">${nextPage.title}</a>
-          </li>
-        </ul>
-      </nav>
-      <section class="page-content">
-        $content
-      </section>
-      <nav class="page-nav">
-        <ul class="nav">
-          <li class="prev">
-            <a href="${prevPage.path}">${prevPage.title}</a>
-          </li>
-          <li class="next">
-            <a href="${nextPage.path}">${nextPage.title}</a>
-          </li>
-        </ul>
-      </nav>
-    </div>
-    <footer id="footer" class="footer">
-      <div class="container">
-        <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a>.</p>
-      </div>
-    </footer>
 
-    <script src="${resource('/js/jquery-1.10.2.min.js')}"></script>
-    <script src="${resource('/js/bootstrap.js')}"></script>
+    <script src="${resource('/js/jquery-2.1.1.min.js')}"></script>
     <script src="${resource('/js/prettify.js')}"></script>
     <script src="${resource('/js/application.js')}"></script>
   </body>

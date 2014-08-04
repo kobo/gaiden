@@ -17,7 +17,6 @@
 package gaiden
 
 import gaiden.context.PageBuildContext
-import gaiden.util.FileUtils
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -39,7 +38,7 @@ class PrevNextLinkSpec extends GaidenSpec {
 
         prevLinkTemplateEngine = new TemplateEngine()
         prevLinkTemplateFile = Files.createTempFile("prevLinkTemplate", "html")
-        prevLinkTemplateFile << '<a href=\'${prevPage.path}\'>${prevPage.title}</a>'
+        prevLinkTemplateFile << '<% if (prevPage) { %><a href=\'${prevPage.path}\'>${prevPage.title}</a><% } %>'
 
         prevLinkTemplateEngine.gaidenConfig = new GaidenConfig()
         prevLinkTemplateEngine.gaidenConfig.templateFilePath = prevLinkTemplateFile
@@ -47,7 +46,7 @@ class PrevNextLinkSpec extends GaidenSpec {
 
         nextLinkTemplateEngine = new TemplateEngine()
         nextLinkTemplateFile = Files.createTempFile("nextLinkTemplate", "html")
-        nextLinkTemplateFile << '<a href=\'${nextPage.path}\'>${nextPage.title}</a>'
+        nextLinkTemplateFile << '<% if (nextPage) { %><a href=\'${nextPage.path}\'>${nextPage.title}</a><% } %>'
 
         nextLinkTemplateEngine.gaidenConfig = new GaidenConfig()
         nextLinkTemplateEngine.gaidenConfig.templateFilePath = nextLinkTemplateFile
@@ -71,7 +70,7 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == "<a href=''></a>"
+            !firstContent
 
         when:
             def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
@@ -91,7 +90,7 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == "<a href=''></a>"
+            !firstContent
 
         when:
             def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
@@ -111,7 +110,7 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == "<a href=''></a>"
+            !firstContent
 
         when:
             def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
@@ -131,7 +130,7 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == "<a href=''></a>"
+            !firstContent
 
         when:
             def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
@@ -151,7 +150,7 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == "<a href=''></a>"
+            !firstContent
 
         when:
             def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
@@ -172,7 +171,7 @@ class PrevNextLinkSpec extends GaidenSpec {
             def firstContent = prevLinkTemplateEngine.make(bindingOf("first.md"))
 
         then:
-            firstContent == "<a href=''></a>"
+            !firstContent
 
         when:
             def secondContent = prevLinkTemplateEngine.make(bindingOf("second.md"))
@@ -198,7 +197,7 @@ class PrevNextLinkSpec extends GaidenSpec {
             def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == "<a href=''></a>"
+            !secondContent
     }
 
     def "make a next link with a TOC which file an extension is not specified"() {
@@ -218,7 +217,7 @@ class PrevNextLinkSpec extends GaidenSpec {
             def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == "<a href=''></a>"
+            !secondContent
     }
 
     def "make a next link with a TOC which an output file path is specified"() {
@@ -238,7 +237,7 @@ class PrevNextLinkSpec extends GaidenSpec {
             def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == "<a href=''></a>"
+            !secondContent
     }
 
     def "make a next link with TOC which a missing file is specified"() {
@@ -258,7 +257,7 @@ class PrevNextLinkSpec extends GaidenSpec {
             def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == "<a href=''></a>"
+            !secondContent
     }
 
     def "make a next link with TOC which a fragment is specified"() {
@@ -278,7 +277,7 @@ class PrevNextLinkSpec extends GaidenSpec {
             def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == "<a href=''></a>"
+            !secondContent
     }
 
     def "make a next link with TOC which a nested pages is specified"() {
@@ -299,10 +298,10 @@ class PrevNextLinkSpec extends GaidenSpec {
             def secondContent = nextLinkTemplateEngine.make(bindingOf("second.md"))
 
         then:
-            secondContent == "<a href=''></a>"
+            !secondContent
     }
 
-    private Map<String, Object> bindingOf(String sourcePath) {
+    private Map<String, Object> bindingOf(String filename) {
         def context = createBuildContext([[path: "first.md"], [path: "second.md"]])
         def pageReferenceFactory = new PageReferenceFactory(gaidenConfig: gaidenConfig)
 
@@ -317,10 +316,9 @@ class PrevNextLinkSpec extends GaidenSpec {
         pageBuildContext.toc = toc
         pageBuildContext.documentSource = context.documentSource
 
-        new BindingBuilder("Test title", gaidenConfig.outputDirectory, gaidenConfig.tocOutputFile, pageReferenceFactory)
-            .setSourcePath(gaidenConfig.pagesDirectory.resolve(sourcePath))
+        new BindingBuilder(gaidenConfig, pageReferenceFactory)
+            .setPageSource(context.documentSource.pageSources.find { it.path.fileName.toString() == filename })
             .setPageBuildContext(pageBuildContext)
-            .setOutputPath(gaidenConfig.outputDirectory.resolve(FileUtils.removeExtension(sourcePath) + ".html"))
             .build()
     }
 }

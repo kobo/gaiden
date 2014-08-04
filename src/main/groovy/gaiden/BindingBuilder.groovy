@@ -18,8 +18,9 @@ package gaiden
 
 import gaiden.context.PageBuildContext
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
+import groovy.xml.MarkupBuilder
 
-import java.nio.file.Path
 import java.nio.file.Paths
 
 import static org.apache.commons.lang3.StringEscapeUtils.*
@@ -34,23 +35,15 @@ class BindingBuilder {
 
     private static final String EMPTY_STRING = ""
 
-    private String title
-    private Path tocOutputFilePath
-
-    private Path outputDirectory
-
-    private String content
-    private Path sourcePath
-    private Path outputPath
-
-    private PageBuildContext pageBuildContext
-
+    private GaidenConfig gaidenConfig
     private PageReferenceFactory pageReferenceFactory
 
-    BindingBuilder(String title, Path outputDirectory, Path tocOutputFilePath, PageReferenceFactory pageReferenceFactory) {
-        this.title = title
-        this.outputDirectory = outputDirectory
-        this.tocOutputFilePath = tocOutputFilePath
+    private String content
+    private PageSource pageSource
+    private PageBuildContext pageBuildContext
+
+    BindingBuilder(GaidenConfig gaidenConfig, PageReferenceFactory pageReferenceFactory) {
+        this.gaidenConfig = gaidenConfig
         this.pageReferenceFactory = pageReferenceFactory
     }
 
@@ -61,12 +54,13 @@ class BindingBuilder {
      */
     Map<String, Object> build() {
         [
-            title   : title,
+            title   : escapeHtml4(gaidenConfig.title),
             content : content,
             tocPath : tocPath,
             resource: resourceMethod,
             prevPage: prevPage,
             nextPage: nextPage,
+            toc     : toc,
         ]
     }
 
@@ -78,19 +72,8 @@ class BindingBuilder {
         this
     }
 
-    /**
-     * Sets the output path.
-     */
-    BindingBuilder setOutputPath(Path outputPath) {
-        this.outputPath = outputPath
-        this
-    }
-
-    /**
-     * Sets the page path.
-     */
-    BindingBuilder setSourcePath(Path sourcePath) {
-        this.sourcePath = sourcePath
+    BindingBuilder setPageSource(PageSource pageSource) {
+        this.pageSource = pageSource
         this
     }
 
@@ -103,19 +86,13 @@ class BindingBuilder {
     }
 
     private Map getPrevPage() {
-        if (!sourcePath || !pageBuildContext) {
-            return [
-                path : EMPTY_STRING,
-                title: EMPTY_STRING,
-            ]
+        if (!pageSource.path || !pageBuildContext) {
+            return Collections.emptyMap()
         }
 
-        def previousTocNode = pageBuildContext.toc.findTocNode(sourcePath)?.previous
+        def previousTocNode = pageBuildContext.toc.findTocNode(pageSource.path)?.previous
         if (!previousTocNode) {
-            return [
-                path : EMPTY_STRING,
-                title: EMPTY_STRING,
-            ]
+            return Collections.emptyMap()
         }
 
         if (!previousTocNode.pageSource) {
@@ -125,7 +102,7 @@ class BindingBuilder {
             ]
         }
 
-        def relativePath = outputPath.parent.relativize(previousTocNode.pageSource.outputPath)
+        def relativePath = pageSource.outputPath.parent.relativize(previousTocNode.pageSource.outputPath)
         return [
             path : relativePath.toString() + previousTocNode.pageReference.hash,
             title: escapeHtml4(previousTocNode.title)
@@ -133,19 +110,13 @@ class BindingBuilder {
     }
 
     private Map getNextPage() {
-        if (!sourcePath || !pageBuildContext) {
-            return [
-                path : EMPTY_STRING,
-                title: EMPTY_STRING,
-            ]
+        if (!pageSource.path || !pageBuildContext) {
+            return Collections.emptyMap()
         }
 
-        def nextTocNode = pageBuildContext.toc.findTocNode(sourcePath)?.next
+        def nextTocNode = pageBuildContext.toc.findTocNode(pageSource.path)?.next
         if (!nextTocNode) {
-            return [
-                path : EMPTY_STRING,
-                title: EMPTY_STRING,
-            ]
+            return Collections.emptyMap()
         }
 
         if (!nextTocNode.pageSource) {
@@ -155,7 +126,7 @@ class BindingBuilder {
             ]
         }
 
-        def relativePath = outputPath.parent.relativize(nextTocNode.pageSource.outputPath)
+        def relativePath = pageSource.outputPath.parent.relativize(nextTocNode.pageSource.outputPath)
         return [
             path : relativePath.toString() + nextTocNode.pageReference.hash,
             title: escapeHtml4(nextTocNode.title)
@@ -169,14 +140,71 @@ class BindingBuilder {
                 return resourceFilePath
             }
 
-            def src = outputDirectory.resolve(outputPath)
-            def dest = outputDirectory.resolve(resourceFile.toString().substring(1))
+            def src = gaidenConfig.outputDirectory.resolve(pageSource.outputPath)
+            def dest = gaidenConfig.outputDirectory.resolve(resourceFile.toString().substring(1))
 
             return src.parent.relativize(dest).toString()
         }
     }
 
     private String getTocPath() {
-        outputPath.parent.relativize(tocOutputFilePath).toString()
+        pageSource.outputPath.parent.relativize(gaidenConfig.tocOutputFile).toString()
+    }
+
+    private String getToc() {
+        if (!pageBuildContext) {
+            return EMPTY_STRING
+        }
+        buildTocContent()
+    }
+
+    @CompileStatic(TypeCheckingMode.SKIP)
+    private String buildTocContent() {
+        def writer = new StringWriter()
+        def printer = new IndentPrinter(writer, " " * 4)
+        def builder = new MarkupBuilder(printer)
+
+        builder.doubleQuotes = true // surrounds an attribute with double quotes
+
+        buildTocNodes(builder, pageBuildContext.toc.tocNodes.findAll { !it.parent })
+
+        writer.toString()
+    }
+
+    private String resolveOutputPath(PageReference pageReference) {
+        def destPageSource = pageBuildContext.documentSource.findPageSource(pageReference)
+        if (!destPageSource) {
+            return null
+        }
+        return pageSource.outputPath.parent.relativize(destPageSource.outputPath).toString() + pageReference.hash
+    }
+
+    @CompileStatic(TypeCheckingMode.SKIP)
+    private void buildTocNodes(MarkupBuilder builder, List<TocNode> tocNodes) {
+        if (!tocNodes) {
+            return
+        }
+
+        builder.ul {
+            tocNodes.each { TocNode tocNode ->
+                if (tocNode.path.startsWith("#")) {
+                    li(tocNode.title) {
+                        buildTocNodes(builder, tocNode.children)
+                    }
+                } else {
+                    def outputPath = resolveOutputPath(tocNode.pageReference)
+                    if (outputPath) {
+                        li("class": pageSource == tocNode.pageSource ? "current" : "") {
+                            a(href: outputPath, tocNode.title)
+                            buildTocNodes(builder, tocNode.children)
+                        }
+                    } else {
+                        li(tocNode.title) {
+                            buildTocNodes(builder, tocNode.children)
+                        }
+                    }
+                }
+            }
+        }
     }
 }

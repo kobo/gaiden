@@ -61,11 +61,10 @@ class PageBuilder {
     private String buildPage(PageBuildContext context, PageSource pageSource) {
         def content = markdownProcessor.markdownToHtml(context, pageSource)
 
-        def binding = new BindingBuilder(gaidenConfig.title, gaidenConfig.outputDirectory, gaidenConfig.tocOutputFile, pageReferenceFactory)
+        def binding = new BindingBuilder(gaidenConfig, pageReferenceFactory)
             .setContent(content)
             .setPageBuildContext(context)
-            .setOutputPath(pageSource.outputPath)
-            .setSourcePath(pageSource.path)
+            .setPageSource(pageSource)
             .build()
 
         templateEngine.make(binding)

@@ -16,9 +16,8 @@
 
 package gaiden.markdown
 
+import org.pegdown.LinkRenderer
 import org.pegdown.Printer
-import org.pegdown.ast.ExpImageNode
-import org.pegdown.ast.TextNode
 import spock.lang.Specification
 
 class GaidenToHtmlSerializerSpec extends Specification {
@@ -36,11 +35,10 @@ class GaidenToHtmlSerializerSpec extends Specification {
             def printer = new Printer()
 
         and:
-            def expImageNode = new ExpImageNode("", url, new TextNode(alt))
             def serializer = new GaidenToHtmlSerializer(null, imageRenderer, printer)
 
         when:
-            serializer.printImageTag(expImageNode, url)
+            serializer.printImageTag(new LinkRenderer.Rendering(url, alt))
 
         then:
             printer.sb.toString() == '<img src="TEST_URL" alt="TEST_ALT"/>'
