@@ -53,8 +53,21 @@ class PageBuilderSpec extends GaidenSpec {
     }
 
     def "'build' should build a page"() {
-        setup:
-            def pageSource = createPageSource("test.md", "# Test")
+        given:
+            def pageSource = createPageSource("test.md", '''
+            |Header1
+            |=======
+            |
+            |Header2
+            |-------
+            |
+            |# Header3
+            |## Header4
+            |### Header5
+            |#### Header6
+            |##### Header7
+            |###### Header8
+            '''.stripMargin())
             def documentSource = new DocumentSource(pageSources: [pageSource])
             def context = new PageBuildContext(documentSource: documentSource, toc: new Toc(tocNodes: []))
 
@@ -73,9 +86,10 @@ class PageBuilderSpec extends GaidenSpec {
             |    <title>Test Title</title>
             |</head>
             |<body>
-            |<h1>Test</h1>
+            |<h1>Header1</h1><h2>Header2</h2><h1>Header3</h1><h2>Header4</h2><h3>Header5</h3><h4>Header6</h4><h5>Header7</h5><h6>Header8</h6>
             |</body>
             |</html>
             '''.stripMargin()
+            page.headers.size() == 8
     }
 }

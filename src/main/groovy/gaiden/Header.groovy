@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors
+ * Copyright 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,30 +18,8 @@ package gaiden
 
 import groovy.transform.CompileStatic
 
-import java.nio.file.Path
-
-/**
- * A holder for a content and the meta information.
- *
- * @author Hideki IGARASHI
- * @author Kazuki YAMAMOTO
- */
 @CompileStatic
-class Page {
-
-    /** A page source */
-    PageSource source
-
-    /** Headers of content */
-    List<Header> headers
-
-    /** A output content */
-    String content
-
-    /**
-     * Returns a relative path from the output directory.
-     */
-    Path getPath() {
-        source.outputPath
-    }
+class Header {
+    String title
+    int level
 }

@@ -52,21 +52,22 @@ class PageBuilder {
      * @return {@link Page}'s instance
      */
     Page build(PageBuildContext context, PageSource pageSource) {
-        new Page(
-            source: pageSource,
-            content: buildPage(context, pageSource),
-        )
+        buildPage(context, pageSource)
     }
 
-    private String buildPage(PageBuildContext context, PageSource pageSource) {
-        def content = markdownProcessor.markdownToHtml(context, pageSource)
+    private Page buildPage(PageBuildContext context, PageSource pageSource) {
+        def rootNode = markdownProcessor.parseMarkdown(pageSource)
+
+        def headers = markdownProcessor.getHeaders(rootNode)
+        def content = markdownProcessor.convertToHtml(rootNode, context, pageSource)
 
         def binding = new BindingBuilder(gaidenConfig, pageReferenceFactory)
             .setContent(content)
             .setPageBuildContext(context)
             .setPageSource(pageSource)
             .build()
+        def pageContent = templateEngine.make(binding)
 
-        templateEngine.make(binding)
+        new Page(source: pageSource, headers: headers, content: pageContent)
     }
 }

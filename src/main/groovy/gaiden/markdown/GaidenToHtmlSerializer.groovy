@@ -20,6 +20,7 @@ import groovy.transform.CompileStatic
 import org.pegdown.LinkRenderer
 import org.pegdown.Printer
 import org.pegdown.ToHtmlSerializer
+import org.pegdown.ast.HeaderNode
 
 /**
  * A Serializer for rendering nodes to HTML.
@@ -40,6 +41,11 @@ class GaidenToHtmlSerializer extends ToHtmlSerializer {
     GaidenToHtmlSerializer(LinkRenderer linkRenderer, ImageRenderer imageRenderer, Printer printer) {
         this(linkRenderer, imageRenderer)
         this.printer = printer
+    }
+
+    @Override
+    void visit(HeaderNode node) {
+        super.visit(node)
     }
 
     @Override
