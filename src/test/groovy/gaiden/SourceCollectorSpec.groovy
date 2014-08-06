@@ -99,4 +99,21 @@ class SourceCollectorSpec extends Specification {
             def pageSource = documentSource.pageSources.first()
             pageSource.content == "これはShift_JISで書かれた文章です\n"
     }
+
+    def "'collect' should skip project directories"() {
+        setup:
+            gaidenConfig.projectDirectoryPath = "src/test/resources/skip-directory-pages"
+            gaidenConfig.staticDirectoryPath = "assets"
+
+        when:
+            def documentSource = collector.collect()
+
+        then:
+            documentSource.pageSources.size() == 2
+
+        and:
+            documentSource.pageSources.collect {
+                gaidenConfig.pagesDirectory.relativize(it.path).toString()
+            } as Set == ["file1.md", "subdir/file2.md"] as Set
+    }
 }

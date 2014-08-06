@@ -50,7 +50,7 @@ class SourceCollector {
 
     private List<PageSource> collectPageSources() {
         def pageSources = []
-        gaidenConfig.pagesDirectory.eachFileRecurse { Path path ->
+        PathUtils.eachFileRecurse(gaidenConfig.pagesDirectory, [gaidenConfig.staticDirectory, gaidenConfig.outputDirectory, gaidenConfig.templateFile.parent]) { Path path ->
             if (isPageSourceFile(path)) {
                 pageSources << createPageSource(path)
             }

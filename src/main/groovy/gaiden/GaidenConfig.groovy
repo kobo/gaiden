@@ -58,7 +58,7 @@ class GaidenConfig {
     String tocOutputFilePath = "toc.html"
 
     /** The path of page source files directory */
-    String pagesDirectoryPath = "pages"
+    String pagesDirectoryPath = ""
 
     /** The path of static files directory */
     String staticDirectoryPath = "static"

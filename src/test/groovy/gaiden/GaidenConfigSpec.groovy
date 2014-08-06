@@ -55,7 +55,7 @@ class GaidenConfigSpec extends Specification {
                 templateFilePath == "templates/layout.html"
                 tocFilePath == "pages/toc.groovy"
                 tocOutputFilePath == "toc.html"
-                pagesDirectoryPath == "pages"
+                pagesDirectoryPath == ""
                 staticDirectoryPath == "static"
                 outputDirectoryPath == "build"
                 inputEncoding == "UTF-8"
