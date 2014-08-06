@@ -17,7 +17,17 @@
 package gaiden
 
 import gaiden.context.BuildContext
+import gaiden.message.MessageSource
+import gaiden.util.PathUtils
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import groovy.xml.MarkupBuilder
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * A builder of TOC.
@@ -25,29 +35,25 @@ import groovy.xml.MarkupBuilder
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@Component
+@CompileStatic
 class TocBuilder {
 
     private static final String WHITESPACE = " "
 
-    private TemplateEngine templateEngine
-    private File tocFile
-    private String tocOutputFilePath
-    private String tocTitle
-    private String inputEncoding
+    @Autowired
+    TemplateEngine templateEngine
+
+    @Autowired
+    GaidenConfig gaidenConfig
+
+    @Autowired
+    MessageSource messageSource
+
+    @Autowired
+    PageReferenceFactory pageReferenceFactory
 
     private List<TocNode> tocNodes = []
-
-    TocBuilder(TemplateEngine templateEngine,
-               File tocFile = Holders.config.tocFile,
-               String tocOutputFilePath = Holders.config.tocOutputFilePath,
-               String tocTitle = Holders.config.tocTitle,
-               String inputEncoding = Holders.config.inputEncoding) {
-        this.templateEngine = templateEngine
-        this.tocFile = tocFile
-        this.tocOutputFilePath = tocOutputFilePath
-        this.tocTitle = tocTitle
-        this.inputEncoding = inputEncoding
-    }
 
     /**
      * Builds a TOC from a TOC file.
@@ -55,7 +61,7 @@ class TocBuilder {
      * @return {@link Toc}'s instance
      */
     Toc build(BuildContext context) {
-        if (!tocFile.exists()) {
+        if (Files.notExists(gaidenConfig.tocFile)) {
             return null
         }
 
@@ -63,20 +69,22 @@ class TocBuilder {
         def tocNode = toTocNodes(context, tocSourceNode.children())
         def tocContent = buildContent(context, tocNode)
 
-        def binding = new BindingBuilder()
+        def binding = new BindingBuilder(gaidenConfig, pageReferenceFactory)
             .setContent(tocContent)
-            .setOutputPath(tocOutputFilePath)
+            .setPageSource(new PageSource(path: gaidenConfig.tocFile, outputPath: gaidenConfig.tocOutputFile, intputEncoding: gaidenConfig.inputEncoding))
             .build()
 
         def content = templateEngine.make(binding)
-        new Toc(path: tocOutputFilePath, content: content, tocNodes: tocNodes)
+        new Toc(path: gaidenConfig.tocOutputFile, content: content, tocNodes: tocNodes)
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     private Node parseTocFile() {
         def tocBuilder = new NodeBuilder()
-        tocBuilder.toc(new GroovyShell().evaluate("{ -> ${tocFile.getText(inputEncoding)} }"))
+        tocBuilder.toc(new GroovyShell().evaluate("{ -> ${gaidenConfig.tocFile.getText(gaidenConfig.inputEncoding)} }"))
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     private void buildContentOfToc(BuildContext context, MarkupBuilder builder, List<TocNode> tocNodes) {
         if (!tocNodes) {
             return
@@ -105,6 +113,7 @@ class TocBuilder {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     private String buildContent(BuildContext context, List<TocNode> tocNodes) {
         def writer = new StringWriter()
         def printer = new IndentPrinter(writer, WHITESPACE * 4)
@@ -112,33 +121,33 @@ class TocBuilder {
 
         builder.doubleQuotes = true // surrounds an attribute with double quotes
 
-        builder.h1(tocTitle)
+        builder.h1(gaidenConfig.tocTitle)
 
         buildContentOfToc(context, builder, tocNodes)
 
         writer.toString()
     }
 
-    private static String resolveOutputPath(BuildContext context, String path) {
-        def pageReference = new PageReference(path)
-        if (pageReference.extension != null && pageReference.extension != "md") {
-            return path
-        }
-
+    private String resolveOutputPath(BuildContext context, Path path) {
+        def pageReference = pageReferenceFactory.get(path)
         def pageSource = context.documentSource.findPageSource(pageReference)
         if (!pageSource) {
-            System.err.println("WARNING: " + Holders.getMessage("toc.page.reference.not.exists.message", [path]))
-            return null
+            if (!PathUtils.getExtension(pageReference.path) || PathUtils.getExtension(pageReference.path) in SourceCollector.PAGE_SOURCE_EXTENSIONS) {
+                System.err.println("WARNING: " + messageSource.getMessage("toc.page.reference.not.exists.message", [path]))
+                return null
+            }
+            return path.toString()
         }
-        return pageSource.outputPath + pageReference.fragment
+        return gaidenConfig.tocOutputFile.parent.relativize(pageSource.outputPath).toString() + pageReference.hash
     }
 
     private List<TocNode> toTocNodes(BuildContext context, List<Node> nodes) {
         nodes.collect { Node node ->
             def tocNode = new TocNode()
-            tocNode.path = node.name()
+            tocNode.path = Paths.get(node.name() as String)
             tocNode.title = node.attributes().title
-            tocNode.pageSource = context.documentSource.findPageSource(new PageReference(tocNode.path))
+            tocNode.pageReference = pageReferenceFactory.get(tocNode.path)
+            tocNode.pageSource = context.documentSource.findPageSource(tocNode.pageReference)
 
             if (!tocNodes.empty) {
                 def previous = tocNodes.last()

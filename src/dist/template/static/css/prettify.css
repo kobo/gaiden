@@ -1,131 +1,142 @@
-/*
- * Derived from einaros's Sons of Obsidian theme at
- * http://studiostyl.es/schemes/son-of-obsidian by
- * Alex Ford of CodeTunnel:
- * http://CodeTunnel.com/blog/post/71/google-code-prettify-obsidian-theme
- */
-
-.str
-{
-    color: #EC7600;
-}
-.kwd
-{
-    color: #93C763;
-}
-.com
-{
-    color: #66747B;
-}
-.typ
-{
-    color: #678CB1;
-}
-.lit
-{
-    color: #FACD22;
-}
-.pun
-{
-    color: #F1F2F3;
-}
-.pln
-{
-    color: #F1F2F3;
-}
-.tag
-{
-    color: #8AC763;
-}
-.atn
-{
-    color: #E0E2E4;
-}
-.atv
-{
-    color: #EC7600;
-}
-.dec
-{
-    color: purple;
-}
-pre.prettyprint
-{
-    border: 0px solid #888;
-}
-ol.linenums
-{
-    margin-top: 0;
-    margin-bottom: 0;
-}
+/* GitHub Theme */
 .prettyprint {
-    background: #000;
+    background: white;
+    font-family: Menlo, 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', Monaco, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    border: 1px solid #ccc;
+    padding: 10px;
 }
-li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9
-{
-    color: #555;
-    list-style-type: decimal;
+
+.pln {
+    color: #333333;
 }
-li.L1, li.L3, li.L5, li.L7, li.L9 {
-    background: #111;
-}
-@media print
-{
-    .str
-    {
-        color: #060;
+
+@media screen {
+    .str {
+        color: #dd1144;
     }
-    .kwd
-    {
+
+    .kwd {
+        color: #333333;
+    }
+
+    .com {
+        color: #999988;
+    }
+
+    .typ {
+        color: #445588;
+    }
+
+    .lit {
+        color: #445588;
+    }
+
+    .pun {
+        color: #333333;
+    }
+
+    .opn {
+        color: #333333;
+    }
+
+    .clo {
+        color: #333333;
+    }
+
+    .tag {
+        color: navy;
+    }
+
+    .atn {
+        color: teal;
+    }
+
+    .atv {
+        color: #dd1144;
+    }
+
+    .dec {
+        color: #333333;
+    }
+
+    .var {
+        color: teal;
+    }
+
+    .fun {
+        color: #990000;
+    }
+}
+
+@media print, projection {
+    .str {
+        color: #006600;
+    }
+
+    .kwd {
         color: #006;
         font-weight: bold;
     }
-    .com
-    {
+
+    .com {
         color: #600;
         font-style: italic;
     }
-    .typ
-    {
+
+    .typ {
         color: #404;
         font-weight: bold;
     }
-    .lit
-    {
-        color: #044;
+
+    .lit {
+        color: #004444;
     }
-    .pun
-    {
-        color: #440;
+
+    .pun, .opn, .clo {
+        color: #444400;
     }
-    .pln
-    {
-        color: #000;
-    }
-    .tag
-    {
+
+    .tag {
         color: #006;
         font-weight: bold;
     }
-    .atn
-    {
-        color: #404;
+
+    .atn {
+        color: #440044;
     }
-    .atv
-    {
-        color: #060;
+
+    .atv {
+        color: #006600;
     }
 }
- 
-.prettyprint {
-  padding: 8px;
-  }
 
 /* Specify class=linenums on a pre to get line numbering */
 ol.linenums {
-  margin: 0; /* IE indents via margin-left */
-} 
-ol.linenums li {
-  color: #bebec5;
-  line-height: 18px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* IE indents via margin-left */
+li.L0,
+li.L1,
+li.L2,
+li.L3,
+li.L4,
+li.L5,
+li.L6,
+li.L7,
+li.L8,
+li.L9 {
+    /* */
+}
+
+/* Alternate shading for lines */
+li.L1,
+li.L3,
+li.L5,
+li.L7,
+li.L9 {
+    /* */
 }

@@ -8,3 +8,5 @@
 //     "quickstart/addingcontent.html"(title: "Adding content")
 // }
 //
+
+"index.md"(title: "Hello World")

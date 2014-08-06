@@ -25,23 +25,28 @@ apply plugin: 'codenarc'
 apply plugin: 'idea'
 
 
-version = '0.4'
+version = '0.4-SNAPSHOT'
 mainClassName = 'gaiden.GaidenMain'
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.2.0'
+    compile 'org.codehaus.groovy:groovy-all:2.3.6'
     compile 'org.apache.ant:ant:1.9.1'
-    compile 'org.pegdown:pegdown:1.2.1'
+    compile 'org.pegdown:pegdown:1.4.2'
     compile 'commons-io:commons-io:2.4'
     compile 'commons-cli:commons-cli:1.2'
-    compile 'org.apache.commons:commons-lang3:3.1'
+    compile 'org.apache.commons:commons-lang3:3.2'
+    compile('org.springframework:spring-context:4.0.6.RELEASE') {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+    }
+    compile 'ch.qos.logback:logback-classic:1.1.2'
+    compile 'org.slf4j:jcl-over-slf4j:1.7.7'
 
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
 

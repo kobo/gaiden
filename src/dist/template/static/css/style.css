@@ -14,68 +14,260 @@
  * limitations under the License.
  */
 
-.toc {
-  position: fixed;
-  top: 28.5px;
-  right: 10px;
-  color: #fff;
+/*
+ * Basic
+ */
+* {
+    font-weight: 300;
 }
 
-.toc.btn {
-  opacity: 0.7;
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
 }
 
-.navbar {
-  background: linear-gradient(#ddfbfc, #c6eafa);
+.wrapper {
+    min-height: 100%;
+    position: relative;
 }
 
-@media (max-width: 768px) {
-  .bs-table-scrollable {
-    width: 100%;
+h1, h2 {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+h3, h4, h5, h6 {
+    margin-top: 25px;
     margin-bottom: 15px;
-    overflow-y: hidden;
-    overflow-x: scroll;
-    border: 1px solid #ddd;
-  }
-  .bs-table-scrollable .table {
-    margin-bottom: 0;
-    border: 0;
-  }
-  .bs-table-scrollable .table th,
-  .bs-table-scrollable .table td {
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 300;
+}
+
+p {
+    line-height: 1.5em;
+    margin: 20px 0;
+}
+
+blockquote {
+    font-size: 100%;
+    color: #777;
+    padding: 20px;
+}
+
+blockquote h1, blockquote h2, blockquote h3, blockquote h4, blockquote h5, blockquote h6 {
+    margin: 0 0 20px 0;
+}
+
+table {
+    border: 1px solid #ccc;
+    font-size: 100%;
+}
+
+table td, table th {
+    border: 1px solid #ccc;
+    padding: 8px 15px;
+}
+
+table th {
+    background: #eee;
     white-space: nowrap;
-  }
-  .bs-table-scrollable .table th:first-child,
-  .bs-table-scrollable .table td:first-child {
-    border-left: 0;
-  }
-  .bs-table-scrollable .table th:last-child,
-  .bs-table-scrollable .table td:last-child {
-    border-right: 0;
-  }
-  .bs-table-scrollable .table tr:last-child th,
-  .bs-table-scrollable .table tr:last-child td {
-    border-bottom: 0;
-  }
+    font-weight: 700;
 }
 
-footer {
-  height: 60px;
-  width: 100%;
-  background-color: #eee;
-  margin-top: 3em;
+.table-responsive {
+    border: none;
+    width: auto;
 }
 
-.container .credit {
-  margin-top: 20px;
+img {
+    max-width: 100%;
+    height: auto;
 }
 
-.page-nav .nav > li > a {
+pre {
+    border-radius: 0;
+}
+
+code {
+    color: #333;
+    background: #eee;
+    border-radius: 0;
+}
+
+/*
+ * Header
+ */
+.header {
+    position: fixed;
+    width: 100%;
+    background: #2980b9;
+    color: #fff;
+    height: 50px;
+    display: table;
+}
+
+.header .toc-toggle {
+    vertical-align: middle;
+    display: table-cell;
+    width: 50px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.header .title {
+    vertical-align: middle;
+    font-size: 150%;
+    display: table-cell;
+    padding: 0 0 0 20px;
+}
+
+.header .title a {
+    color: #fff;
+}
+
+.header .title a:hover {
+    text-decoration: none;
+}
+
+.toc-toggle + .title {
+    padding: 0;
+}
+
+/*
+ * Toc
+ */
+.toc {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    overflow: auto;
+    border-right: 1px solid #ccc;
+    padding: 15px 0 20px 0;
+    background: #eee;
+}
+
+.toc > ul {
+    margin: 0 20px 50px 0;
+}
+
+.toc ul, .toc li {
+    list-style-type: none;
+}
+
+.toc ul {
+    padding: 0;
+}
+
+.toc li {
+    padding: 4px 0 0 25px;
+}
+
+.toc a {
+    color: #333;
+}
+
+.toc .current > a {
+    font-weight: 700;
+}
+
+@media screen and (max-width: 480px) {
+    .toc {
+        display: none;
+        width: 100%;
+    }
+
+    .toc > ul {
+        margin: 0 20px 20px 0;
+    }
+}
+
+/*
+ * Content
+ */
+.content {
+    padding: 70px 60px 20px 60px;
+}
+
+.content-toc-visible {
+    margin: 0 0 0 250px;
+}
+
+.content-nav {
+    width: 100%;
+    overflow: auto;
+}
+
+.content-nav .prev-page {
+    float: left;
+    width: 50%;
+    font-size: 110%;
+}
+
+.content-nav .prev-page .fa {
+    margin: 0 8px 0 0;
+}
+
+.content-nav .next-page {
+    float: right;
+    width: 50%;
+    text-align: right;
+    font-size: 110%;
+}
+
+.content-nav .next-page .fa {
+    margin: 0 0 0 8px;
+}
+
+.main-content {
+    padding: 0 0 50px 0;
+}
+
+@media screen and (max-width: 480px) {
+    .content {
+        margin: 0;
+        padding: 70px 30px 20px 30px;
+    }
+}
+
+/*
+ * footer
+ */
+.footer {
+    text-align: right;
+    width: 100%;
+    height: 50px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.footer-toc-visible {
+    padding: 0 0 0 250px;
+}
+
+.footer .credit {
+    border-top: 1px solid #eee;
+    margin: 0 50px;
     padding: 10px 0;
 }
-.page-nav .nav .prev {
-    float: left;
-}
-.page-nav .nav .next {
-    float: right;
+
+@media screen and (max-width: 480px) {
+    .footer {
+        padding: 0;
+    }
+
+    .footer .credit {
+        margin: 0 30px;
+        padding: 10px 0;
+    }
+
+    .footer-toc-visible {
+        padding: 0;
+    }
 }

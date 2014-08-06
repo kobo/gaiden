@@ -16,9 +16,15 @@
 
 package gaiden.markdown
 
-import gaiden.Holders
 import gaiden.PageSource
-import gaiden.util.FileUtils
+import gaiden.message.MessageSource
+import gaiden.util.UrlUtils
+import groovy.transform.CompileStatic
+
+import java.nio.file.Files
+import java.nio.file.LinkOption
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * A Renderer for image node.
@@ -26,14 +32,19 @@ import gaiden.util.FileUtils
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class ImageRenderer {
 
     private PageSource pageSource
-    private File staticDirectory
+    private Path staticDirectory
+    private Path outputDirectory
+    private MessageSource messageSource
 
-    ImageRenderer(PageSource pageSource, File staticDirectory = Holders.config.staticDirectory) {
+    ImageRenderer(PageSource pageSource, Path staticDirectory, Path outputDirectory, MessageSource messageSource) {
         this.pageSource = pageSource
         this.staticDirectory = staticDirectory
+        this.outputDirectory = outputDirectory
+        this.messageSource = messageSource
     }
 
     /**
@@ -56,32 +67,32 @@ class ImageRenderer {
      * @return {@link ImageElement}'s instance
      */
     ImageElement render(String imagePath, String alt) {
-        if (imagePath =~ /^\w+:\/\//) {  // URL
+        if (UrlUtils.isUrl(imagePath)) {  // URL
             return new ImageElement(src: imagePath, alt: alt)
         }
 
-        def relativeImagePath = getRelativePathForImageFileToOutputPageFile(imagePath)
+        def relativeImagePath = getRelativeImagePath(imagePath)
         new ImageElement(src: relativeImagePath, alt: alt)
     }
 
-    private String getRelativePathForImageFileToOutputPageFile(String imagePath) {
-        def staticOutputPageFile = new File(staticDirectory, pageSource.outputPath)
+    private String getRelativeImagePath(String imagePath) {
+        def imageFile = getImageFile(imagePath)
 
-        if (imagePath.startsWith("/")) {
-            def resourceFile = new File(staticDirectory, imagePath)
-            checkFileExists(resourceFile, imagePath)
-            return FileUtils.getRelativePathForFileToFile(staticOutputPageFile, resourceFile)
-        } else {
-            def resourceFile = new File(staticOutputPageFile.parentFile, imagePath)
-            checkFileExists(resourceFile, imagePath)
+        if (Files.notExists(imageFile)) {
+            // It is required to normalize path such as '/path/to/../images/sample.png'.
+            System.err.println("WARNING: " + messageSource.getMessage("image.reference.not.exists.message", [imagePath, pageSource.path]))
             return imagePath
         }
+
+        pageSource.outputPath.parent.relativize(outputDirectory.resolve(staticDirectory.relativize(imageFile.toRealPath(LinkOption.NOFOLLOW_LINKS)))).toString()
     }
 
-    private void checkFileExists(File resourceFile, String imagePath) {
-        if (!resourceFile.canonicalFile.exists()) { // It is required to normalize path such as '/path/to/../images/sample.png'.
-            System.err.println("WARNING: " + Holders.getMessage("image.reference.not.exists.message", [imagePath, pageSource.path]))
+    private Path getImageFile(String imagePath) {
+        def path = Paths.get(imagePath)
+        if (path.absolute) {
+            return staticDirectory.resolve(imagePath.substring(1))
+        } else {
+            return staticDirectory.resolve(outputDirectory.relativize(pageSource.outputPath.parent).resolve(imagePath))
         }
     }
-
 }

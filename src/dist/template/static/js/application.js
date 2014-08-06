@@ -14,6 +14,50 @@
  * limitations under the License.
  */
 
-$('pre').addClass('prettyprint linenums');
+$(function () {
+    var $content = $('.content');
+    var $toc = $('.toc');
+    var $tocToggle = $('.toc-toggle');
+    var $footer = $('.footer');
+    var $navLink = $('.content-nav a');
 
-prettyPrint();
+    function hideToc() {
+        $toc.hide();
+        $content.removeClass('content-toc-visible');
+        $footer.removeClass('footer-toc-visible');
+    }
+
+    function showToc() {
+        $toc.show();
+        $content.addClass('content-toc-visible');
+        $footer.addClass('footer-toc-visible');
+    }
+
+    // bind events
+
+    $tocToggle.on('click', function () {
+        if ($toc.is(':visible')) {
+            hideToc();
+        } else {
+            showToc();
+        }
+    });
+    $navLink.on('click', function (e) {
+        if (!$toc.is(':visible')) {
+            e.preventDefault();
+            location.href = $(this).attr('href') + "?toc=hidden";
+        }
+    });
+
+    // initialize
+
+    if (location.search.indexOf('toc=hidden') !== -1) {
+        hideToc();
+    }
+
+    $('pre').addClass('prettyprint');
+    prettyPrint();
+
+    $('table').wrap('<div class="table-responsive"></div>');
+});
+

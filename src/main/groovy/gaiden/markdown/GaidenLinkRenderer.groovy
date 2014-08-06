@@ -16,14 +16,20 @@
 
 package gaiden.markdown
 
-import gaiden.Holders
-import gaiden.PageReference
+import gaiden.PageReferenceFactory
 import gaiden.PageSource
+import gaiden.SourceCollector
 import gaiden.context.PageBuildContext
-import gaiden.util.FileUtils
+import gaiden.message.MessageSource
+import gaiden.util.UrlUtils
+import groovy.transform.CompileStatic
+import org.apache.commons.io.FilenameUtils
 import org.pegdown.LinkRenderer
 import org.pegdown.ast.ExpLinkNode
 import org.pegdown.ast.RefLinkNode
+
+import java.nio.file.Path
+import java.nio.file.Paths
 
 import static org.pegdown.FastEncoder.*
 
@@ -33,16 +39,21 @@ import static org.pegdown.FastEncoder.*
  * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
  */
+@CompileStatic
 class GaidenLinkRenderer extends LinkRenderer {
 
     private PageBuildContext context
     private PageSource pageSource
-    private File pagesDirectory
+    private Path pagesDirectory
+    private MessageSource messageSource
+    private PageReferenceFactory pageReferenceFactory
 
-    GaidenLinkRenderer(PageBuildContext context, PageSource pageSource, File pagesDirectory = Holders.config.pagesDirectory) {
+    GaidenLinkRenderer(PageBuildContext context, PageSource pageSource, Path pagesDirectory, MessageSource messageSource, PageReferenceFactory pageReferenceFactory) {
         this.context = context
         this.pageSource = pageSource
         this.pagesDirectory = pagesDirectory
+        this.messageSource = messageSource
+        this.pageReferenceFactory = pageReferenceFactory
     }
 
     @Override
@@ -56,30 +67,22 @@ class GaidenLinkRenderer extends LinkRenderer {
     }
 
     protected LinkRenderer.Rendering render(String url, String title, String text) {
-        def pageRef = new PageReference(url)
-
-        if (pageRef.isUrl() || !pageRef.isPageSourceExtension()) {
+        if (UrlUtils.isUrl(url)) {
             return createRendering(url, title, text)
         }
 
-        def targetPageSource = findPageSource(pageRef)
+        def pageReference = pageReferenceFactory.get(Paths.get(url), pageSource)
+        def targetPageSource = context.documentSource.findPageSource(pageReference)
         if (!targetPageSource) {
-            System.err.println("WARNING: " + Holders.getMessage("output.page.reference.not.exists.message", [url, pageSource.path]))
+            if (isPageSourceExtension(pageReference.path.toString())) {
+                System.err.println("WARNING: " + messageSource.getMessage("output.page.reference.not.exists.message", [url, pageSource.path]))
+            }
+
             return createRendering(url, title, text)
         }
 
-        def relativeUrl = FileUtils.getRelativePathForFileToFile(pageSource.outputPath, targetPageSource.outputPath)
-        return createRendering(relativeUrl + pageRef.fragment, title, text)
-    }
-
-    private PageSource findPageSource(PageReference pageRef) {
-        if (pageRef.isAbsolutePath()) {
-            def pageSourceParentDirectory = new File(pagesDirectory, pageSource.path).parentFile
-            def fullPathPageRef = pageRef.toFullPathPageReference(pagesDirectory, pageSourceParentDirectory)
-            context.documentSource.findPageSource(fullPathPageRef)
-        } else {
-            context.documentSource.findPageSource(pageRef)
-        }
+        def relativePath = pageSource.outputPath.parent.relativize(targetPageSource.outputPath).toString()
+        return createRendering("${relativePath}${pageReference.hash}", title, text)
     }
 
     private LinkRenderer.Rendering createRendering(String url, String title, String text) {
@@ -87,4 +90,15 @@ class GaidenLinkRenderer extends LinkRenderer {
         return title ? rendering.withAttribute("title", encode(title)) : rendering
     }
 
+    /**
+     * Checks the extension of filename is a page source extension.
+     *
+     * @return {@code true} if the extension of filename is a page source extension
+     * @see SourceCollector#PAGE_SOURCE_EXTENSIONS
+     */
+    private static boolean isPageSourceExtension(String path) {
+        def extension = FilenameUtils.getExtension(path)
+
+        !extension || extension in SourceCollector.PAGE_SOURCE_EXTENSIONS
+    }
 }

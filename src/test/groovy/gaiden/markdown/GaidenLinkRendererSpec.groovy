@@ -18,155 +18,158 @@ package gaiden.markdown
 
 import gaiden.DocumentSource
 import gaiden.GaidenSpec
-import gaiden.PageSource
-import gaiden.SourceCollector
+import gaiden.PageReferenceFactory
 import gaiden.context.PageBuildContext
 
 class GaidenLinkRendererSpec extends GaidenSpec {
 
     def "'render' should return a rendering object which has replaced link url"() {
         setup:
-        def documentSource = new DocumentSource(pageSources: [
-            new PageSource(path: "first.md"),
-            new PageSource(path: "path/second.md"),
-        ])
-        createFiles("first.md", "path/second.md", pageSourcePath)
-        def context = new PageBuildContext(documentSource: documentSource)
-        def pageSource = new PageSource(path: pageSourcePath)
-        def linkRenderer = new GaidenLinkRenderer(context, pageSource, pagesDirectory)
+            def documentSource = new DocumentSource(pageSources: [
+                createPageSource("first.md"),
+                createPageSource("path/second.md")
+            ])
+            createFiles("first.md", "path/second.md", pageSourcePath)
+            def context = new PageBuildContext(documentSource: documentSource)
+            def pageSource = createPageSource(pageSourcePath)
+            def pageReferenceFactory = new PageReferenceFactory(gaidenConfig: gaidenConfig)
+            def linkRenderer = new GaidenLinkRenderer(context, pageSource, gaidenConfig.pagesDirectory, messageSource, pageReferenceFactory)
 
         when:
-        def rendering = linkRenderer.render(path, "Test Title", "Test Text")
+            def rendering = linkRenderer.render(path, "Test Title", "Test Text")
 
         then:
-        rendering.href == renderingHref
-        rendering.text == "Test Text"
+            rendering.href == renderingHref
+            rendering.text == "Test Text"
 
         where:
-        pageSourcePath | path                 | renderingHref
-        "test.md"      | "first.md"           | "first.html"
-        "test.md"      | "first"              | "first.html"
-        "test.md"      | "./first.md"         | "first.html"
-        "test.md"      | "./first"            | "first.html"
-        "test.md"      | "/first.md"          | "first.html"
-        "test.md"      | "/first"             | "first.html"
-        "path/test.md" | "../first.md"        | "../first.html"
-        "path/test.md" | "/first.md"          | "../first.html"
-        "path/test.md" | "second.md"          | "second.html"
-        "path/test.md" | "/path/second.md"    | "second.html"
-        "test.md"      | "first.md#fragment"  | "first.html#fragment"
-        "test.md"      | "first#fragment"     | "first.html#fragment"
-        "test.md"      | "/first.md#fragment" | "first.html#fragment"
+            pageSourcePath | path                 | renderingHref
+            "test.md"      | "first.md"           | "first.html"
+            "test.md"      | "first"              | "first.html"
+            "test.md"      | "./first.md"         | "first.html"
+            "test.md"      | "./first"            | "first.html"
+            "test.md"      | "/first.md"          | "first.html"
+            "test.md"      | "/first"             | "first.html"
+            "path/test.md" | "../first.md"        | "../first.html"
+            "path/test.md" | "/first.md"          | "../first.html"
+            "path/test.md" | "second.md"          | "second.html"
+            "path/test.md" | "/path/second.md"    | "second.html"
+            "test.md"      | "first.md#fragment"  | "first.html#fragment"
+            "test.md"      | "first#fragment"     | "first.html#fragment"
+            "test.md"      | "/first.md#fragment" | "first.html#fragment"
     }
 
     def "'render' should not replace path if not found a page source"() {
         setup:
-        def context = new PageBuildContext(documentSource: new DocumentSource())
-        def pageSource = new PageSource(path: pageSourcePath)
-        def linkRenderer = new GaidenLinkRenderer(context, pageSource, pagesDirectory)
-        createFile(pageSourcePath)
+            def context = new PageBuildContext(documentSource: new DocumentSource(pageSources: []))
+            def pageSource = createPageSource(pageSourcePath)
+            def pageReferenceFactory = new PageReferenceFactory(gaidenConfig: gaidenConfig)
+            def linkRenderer = new GaidenLinkRenderer(context, pageSource, gaidenConfig.pagesDirectory, messageSource, pageReferenceFactory)
+            createFile(pageSourcePath)
 
         and:
-        def printStream = Mock(PrintStream)
-        System.err = printStream
+            def printStream = Mock(PrintStream)
+            System.err = printStream
 
         when:
-        def rendering = linkRenderer.render(path, "Test Title", "Test Text")
+            def rendering = linkRenderer.render(path, "Test Title", "Test Text")
 
         then:
-        rendering.href == path
-        rendering.text == "Test Text"
+            rendering.href == path
+            rendering.text == "Test Text"
 
         and:
-        (1..SourceCollector.PAGE_SOURCE_EXTENSIONS.size()) * printStream.println("WARNING: '$path' in $pageSourcePath refers to non-existent page")
+            1 * printStream.println("WARNING: '${path}' in ${pageSource.path.toString()} refers to non-existent page")
 
         where:
-        pageSourcePath | path
-        "test.md"      | "not-exist.md"
-        "test.md"      | "not-exist"
-        "test.md"      | "./not-exist.md"
-        "test.md"      | "./not-exist"
-        "test.md"      | "/not-exist.md"
-        "test.md"      | "/not-exist"
-        "test.md"      | "../not-exist.md"
-        "test.md"      | "../not-exist"
-        "path/test.md" | "not-exist.md"
-        "path/test.md" | "./not-exist.md"
-        "path/test.md" | "/not-exist.md"
-        "path/test.md" | "../not-exist.md"
-        "test.md"      | "not-exist.md#fragment"
-        "test.md"      | "/not-exist.md#fragment"
+            pageSourcePath | path
+            "test.md"      | "not-exist.md"
+            "test.md"      | "not-exist"
+            "test.md"      | "./not-exist.md"
+            "test.md"      | "./not-exist"
+            "test.md"      | "/not-exist.md"
+            "test.md"      | "/not-exist"
+            "test.md"      | "../not-exist.md"
+            "test.md"      | "../not-exist"
+            "path/test.md" | "not-exist.md"
+            "path/test.md" | "./not-exist.md"
+            "path/test.md" | "/not-exist.md"
+            "path/test.md" | "../not-exist.md"
+            "test.md"      | "not-exist.md#fragment"
+            "test.md"      | "/not-exist.md#fragment"
     }
 
     def "'render' should not output a warning message when a path is not Markdown"() {
         setup:
-        def context = new PageBuildContext(documentSource: new DocumentSource())
-        def pageSource = new PageSource(path: "test.md")
-        def linkRenderer = new GaidenLinkRenderer(context, pageSource, pagesDirectory)
+            def context = new PageBuildContext(documentSource: new DocumentSource(pageSources: []))
+            def pageSource = createPageSource("test.md")
+            def pageReferenceFactory = new PageReferenceFactory(gaidenConfig: gaidenConfig)
+            def linkRenderer = new GaidenLinkRenderer(context, pageSource, gaidenConfig.pagesDirectory, messageSource, pageReferenceFactory)
 
         and:
-        def printStream = Mock(PrintStream)
-        System.err = printStream
+            def printStream = Mock(PrintStream)
+            System.err = printStream
 
         when:
-        def rendering = linkRenderer.render(path, "Test Title", "Test Text")
+            def rendering = linkRenderer.render(path, "Test Title", "Test Text")
 
         then:
-        rendering.href == path
-        rendering.text == "Test Text"
+            rendering.href == path
+            rendering.text == "Test Text"
 
         and:
-        0 * printStream.println(_)
+            0 * printStream.println(_)
 
         where:
-        pageSourcePath | path
-        "test.md"      | "first.html"
-        "test.md"      | "first.test"
-        "test.md"      | "./first.html"
-        "test.md"      | "./first.test"
-        "test.md"      | "/first.html"
-        "test.md"      | "/first.test"
-        "path/test.md" | "../first.test"
-        "path/test.md" | "/first.test"
-        "path/test.md" | "second.test"
-        "path/test.md" | "/path/second.test"
-        "test.md"      | "first.html#fragment"
-        "test.md"      | "first.test#fragment"
-        "test.md"      | "/first.test#fragment"
+            pageSourcePath | path
+            "test.md"      | "first.html"
+            "test.md"      | "first.test"
+            "test.md"      | "./first.html"
+            "test.md"      | "./first.test"
+            "test.md"      | "/first.html"
+            "test.md"      | "/first.test"
+            "path/test.md" | "../first.test"
+            "path/test.md" | "/first.test"
+            "path/test.md" | "second.test"
+            "path/test.md" | "/path/second.test"
+            "test.md"      | "first.html#fragment"
+            "test.md"      | "first.test#fragment"
+            "test.md"      | "/first.test#fragment"
     }
 
     def "'render' should not output a warning message when a path is URL"() {
         setup:
-        def context = new PageBuildContext(documentSource: new DocumentSource())
-        def pageSource = new PageSource(path: "test.md")
-        def linkRenderer = new GaidenLinkRenderer(context, pageSource, pagesDirectory)
+            def context = new PageBuildContext(documentSource: new DocumentSource(pageSources: []))
+            def pageSource = createPageSource("test.md")
+            def pageReferenceFactory = new PageReferenceFactory(gaidenConfig: gaidenConfig)
+            def linkRenderer = new GaidenLinkRenderer(context, pageSource, gaidenConfig.pagesDirectory, messageSource, pageReferenceFactory)
 
         and:
-        def printStream = Mock(PrintStream)
-        System.err = printStream
+            def printStream = Mock(PrintStream)
+            System.err = printStream
 
         when:
-        def rendering = linkRenderer.render(path, "Test Title", "Test Text")
+            def rendering = linkRenderer.render(path, "Test Title", "Test Text")
 
         then:
-        rendering.href == path
-        rendering.text == "Test Text"
+            rendering.href == path
+            rendering.text == "Test Text"
 
         and:
-        0 * printStream.println(_)
+            0 * printStream.println(_)
 
         where:
-        path << [
-            "http://www.example.com",
-            "http://www.example.com/",
-            "http://www.example.com/test",
-            "http://www.example.com/test/",
-            "http://www.example.com/test.html",
-            "http://www.example.com/test.md",
-            "https://www.example.com/test.md",
-            "ftp://www.example.com/test.md",
-            "file:///www.example.com/test.md",
-        ]
+            path << [
+                "http://www.example.com",
+                "http://www.example.com/",
+                "http://www.example.com/test",
+                "http://www.example.com/test/",
+                "http://www.example.com/test.html",
+                "http://www.example.com/test.md",
+                "https://www.example.com/test.md",
+                "ftp://www.example.com/test.md",
+                "file:///www.example.com/test.md",
+            ]
     }
 
     private void createFiles(String[] paths) {

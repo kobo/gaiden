@@ -16,8 +16,13 @@
 
 package gaiden
 
-import org.apache.commons.io.FileUtils
+import gaiden.util.PathUtils
+import groovy.transform.CompileStatic
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
+import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  * A document writer writes a {@link Document} to files.
@@ -25,20 +30,12 @@ import org.apache.commons.io.FileUtils
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@Component
+@CompileStatic
 class DocumentWriter {
 
-    private File outputDirectory
-    private File staticDirectory
-    private String outputEncoding
-
-    DocumentWriter(
-        File staticDirectory = Holders.config.staticDirectory,
-        File outputDirectory = Holders.config.outputDirectory,
-        String outputEncoding = Holders.config.outputEncoding) {
-        this.staticDirectory = staticDirectory
-        this.outputDirectory = outputDirectory
-        this.outputEncoding = outputEncoding
-    }
+    @Autowired
+    GaidenConfig gaidenConfig
 
     /**
      * Writes a {@link Document} to file.
@@ -46,8 +43,8 @@ class DocumentWriter {
      * @param document the document to be written
      */
     void write(Document document) {
-        if (!outputDirectory.exists()) {
-            assert outputDirectory.mkdirs()
+        if (Files.notExists(gaidenConfig.outputDirectory)) {
+            Files.createDirectories(gaidenConfig.outputDirectory)
         }
 
         writePages(document.pages)
@@ -55,33 +52,30 @@ class DocumentWriter {
 
         copyStaticFiles()
 
-        println "Built document at ${outputDirectory.canonicalPath}"
+        println "Built document at ${gaidenConfig.outputDirectory.toAbsolutePath()}"
     }
 
     private void writePages(List<Page> pages) {
         pages.each { Page page ->
-            writeToFile(page)
+            writeToFile(page.path, page.content)
         }
     }
 
     private void writeToc(Toc toc) {
-        writeToFile(toc)
-    }
-
-    void writeToFile(data) {
-        if (!data) {
+        if (!toc) {
             return
         }
+        writeToFile(toc.path, toc.content)
+    }
 
-        def file = new File(outputDirectory, data.path as String)
-        if (!file.parentFile.exists()) {
-            assert file.parentFile.mkdirs()
+    private void writeToFile(Path path, String content) {
+        if (Files.notExists(path.parent)) {
+            Files.createDirectories(path.parent)
         }
-        file.write(data.content as String, outputEncoding)
+        Files.write(path, content.getBytes(gaidenConfig.outputEncoding))
     }
 
     private void copyStaticFiles() {
-        FileUtils.copyDirectory(staticDirectory, outputDirectory)
+        PathUtils.copyFiles(gaidenConfig.staticDirectory, gaidenConfig.outputDirectory)
     }
-
 }

@@ -18,6 +18,9 @@ package gaiden
 
 import groovy.text.SimpleTemplateEngine
 import groovy.text.Template
+import groovy.transform.CompileStatic
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
 /**
  * Substitutes variables in a template source text.
@@ -25,18 +28,14 @@ import groovy.text.Template
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@Component
+@CompileStatic
 class TemplateEngine {
 
     private Template template
 
-    /**
-     * Creates a new {@link TemplateEngine} instance by the given template text and the base binding variables.
-     *
-     * @param templateText a template text
-     */
-    TemplateEngine(String templateText) {
-        template = new SimpleTemplateEngine().createTemplate(templateText)
-    }
+    @Autowired
+    GaidenConfig gaidenConfig
 
     /**
      * Produces a result from a template.
@@ -45,7 +44,9 @@ class TemplateEngine {
      * @return a result produced
      */
     String make(Map binding) {
+        if (!template) {
+            template = new SimpleTemplateEngine().createTemplate(gaidenConfig.templateFile.text)
+        }
         template.make(binding)
     }
-
 }

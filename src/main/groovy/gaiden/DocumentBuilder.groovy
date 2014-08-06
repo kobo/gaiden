@@ -18,6 +18,9 @@ package gaiden
 
 import gaiden.context.BuildContext
 import gaiden.context.PageBuildContext
+import groovy.transform.CompileStatic
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
 /**
  * A document builder builds from a document source to a document.
@@ -25,32 +28,15 @@ import gaiden.context.PageBuildContext
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@Component
+@CompileStatic
 class DocumentBuilder {
 
-    private File templateFile
-    private Map baseBinding
+    @Autowired
+    PageBuilder pageBuilder
 
-    private PageBuilder pageBuilder
-    private TocBuilder tocBuilder
-
-    private File outputDirectory
-
-    DocumentBuilder() {
-        this.templateFile = Holders.config.templateFile
-        this.outputDirectory = Holders.config.outputDirectory
-
-        def templateEngine = createTemplateEngine()
-        this.pageBuilder = new PageBuilder(templateEngine)
-        this.tocBuilder = new TocBuilder(templateEngine)
-    }
-
-    DocumentBuilder(File templateFile, PageBuilder pageBuilder, TocBuilder tocBuilder, File outputDirectory, Map baseBinding) {
-        this.templateFile = templateFile
-        this.pageBuilder = pageBuilder
-        this.tocBuilder = tocBuilder
-        this.outputDirectory = outputDirectory
-        this.baseBinding = baseBinding
-    }
+    @Autowired
+    TocBuilder tocBuilder
 
     /**
      * Builds a document from a document source.
@@ -69,13 +55,8 @@ class DocumentBuilder {
     }
 
     private List<Page> buildPages(PageBuildContext context) {
-        context.documentSource.pageSources.collect { pageSource ->
+        context.documentSource.pageSources.collect { PageSource pageSource ->
             pageBuilder.build(context, pageSource)
         }
     }
-
-    private TemplateEngine createTemplateEngine() {
-        new TemplateEngine(templateFile.text)
-    }
-
 }

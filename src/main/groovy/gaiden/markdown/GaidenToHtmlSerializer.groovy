@@ -16,10 +16,12 @@
 
 package gaiden.markdown
 
+import groovy.transform.CompileStatic
 import org.pegdown.LinkRenderer
 import org.pegdown.Printer
 import org.pegdown.ToHtmlSerializer
-import org.pegdown.ast.SuperNode
+import org.pegdown.ast.HeaderNode
+import org.pegdown.ast.Node
 
 /**
  * A Serializer for rendering nodes to HTML.
@@ -27,6 +29,7 @@ import org.pegdown.ast.SuperNode
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class GaidenToHtmlSerializer extends ToHtmlSerializer {
 
     private ImageRenderer imageRenderer
@@ -42,14 +45,24 @@ class GaidenToHtmlSerializer extends ToHtmlSerializer {
     }
 
     @Override
-    protected void printImageTag(SuperNode imageNode, String url) {
-        def rendering = imageRenderer.render(url, printChildrenToString(imageNode))
-        printer
-            .print('<img src="')
-            .print(rendering.src)
-            .print('" alt="')
-            .printEncoded(rendering.alt)
-            .print('"/>')
+    void visit(HeaderNode node) {
+        super.visit(node)
     }
 
+    @Override
+    protected void printImageTag(LinkRenderer.Rendering rendering) {
+        def image = imageRenderer.render(rendering.href, rendering.text)
+        printer.print("<img");
+        printAttributes(src: image.src, alt: image.alt)
+        printAttributes(rendering.attributes.collectEntries { LinkRenderer.Attribute attribute ->
+            [(attribute.name): attribute.value]
+        })
+        printer.print("/>");
+    }
+
+    private void printAttributes(Map<String, String> attributes) {
+        attributes.each {
+            printer.print(' ').print(it.key).print('=').print('"').print(it.value).print('"');
+        }
+    }
 }

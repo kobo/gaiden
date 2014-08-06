@@ -16,7 +16,7 @@
 
 package gaiden.exception
 
-import gaiden.Holders
+import groovy.transform.CompileStatic
 
 /**
  * An exception for Gaiden.
@@ -24,31 +24,15 @@ import gaiden.Holders
  * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
  */
+@CompileStatic
 class GaidenException extends RuntimeException {
 
-    final String key
-    final List<Object> arguments
+    final String code
+    final List<?> arguments
 
-    GaidenException(String key, List<Object> arguments = []) {
-        super(key)
-        this.key = key
+    GaidenException(String code, List<?> arguments = []) {
+        super(code)
+        this.code = code
         this.arguments = arguments
     }
-
-    GaidenException(String key, Throwable cause) {
-        super(key, cause)
-        this.key = key
-    }
-
-    GaidenException(String key, List<Object> arguments, Throwable cause) {
-        super(key, cause)
-        this.key = key
-        this.arguments = arguments
-    }
-
-    @Override
-    String getMessage() {
-        return "ERROR: " + Holders.getMessage(key, arguments)
-    }
-
 }

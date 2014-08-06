@@ -16,67 +16,131 @@
 
 package gaiden
 
+import gaiden.message.MessageSource
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+
+import javax.annotation.PostConstruct
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+
 /**
  * The Gaiden configuration.
  *
  * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
  */
+@Component
+@CompileStatic
 class GaidenConfig {
 
+    @Autowired
+    MessageSource messageSource
+
+    static final Path CONFIG_PATH = Paths.get("GaidenConfig.groovy")
+
     /** The base title of page */
-    String title
+    String title = "Gaiden"
 
     /** The title of TOC */
-    String tocTitle
+    String tocTitle = "Table of contents"
 
     /** The path of template file */
-    String templateFilePath
+    String templateFilePath = "templates/layout.html"
 
     /** The path of TOC file */
-    String tocFilePath
+    String tocFilePath = "pages/toc.groovy"
 
     /** The path of TOC output file */
-    String tocOutputFilePath
+    String tocOutputFilePath = "toc.html"
 
     /** The path of page source files directory */
-    String pagesDirectoryPath
+    String pagesDirectoryPath = "pages"
 
     /** The path of static files directory */
-    String staticDirectoryPath
+    String staticDirectoryPath = "static"
 
     /** The path of directory to be outputted a document */
-    String outputDirectoryPath
+    String outputDirectoryPath = "build"
 
     /** The input encoding of files */
-    String inputEncoding
+    String inputEncoding = "UTF-8"
 
     /** The output encoding of files */
-    String outputEncoding
+    String outputEncoding = "UTF-8"
 
-    /** Returns the {@link #templateFilePath} as {@link File} */
-    File getTemplateFile() {
-        new File(templateFilePath)
+    /** The path of application home directory */
+    String appHomePath = System.properties["app.home"] as String
+
+    /** The path of user directory */
+    String projectDirectoryPath = System.properties["user.dir"] as String
+
+    /** Returns the {@link #templateFilePath} as {@link Path} */
+    Path getTemplateFile() {
+        projectDirectory.resolve(templateFilePath)
     }
 
-    /** Returns the {@link #tocFilePath} as {@link File} */
-    File getTocFile() {
-        new File(tocFilePath)
+    /** Returns the {@link #tocFilePath} as {@link Path} */
+    Path getTocFile() {
+        projectDirectory.resolve(tocFilePath)
     }
 
-    /** Returns the {@link #pagesDirectoryPath} as {@link File} */
-    File getPagesDirectory() {
-        new File(pagesDirectoryPath)
+    /** Returns the {@link #pagesDirectoryPath} as {@link Path} */
+    Path getPagesDirectory() {
+        projectDirectory.resolve(pagesDirectoryPath)
     }
 
-    /** Returns the {@link #staticDirectoryPath} as {@link File} */
-    File getStaticDirectory() {
-        new File(staticDirectoryPath)
+    /** Returns the {@link #staticDirectoryPath} as {@link Path} */
+    Path getStaticDirectory() {
+        projectDirectory.resolve(staticDirectoryPath)
     }
 
-    /** Returns the {@link #outputDirectoryPath} as {@link File} */
-    File getOutputDirectory() {
-        new File(outputDirectoryPath)
+    /** Returns the {@link #outputDirectoryPath} as {@link Path} */
+    Path getOutputDirectory() {
+        projectDirectory.resolve(outputDirectoryPath)
+    }
+
+    /** Returns the application home directory as {@link Path} */
+    Path getAppHomeDirectory() {
+        Paths.get(appHomePath)
+    }
+
+    /** Returns the user directory as {@link Path} */
+    Path getProjectDirectory() {
+        Paths.get(projectDirectoryPath)
+    }
+
+    /** Returns the default template directory as {@link Path} */
+    Path getDefaultTemplateDirectory() {
+        appHomeDirectory.resolve("template")
+    }
+
+    Path getTocOutputFile() {
+        outputDirectory.resolve(tocOutputFilePath)
+    }
+
+    Path getGaidenConfigFile() {
+        projectDirectory.resolve(CONFIG_PATH)
+    }
+
+    @PostConstruct
+    void initialize() {
+        initialize(CONFIG_PATH)
+    }
+
+    @CompileStatic(TypeCheckingMode.SKIP)
+    void initialize(Path configFile) {
+        if (Files.notExists(configFile)) {
+            return
+        }
+
+        def configObject = new ConfigSlurper().parse(configFile.toUri().toURL())
+        configObject.each { Map.Entry entry ->
+            this."$entry.key" = entry.value
+        }
     }
 
     /**
@@ -85,10 +149,11 @@ class GaidenConfig {
      * @param name a property name
      * @param value a property value
      */
+    @CompileStatic(TypeCheckingMode.SKIP)
     def propertyMissing(String name, value) {
         def deprecatedMapping = [
-            templatePath: "templateFilePath",
-            tocPath: "tocFilePath",
+            templatePath : "templateFilePath",
+            tocPath      : "tocFilePath",
             tocOutputPath: "tocOutputFilePath",
         ]
 
@@ -122,7 +187,7 @@ class GaidenConfig {
     }
 
     private void printDeprecatedWarning(String deprecatedName, String insteadName) {
-        System.err.println("WARNING: ${Holders.messageSource.getMessage("config.deprecated.parameter.message", [deprecatedName, insteadName])}")
+        System.err.println("WARNING: ${messageSource.getMessage("config.deprecated.parameter.message", [deprecatedName, insteadName])}")
     }
 
 }

@@ -17,12 +17,14 @@
 package gaiden.context
 
 import gaiden.DocumentSource
+import groovy.transform.CompileStatic
 
 /**
  * To provide objects for building.
  *
  * @author Hideki IGARASHI
  */
+@CompileStatic
 class BuildContext {
 
     /** A document source */

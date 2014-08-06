@@ -17,29 +17,35 @@
 package gaiden
 
 import gaiden.context.PageBuildContext
-import gaiden.util.FileUtils
+import gaiden.markdown.GaidenMarkdownProcessor
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
+import groovy.xml.MarkupBuilder
+
+import java.nio.file.Paths
+
+import static org.apache.commons.lang3.StringEscapeUtils.*
 
 /**
  * Builder for binding to be passed to a template engine.
  *
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class BindingBuilder {
 
     private static final String EMPTY_STRING = ""
 
-    private String title
-    private String tocOutputFilePath
+    private GaidenConfig gaidenConfig
+    private PageReferenceFactory pageReferenceFactory
 
     private String content
-    private String sourcePath
-    private String outputPath
-
+    private PageSource pageSource
     private PageBuildContext pageBuildContext
 
-    BindingBuilder(String title = Holders.config.title, String tocOutputFilePath = Holders.config.tocOutputFilePath) {
-        this.title = title
-        this.tocOutputFilePath = tocOutputFilePath
+    BindingBuilder(GaidenConfig gaidenConfig, PageReferenceFactory pageReferenceFactory) {
+        this.gaidenConfig = gaidenConfig
+        this.pageReferenceFactory = pageReferenceFactory
     }
 
     /**
@@ -49,12 +55,14 @@ class BindingBuilder {
      */
     Map<String, Object> build() {
         [
-            title: title,
+            title: escapeHtml4(gaidenConfig.title),
             content: content,
             tocPath: tocPath,
             resource: resourceMethod,
-            prevLink: prevLink,
-            nextLink: nextLink,
+            prevPage: prevPage,
+            nextPage: nextPage,
+            toc: toc,
+            render: renderMethod,
         ]
     }
 
@@ -66,19 +74,8 @@ class BindingBuilder {
         this
     }
 
-    /**
-     * Sets the output path.
-     */
-    BindingBuilder setOutputPath(String outputPath) {
-        this.outputPath = outputPath
-        this
-    }
-
-    /**
-     * Sets the page path.
-     */
-    BindingBuilder setSourcePath(String sourcePath) {
-        this.sourcePath = sourcePath
+    BindingBuilder setPageSource(PageSource pageSource) {
+        this.pageSource = pageSource
         this
     }
 
@@ -90,63 +87,135 @@ class BindingBuilder {
         this
     }
 
-    private String getPrevLink() {
-        if (!sourcePath || !pageBuildContext) {
-            return EMPTY_STRING
+    private Map getPrevPage() {
+        if (!pageSource.path || !pageBuildContext) {
+            return Collections.emptyMap()
         }
 
-        def previousTocNode = pageBuildContext.toc.findTocNode(new PageReference(sourcePath))?.previous
+        def previousTocNode = pageBuildContext.toc.findTocNode(pageSource.path)?.previous
         if (!previousTocNode) {
-            return EMPTY_STRING
+            return Collections.emptyMap()
         }
 
         if (!previousTocNode.pageSource) {
-            return "<< $previousTocNode.title".encodeAsHtml()
+            return [
+                path: EMPTY_STRING,
+                title: escapeHtml4(previousTocNode.title),
+            ]
         }
 
-        def relativePath = FileUtils.getRelativePathForFileToFile(outputPath, previousTocNode.pageSource.outputPath)
-
-        def sb = new StringBuilder()
-        sb << "<a href='${relativePath + previousTocNode.pageReference.fragment}' class='prev'>"
-        sb << "<< $previousTocNode.title".encodeAsHtml()
-        sb << "</a>"
-        return sb.toString()
+        def relativePath = pageSource.outputPath.parent.relativize(previousTocNode.pageSource.outputPath)
+        return [
+            path: relativePath.toString() + previousTocNode.pageReference.hash,
+            title: escapeHtml4(previousTocNode.title)
+        ]
     }
 
-    private String getNextLink() {
-        if (!sourcePath || !pageBuildContext) {
-            return EMPTY_STRING
+    private Map getNextPage() {
+        if (!pageSource.path || !pageBuildContext) {
+            return Collections.emptyMap()
         }
 
-        def nextTocNode = pageBuildContext.toc.findTocNode(new PageReference(sourcePath))?.next
+        def nextTocNode = pageBuildContext.toc.findTocNode(pageSource.path)?.next
         if (!nextTocNode) {
-            return EMPTY_STRING
+            return Collections.emptyMap()
         }
 
         if (!nextTocNode.pageSource) {
-            return "$nextTocNode.title >>".encodeAsHtml()
+            return [
+                path: EMPTY_STRING,
+                title: escapeHtml4(nextTocNode.title),
+            ]
         }
 
-        def relativePath = FileUtils.getRelativePathForFileToFile(outputPath, nextTocNode.pageSource.outputPath)
-
-        def sb = new StringBuilder()
-        sb << "<a href='${relativePath + nextTocNode.pageReference.fragment}' class='next'>"
-        sb << "$nextTocNode.title >>".encodeAsHtml()
-        sb << "</a>"
-        return sb.toString()
+        def relativePath = pageSource.outputPath.parent.relativize(nextTocNode.pageSource.outputPath)
+        return [
+            path: relativePath.toString() + nextTocNode.pageReference.hash,
+            title: escapeHtml4(nextTocNode.title)
+        ]
     }
 
     private Closure getResourceMethod() {
         return { String resourceFilePath ->
-            if (!resourceFilePath.startsWith("/")) {
+            def resourceFile = Paths.get(resourceFilePath)
+            if (!resourceFile.absolute) {
                 return resourceFilePath
             }
-            FileUtils.getRelativePathForFileToFile(outputPath, resourceFilePath)
+
+            def src = gaidenConfig.outputDirectory.resolve(pageSource.outputPath)
+            def dest = gaidenConfig.outputDirectory.resolve(resourceFile.toString().substring(1))
+
+            return src.parent.relativize(dest).toString()
         }
     }
 
     private String getTocPath() {
-        FileUtils.getRelativePathForFileToFile(outputPath, tocOutputFilePath)
+        pageSource.outputPath.parent.relativize(gaidenConfig.tocOutputFile).toString()
     }
 
+    private String getToc() {
+        if (!pageBuildContext) {
+            return EMPTY_STRING
+        }
+        buildTocContent()
+    }
+
+    @CompileStatic(TypeCheckingMode.SKIP)
+    private String buildTocContent() {
+        def writer = new StringWriter()
+        def printer = new IndentPrinter(writer, " " * 4)
+        def builder = new MarkupBuilder(printer)
+
+        builder.doubleQuotes = true // surrounds an attribute with double quotes
+
+        buildTocNodes(builder, pageBuildContext.toc.tocNodes.findAll { !it.parent })
+
+        writer.toString()
+    }
+
+    private String resolveOutputPath(PageReference pageReference) {
+        def destPageSource = pageBuildContext.documentSource.findPageSource(pageReference)
+        if (!destPageSource) {
+            return null
+        }
+        return pageSource.outputPath.parent.relativize(destPageSource.outputPath).toString() + pageReference.hash
+    }
+
+    @CompileStatic(TypeCheckingMode.SKIP)
+    private void buildTocNodes(MarkupBuilder builder, List<TocNode> tocNodes) {
+        if (!tocNodes) {
+            return
+        }
+
+        builder.ul {
+            tocNodes.each { TocNode tocNode ->
+                if (tocNode.path.startsWith("#")) {
+                    li(tocNode.title) {
+                        buildTocNodes(builder, tocNode.children)
+                    }
+                } else {
+                    def outputPath = resolveOutputPath(tocNode.pageReference)
+                    if (outputPath) {
+                        li("class": pageSource == tocNode.pageSource ? "current" : "") {
+                            a(href: outputPath, tocNode.title)
+                            buildTocNodes(builder, tocNode.children)
+                        }
+                    } else {
+                        li(tocNode.title) {
+                            buildTocNodes(builder, tocNode.children)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @CompileStatic(TypeCheckingMode.SKIP)
+    private Closure getRenderMethod() {
+        return { String filePath ->
+            def resolvedPath = resourceMethod.call(filePath)
+            def processor = new GaidenMarkdownProcessor()
+            processor.markdownToHtml(new File(resolvedPath).text)
+        }
+    }
 }

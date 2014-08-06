@@ -17,12 +17,14 @@
 package gaiden.context
 
 import gaiden.Toc
+import groovy.transform.CompileStatic
 
 /**
  * To provide objects for page building.
  *
  * @author Hideki IGARASHI
  */
+@CompileStatic
 class PageBuildContext extends BuildContext {
 
     /** A TOC */

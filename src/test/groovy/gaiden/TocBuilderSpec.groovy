@@ -18,13 +18,21 @@ package gaiden
 
 import gaiden.context.BuildContext
 
+import java.nio.file.Files
+import java.nio.file.Path
+
 class TocBuilderSpec extends GaidenSpec {
 
     TocBuilder tocBuilder
     TemplateEngine templateEngine
 
+    Path tocFile
+
     def setup() {
-        templateEngine = new TemplateEngine('''
+        if (Files.notExists(gaidenConfig.templateFile.parent)) {
+            Files.createDirectories(gaidenConfig.templateFile.parent)
+        }
+        gaidenConfig.templateFile.write '''
             |<html>
             |<head>
             |    <title>$title</title>
@@ -33,27 +41,42 @@ class TocBuilderSpec extends GaidenSpec {
             |$content
             |</body>
             |</html>
-            '''.stripMargin())
-        tocBuilder = new TocBuilder(this.templateEngine)
+            '''.stripMargin()
+
+        tocFile = gaidenConfig.tocFile
+        if (Files.notExists(tocFile.parent)) {
+            Files.createDirectories(tocFile.parent)
+        }
+        gaidenConfig.title = "Test Title"
+        gaidenConfig.tocTitle = "Test TOC Title"
+
+        templateEngine = new TemplateEngine()
+        templateEngine.gaidenConfig = gaidenConfig
+
+        tocBuilder = new TocBuilder()
+        tocBuilder.gaidenConfig = gaidenConfig
+        tocBuilder.templateEngine = templateEngine
+        tocBuilder.messageSource = messageSource
+        tocBuilder.pageReferenceFactory = new PageReferenceFactory(gaidenConfig: gaidenConfig)
     }
 
     def "'build' should return a toc"() {
         setup:
-        tocFile.write """
+            tocFile.write """
             |"first"(title: 'first title')
             |"second.md"(title: 'second title')
             |"third.html"(title: 'third title')
             """.stripMargin()
 
         and:
-        def context = createBuildContext([[path: "first.md"], [path: "second.md"]])
+            def context = createBuildContext([[path: "first.md"], [path: "second.md"]])
 
         when:
-        Toc toc = tocBuilder.build(context)
+            Toc toc = tocBuilder.build(context)
 
         then:
-        toc.path == "test/toc.html"
-        toc.content == """
+            toc.path == gaidenConfig.outputDirectory.resolve("toc.html")
+            toc.content == """
             |<html>
             |<head>
             |    <title>Test Title</title>
@@ -78,22 +101,22 @@ class TocBuilderSpec extends GaidenSpec {
 
     def "'build' should not make a link if not found a page source"() {
         setup:
-        tocFile.write """
+            tocFile.write """
             |"first"(title: 'first title')
             |"second.md"(title: 'second title')
             |"third.html"(title: 'third title')
             """.stripMargin()
 
         and:
-        def systemErr = Mock(PrintStream)
-        System.err = systemErr
+            def systemErr = Mock(PrintStream)
+            System.err = systemErr
 
         when:
-        Toc toc = tocBuilder.build(emptyContext)
+            Toc toc = tocBuilder.build(emptyContext)
 
         then:
-        toc.path == "test/toc.html"
-        toc.content == """
+            toc.path == gaidenConfig.outputDirectory.resolve("toc.html")
+            toc.content == """
             |<html>
             |<head>
             |    <title>Test Title</title>
@@ -112,13 +135,13 @@ class TocBuilderSpec extends GaidenSpec {
             """.stripMargin()
 
         and:
-        1 * systemErr.println("WARNING: 'second.md' in the Table of Contents refers to non-existent page")
-        1 * systemErr.println("WARNING: 'first' in the Table of Contents refers to non-existent page")
+            1 * systemErr.println("WARNING: 'second.md' in the Table of Contents refers to non-existent page")
+            1 * systemErr.println("WARNING: 'first' in the Table of Contents refers to non-existent page")
     }
 
     def "'build' should return a hierarchy toc"() {
         setup:
-        tocFile.write """
+            tocFile.write """
             |"first"(title: 'first title')
             |"second/"(title: 'second title') {
             |    "second/second1"(title: 'second 1 title')
@@ -126,14 +149,14 @@ class TocBuilderSpec extends GaidenSpec {
             """.stripMargin()
 
         and:
-        def context = createBuildContext([[path: "first.md"], [path: "second/second1.md"]])
+            def context = createBuildContext([[path: "first.md"], [path: "second/second1.md"]])
 
         when:
-        Toc toc = tocBuilder.build(context)
+            Toc toc = tocBuilder.build(context)
 
         then:
-        toc.path == "test/toc.html"
-        toc.content == """
+            toc.path == gaidenConfig.outputDirectory.resolve("toc.html")
+            toc.content == """
             |<html>
             |<head>
             |    <title>Test Title</title>
@@ -159,17 +182,17 @@ class TocBuilderSpec extends GaidenSpec {
 
     def "'build' should return a toc which contains a fragment"() {
         setup:
-        tocFile.write "'first#fragment'(title: 'first title')"
+            tocFile.write "'first#fragment'(title: 'first title')"
 
         and:
-        def context = createBuildContext([[path: "first.md"]])
+            def context = createBuildContext([[path: "first.md"]])
 
         when:
-        Toc toc = tocBuilder.build(context)
+            Toc toc = tocBuilder.build(context)
 
         then:
-        toc.path == "test/toc.html"
-        toc.content == """
+            toc.path == gaidenConfig.outputDirectory.resolve("toc.html")
+            toc.content == """
             |<html>
             |<head>
             |    <title>Test Title</title>
@@ -188,18 +211,18 @@ class TocBuilderSpec extends GaidenSpec {
 
     def "'build' should return the null when the toc file does not exist"() {
         setup:
-        assert tocFile.delete()
+            assert Files.notExists(tocFile)
 
         when:
-        def toc = tocBuilder.build(emptyContext)
+            def toc = tocBuilder.build(emptyContext)
 
         then:
-        toc == null
+            toc == null
     }
 
     def "'build' should not link a path with '#'"() {
         setup:
-        tocFile.write """
+            tocFile.write """
             |"#first.html"(title: 'first title')
             |"#second/"(title: 'second title') {
             |    "second/second1.html"(title: 'second 1 title')
@@ -207,11 +230,11 @@ class TocBuilderSpec extends GaidenSpec {
             """.stripMargin()
 
         when:
-        Toc toc = tocBuilder.build(emptyContext)
+            Toc toc = tocBuilder.build(emptyContext)
 
         then:
-        toc.path == "test/toc.html"
-        toc.content == """
+            toc.path == gaidenConfig.outputDirectory.resolve("toc.html")
+            toc.content == """
             |<html>
             |<head>
             |    <title>Test Title</title>
@@ -235,17 +258,19 @@ class TocBuilderSpec extends GaidenSpec {
 
     def "'build' should read a specified encoding"() {
         setup:
-        tocFile << new File("src/test/resources/toc/shiftjis-toc.groovy").bytes
+            tocFile.withOutputStream { out ->
+                out.write(new File("src/test/resources/toc/shiftjis-toc.groovy").bytes)
+            }
 
         and:
-        Holders.config.inputEncoding = "Shift_JIS"
+            gaidenConfig.inputEncoding = "Shift_JIS"
 
         when:
-        Toc toc = new TocBuilder(templateEngine).build(emptyContext)
+            Toc toc = tocBuilder.build(emptyContext)
 
         then:
-        toc.path == "test/toc.html"
-        toc.content == """
+            toc.path == gaidenConfig.outputDirectory.resolve("toc.html")
+            toc.content == """
             |<html>
             |<head>
             |    <title>Test Title</title>
@@ -260,9 +285,8 @@ class TocBuilderSpec extends GaidenSpec {
             """.stripMargin()
     }
 
-    private BuildContext getEmptyContext() {
+    private static BuildContext getEmptyContext() {
         def documentSource = new DocumentSource(pageSources: [])
         new BuildContext(documentSource: documentSource)
     }
-
 }

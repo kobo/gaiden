@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors
+ * Copyright 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-title = "Gaiden"
-tocTitle = "Table of contents"
-templateFilePath = "templates/layout.html"
-tocFilePath = "pages/toc.groovy"
-tocOutputFilePath = "toc.html"
-pagesDirectoryPath = "pages"
-staticDirectoryPath = "static"
-outputDirectoryPath = "build"
-inputEncoding = "UTF-8"
-outputEncoding = "UTF-8"
+package gaiden
+
+import groovy.transform.CompileStatic
+
+@CompileStatic
+class Header {
+    String title
+    int level
+}

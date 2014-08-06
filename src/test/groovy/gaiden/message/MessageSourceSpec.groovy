@@ -21,19 +21,17 @@ import spock.lang.Specification
 class MessageSourceSpec extends Specification {
 
     def "'getMessage' should return message"() {
-        setup:
-        def messageSource = new MessageSource("message.test_messages")
+        given:
+            def messageSource = new MessageSource("message.test_messages")
 
         expect:
-        messageSource.getMessage(key, args) == expected
+            messageSource.getMessage(key, args) == expected
 
         where:
-        key         | args           | expected
-        "simple"    | []             | "simple message"
-        "argument"  | []             | "{0} {1} argument message"
-        "argument"  | ["foo", "bar"] | "foo bar argument message"
-        "argument"  | null           | "{0} {1} argument message"
-        "notexists" | []             | "notexists"
+            key        | args           | expected
+            "simple"   | []             | "simple message"
+            "argument" | []             | "{0} {1} argument message"
+            "argument" | ["foo", "bar"] | "foo bar argument message"
+            "argument" | null           | "{0} {1} argument message"
     }
-
 }

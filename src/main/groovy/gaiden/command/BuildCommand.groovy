@@ -16,11 +16,14 @@
 
 package gaiden.command
 
-import gaiden.context.BuildContext
 import gaiden.Document
 import gaiden.DocumentBuilder
 import gaiden.DocumentWriter
 import gaiden.SourceCollector
+import gaiden.context.BuildContext
+import groovy.transform.CompileStatic
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
 /**
  * The 'build' command.
@@ -28,19 +31,31 @@ import gaiden.SourceCollector
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class Build implements GaidenCommand {
+@Component
+@CompileStatic
+class BuildCommand extends AbstractCommand {
+
+    final String name = "build"
 
     final boolean onlyGaidenProject = true
+
+    @Autowired
+    SourceCollector sourceCollector
+
+    @Autowired
+    DocumentBuilder documentBuilder
+
+    @Autowired
+    DocumentWriter documentWriter
 
     /**
      * Executes building.
      */
     @Override
-    void execute(List args = []) {
-        def documentSource = new SourceCollector().collect()
+    void execute(List<String> arguments, OptionAccessor optionAccessor) {
+        def documentSource = sourceCollector.collect()
         def context = new BuildContext(documentSource: documentSource)
-        Document document = new DocumentBuilder().build(context)
-        new DocumentWriter().write(document)
+        Document document = documentBuilder.build(context)
+        documentWriter.write(document)
     }
-
 }

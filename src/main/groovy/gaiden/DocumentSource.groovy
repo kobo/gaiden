@@ -16,12 +16,15 @@
 
 package gaiden
 
+import groovy.transform.CompileStatic
+
 /**
  * A document source is aggregate of page sources.
  *
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class DocumentSource {
     List<PageSource> pageSources
 
@@ -32,6 +35,10 @@ class DocumentSource {
      * @return the page source
      */
     PageSource findPageSource(PageReference pageReference) {
-        pageSources.find { it.matches(pageReference) }
+        pageSources.find {
+            if (pageReference.path in [it.path, it.outputPath]) {
+                return true
+            }
+        }
     }
 }

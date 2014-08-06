@@ -18,41 +18,35 @@ package gaiden
 
 import gaiden.context.BuildContext
 import gaiden.context.PageBuildContext
-import spock.lang.Specification
 
-class DocumentBuilderSpec extends Specification {
+class DocumentBuilderSpec extends GaidenSpec {
 
     def "'build' should builds document"() {
         setup:
-        def documentSource = new DocumentSource()
-        documentSource.pageSources = [
-            new PageSource(path: "source1.md", content: "# markdown1"),
-            new PageSource(path: "source2.md", content: "# markdown2"),
-        ]
-        def context = new BuildContext(documentSource: documentSource)
+            def documentSource = new DocumentSource()
+            documentSource.pageSources = [
+                createPageSource("source1.md"),
+                createPageSource("source2.md"),
+            ]
+            def context = new BuildContext(documentSource: documentSource)
 
         and:
-        def pageBuilder = Mock(PageBuilder)
-        def tocBuilder = Mock(TocBuilder)
+            def pageBuilder = Mock(PageBuilder)
+            def tocBuilder = Mock(TocBuilder)
 
         and:
-        def builder = new DocumentBuilder(
-            new File("src/test/resources/templates/simple-template.html"),
-            pageBuilder,
-            tocBuilder,
-            null,
-            [title: "Gaiden"]
-        )
+            def builder = new DocumentBuilder()
+            builder.tocBuilder = tocBuilder
+            builder.pageBuilder = pageBuilder
 
         when:
-        def document = builder.build(context)
+            def document = builder.build(context)
 
         then:
-        1 * tocBuilder.build(_ as BuildContext)
-        2 * pageBuilder.build(_ as PageBuildContext, _ as PageSource)
+            1 * tocBuilder.build(_ as BuildContext)
+            2 * pageBuilder.build(_ as PageBuildContext, _ as PageSource)
 
         and:
-        document
+            document
     }
-
 }

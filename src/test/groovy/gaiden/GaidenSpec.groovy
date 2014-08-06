@@ -18,8 +18,11 @@ package gaiden
 
 import gaiden.context.BuildContext
 import gaiden.message.MessageSource
-import spock.lang.AutoCleanup
+import org.apache.commons.io.FilenameUtils
+import spock.lang.Shared
 import spock.lang.Specification
+
+import java.nio.file.Files
 
 abstract class GaidenSpec extends Specification {
 
@@ -27,37 +30,58 @@ abstract class GaidenSpec extends Specification {
     def savedSystemErr
     def savedSystemSecurityManager
 
-    @AutoCleanup("delete")
-    def tocFile = File.createTempFile("toc", "groovy")
+    @Shared
+    MessageSource messageSource = new MessageSource()
 
-    @AutoCleanup("deleteDir")
     def pagesDirectory = File.createTempDir()
 
     def setup() {
         saveSystemProperties()
-        setupMessageSource()
-        setupConfig()
+        setupGaidenConfig()
     }
 
     def cleanup() {
+        cleanupGaidenConfig()
         restoreSystemProperties()
     }
 
-    GaidenConfig getConfig() {
-        Holders.config
-    }
-
-    BuildContext createBuildContext(List<Map> pageSourceMaps) {
-        def pageSources = pageSourceMaps.collect { new PageSource(it) }
+    BuildContext createBuildContext(List<Map<String, String>> pageSourceMaps) {
+        def pageSources = pageSourceMaps.collect { Map<String, String> params -> createPageSource(params.path) }
         def documentSource = new DocumentSource(pageSources: pageSources)
         new BuildContext(documentSource: documentSource)
     }
 
-    private setupConfig() {
-        def configFile = new File("src/test/resources/config/ValidConfig.groovy")
-        assert configFile.exists()
-        Holders.config = new GaidenConfigLoader().load(configFile)
-        Holders.config.tocFilePath = tocFile.canonicalPath
+    PageSource createPageSource(String path, String content = null) {
+        def pageSource = new PageSource()
+
+        pageSource.path = gaidenConfig.pagesDirectory.resolve(path)
+        if (Files.notExists(pageSource.path.parent)) {
+            Files.createDirectories(pageSource.path.parent)
+
+        }
+        if (Files.exists(pageSource.path)) {
+            Files.delete(pageSource.path)
+        }
+        Files.createFile(pageSource.path)
+        if (content) {
+            pageSource.path.write(content)
+        }
+
+        pageSource.outputPath = gaidenConfig.outputDirectory.resolve(FilenameUtils.removeExtension(path) + ".html")
+        pageSource.intputEncoding = gaidenConfig.inputEncoding
+
+        pageSource
+    }
+
+    GaidenConfig gaidenConfig
+
+    private void setupGaidenConfig() {
+        gaidenConfig = new GaidenConfig()
+        gaidenConfig.projectDirectoryPath = Files.createTempDirectory("gaiden-project")
+    }
+
+    private void cleanupGaidenConfig() {
+        gaidenConfig.projectDirectory.deleteDir()
     }
 
     private saveSystemProperties() {
@@ -70,9 +94,5 @@ abstract class GaidenSpec extends Specification {
         System.out = savedSystemOut
         System.err = savedSystemErr
         System.securityManager = savedSystemSecurityManager
-    }
-
-    private setupMessageSource() {
-        Holders.messageSource = new MessageSource()
     }
 }

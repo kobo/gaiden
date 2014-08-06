@@ -16,12 +16,17 @@
 
 package gaiden
 
+import groovy.transform.CompileStatic
+
+import java.nio.file.Path
+
 /**
  * A holder for a content and the meta information.
  *
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class Page {
 
     /** A page source */
@@ -33,8 +38,7 @@ class Page {
     /**
      * Returns a relative path from the output directory.
      */
-    String getPath() {
+    Path getPath() {
         source.outputPath
     }
-
 }

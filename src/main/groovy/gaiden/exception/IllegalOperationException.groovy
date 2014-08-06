@@ -16,7 +16,7 @@
 
 package gaiden.exception
 
-import gaiden.Holders
+import groovy.transform.CompileStatic
 
 /**
  * Thrown when an operation is illegal.
@@ -24,15 +24,10 @@ import gaiden.Holders
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class IllegalOperationException extends GaidenException {
 
     IllegalOperationException() {
         super("usage")
     }
-
-    @Override
-    String getMessage() {
-        return Holders.getMessage(key, arguments)
-    }
-
 }

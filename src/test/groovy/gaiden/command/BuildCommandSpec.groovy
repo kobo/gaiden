@@ -16,24 +16,32 @@
 
 package gaiden.command
 
+import gaiden.DocumentBuilder
+import gaiden.DocumentWriter
+import gaiden.SourceCollector
 import spock.lang.Specification
 
-class CleanSpec extends Specification {
+class BuildCommandSpec extends Specification {
 
-    def "'execute' should clean the build directory"() {
+    def "'execute' should build a document"() {
         setup:
-        def buildDirectory = File.createTempDir()
-        new File(buildDirectory, "dummy").write("dummy")
-        assert buildDirectory.exists()
+            def sourceCollector = Mock(SourceCollector)
+            def documentBuilder = Mock(DocumentBuilder)
+            def documentWriter = Mock(DocumentWriter)
 
         and:
-        def command = new Clean(buildDirectory)
+            def command = new BuildCommand()
+            command.sourceCollector = sourceCollector
+            command.documentBuilder = documentBuilder
+            command.documentWriter = documentWriter
 
         when:
-        command.execute()
+            command.execute([], null)
 
         then:
-        !buildDirectory.exists()
+            1 * sourceCollector.collect()
+            1 * documentBuilder.build(_)
+            1 * documentWriter.write(_)
     }
 
 }

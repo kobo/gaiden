@@ -17,12 +17,21 @@
 package gaiden
 
 import gaiden.context.PageBuildContext
+import gaiden.markdown.GaidenMarkdownProcessor
+
+import java.nio.file.Files
 
 class PageBuilderSpec extends GaidenSpec {
 
-    def "'build' should build a page"() {
-        setup:
-        def templateEngine = new TemplateEngine('''
+    TemplateEngine templateEngine
+    GaidenMarkdownProcessor gaidenMarkdownProcessor
+
+    def setup() {
+        def templateFile = gaidenConfig.templateFile
+        if (Files.notExists(templateFile.parent)) {
+            Files.createDirectories(templateFile.parent)
+        }
+        templateFile << '''
             |<html>
             |<head>
             |    <title>$title</title>
@@ -31,19 +40,34 @@ class PageBuilderSpec extends GaidenSpec {
             |$content
             |</body>
             |</html>
-            '''.stripMargin())
+            '''.stripMargin()
 
-        and:
-        def pageSource = new PageSource(path: "test.md", content: "# Test")
-        def documentSource = new DocumentSource(pageSources: [pageSource])
-        def context = new PageBuildContext(documentSource: documentSource, toc: new Toc(tocNodes: []))
+        gaidenConfig.title = "Test Title"
+
+        templateEngine = new TemplateEngine()
+        templateEngine.gaidenConfig = gaidenConfig
+
+        gaidenMarkdownProcessor = new GaidenMarkdownProcessor()
+        gaidenMarkdownProcessor.gaidenConfig = gaidenConfig
+        gaidenMarkdownProcessor.messageSource = messageSource
+    }
+
+    def "'build' should build a page"() {
+        setup:
+            def pageSource = createPageSource("test.md", "# Test")
+            def documentSource = new DocumentSource(pageSources: [pageSource])
+            def context = new PageBuildContext(documentSource: documentSource, toc: new Toc(tocNodes: []))
 
         when:
-        def page = new PageBuilder(templateEngine).build(context, pageSource)
+            def pageBuilder = new PageBuilder()
+            pageBuilder.templateEngine = templateEngine
+            pageBuilder.gaidenConfig = gaidenConfig
+            pageBuilder.markdownProcessor = gaidenMarkdownProcessor
+            def page = pageBuilder.build(context, pageSource)
 
         then:
-        page.path == "test.html"
-        page.content == '''
+            page.path == gaidenConfig.outputDirectory.resolve("test.html")
+            page.content == '''
             |<html>
             |<head>
             |    <title>Test Title</title>
@@ -54,5 +78,4 @@ class PageBuilderSpec extends GaidenSpec {
             |</html>
             '''.stripMargin()
     }
-
 }

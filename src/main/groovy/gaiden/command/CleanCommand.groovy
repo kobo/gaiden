@@ -16,7 +16,11 @@
 
 package gaiden.command
 
-import gaiden.Holders
+import gaiden.message.MessageSource
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
 /**
  * The 'clean' command.
@@ -24,22 +28,24 @@ import gaiden.Holders
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
-class Clean implements GaidenCommand {
+@Component
+@CompileStatic
+class CleanCommand extends AbstractCommand {
 
-    private File targetDirectory
+    @Autowired
+    MessageSource messageSource
+
+    final String name = "clean"
 
     final boolean onlyGaidenProject = true
-
-    Clean(targetDirectory = Holders.config.outputDirectory) {
-        this.targetDirectory = targetDirectory
-    }
 
     /**
      * Executes cleaning.
      */
+    @CompileStatic(TypeCheckingMode.SKIP)
     @Override
-    void execute(List args = []) {
-        new AntBuilder().delete(dir: targetDirectory)
+    void execute(List<String> arguments, OptionAccessor optionAccessor) {
+        new AntBuilder().delete(dir: gaidenConfig.projectDirectory.resolve(gaidenConfig.outputDirectoryPath))
+        println messageSource.getMessage("command.clean.success.message")
     }
-
 }
