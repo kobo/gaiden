@@ -78,6 +78,12 @@ class GaidenConfig {
     /** The path of user directory */
     String projectDirectoryPath = System.properties["user.dir"] as String
 
+    String pagesFilePath = "pages.groovy"
+
+    Path getPagesFile() {
+        projectDirectory.resolve(pagesFilePath)
+    }
+
     /** Returns the {@link #templateFilePath} as {@link Path} */
     Path getTemplateFile() {
         projectDirectory.resolve(templateFilePath)
