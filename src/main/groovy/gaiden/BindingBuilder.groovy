@@ -17,6 +17,7 @@
 package gaiden
 
 import gaiden.context.PageBuildContext
+import gaiden.markdown.GaidenMarkdownProcessor
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 import groovy.xml.MarkupBuilder
@@ -54,13 +55,14 @@ class BindingBuilder {
      */
     Map<String, Object> build() {
         [
-            title   : escapeHtml4(gaidenConfig.title),
-            content : content,
-            tocPath : tocPath,
+            title: escapeHtml4(gaidenConfig.title),
+            content: content,
+            tocPath: tocPath,
             resource: resourceMethod,
             prevPage: prevPage,
             nextPage: nextPage,
-            toc     : toc,
+            toc: toc,
+            render: renderMethod,
         ]
     }
 
@@ -97,14 +99,14 @@ class BindingBuilder {
 
         if (!previousTocNode.pageSource) {
             return [
-                path : EMPTY_STRING,
+                path: EMPTY_STRING,
                 title: escapeHtml4(previousTocNode.title),
             ]
         }
 
         def relativePath = pageSource.outputPath.parent.relativize(previousTocNode.pageSource.outputPath)
         return [
-            path : relativePath.toString() + previousTocNode.pageReference.hash,
+            path: relativePath.toString() + previousTocNode.pageReference.hash,
             title: escapeHtml4(previousTocNode.title)
         ]
     }
@@ -121,14 +123,14 @@ class BindingBuilder {
 
         if (!nextTocNode.pageSource) {
             return [
-                path : EMPTY_STRING,
+                path: EMPTY_STRING,
                 title: escapeHtml4(nextTocNode.title),
             ]
         }
 
         def relativePath = pageSource.outputPath.parent.relativize(nextTocNode.pageSource.outputPath)
         return [
-            path : relativePath.toString() + nextTocNode.pageReference.hash,
+            path: relativePath.toString() + nextTocNode.pageReference.hash,
             title: escapeHtml4(nextTocNode.title)
         ]
     }
@@ -205,6 +207,15 @@ class BindingBuilder {
                     }
                 }
             }
+        }
+    }
+
+    @CompileStatic(TypeCheckingMode.SKIP)
+    private Closure getRenderMethod() {
+        return { String filePath ->
+            def resolvedPath = resourceMethod.call(filePath)
+            def processor = new GaidenMarkdownProcessor()
+            processor.markdownToHtml(new File(resolvedPath).text)
         }
     }
 }
