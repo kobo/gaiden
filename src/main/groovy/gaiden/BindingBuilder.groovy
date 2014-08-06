@@ -16,8 +16,11 @@
 
 package gaiden
 
+import gaiden.markdown.GaidenMarkdownProcessor
+import gaiden.message.MessageSource
 import groovy.transform.CompileStatic
 
+import java.nio.file.Files
 import java.nio.file.Paths
 
 import static org.apache.commons.lang3.StringEscapeUtils.*
@@ -30,10 +33,16 @@ import static org.apache.commons.lang3.StringEscapeUtils.*
 @CompileStatic
 class BindingBuilder {
 
+    private MessageSource messageSource
     private GaidenConfig gaidenConfig
     private Page page
     private Document document
     private String content
+
+    BindingBuilder setMessageSource(MessageSource messageSource) {
+        this.messageSource = messageSource
+        return this
+    }
 
     BindingBuilder setGaidenConfig(GaidenConfig gaidenConfig) {
         this.gaidenConfig = gaidenConfig
@@ -64,10 +73,11 @@ class BindingBuilder {
         [
             title      : escapeHtml4(gaidenConfig.title),
             content    : content,
-            resource   : this.&getResourceMethod,
+            resource   : this.&getResource,
             prevPage   : prevPage,
             nextPage   : nextPage,
             documentToc: this.&getDocumentToc,
+            render     : this.&render,
         ]
     }
 
@@ -95,7 +105,7 @@ class BindingBuilder {
         ]
     }
 
-    private String getResourceMethod(String path) {
+    private String getResource(String path) {
         def resourceFile = Paths.get(path)
         def src = page.source.outputPath
         def dest = gaidenConfig.outputDirectory.resolve(resourceFile.absolute ? Paths.get(resourceFile.toString().substring(1)) : resourceFile)
@@ -136,5 +146,16 @@ class BindingBuilder {
             sb << "${indent * currentLevel}</ul>\n"
         }
         sb.toString()
+    }
+
+    private String render(String filePath) {
+        def file = gaidenConfig.pagesDirectory.resolve(filePath)
+        if (Files.notExists(file)) {
+            System.err.println("WARNING: " + messageSource.getMessage("output.page.reference.not.exists.message", [filePath, gaidenConfig.templateFile]))
+            return ""
+        }
+
+        def processor = new GaidenMarkdownProcessor()
+        processor.markdownToHtml(file.text)
     }
 }

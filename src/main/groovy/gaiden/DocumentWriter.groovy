@@ -17,6 +17,7 @@
 package gaiden
 
 import gaiden.markdown.GaidenMarkdownProcessor
+import gaiden.message.MessageSource
 import gaiden.util.PathUtils
 import groovy.transform.CompileStatic
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,6 +43,9 @@ class DocumentWriter {
 
     @Autowired
     GaidenMarkdownProcessor markdownProcessor
+
+    @Autowired
+    MessageSource messageSource
 
     /**
      * Writes a {@link Document} to file.
@@ -72,6 +76,7 @@ class DocumentWriter {
 
         def binding = new BindingBuilder()
             .setGaidenConfig(gaidenConfig)
+            .setMessageSource(messageSource)
             .setPage(page)
             .setDocument(document)
             .setContent(markdownProcessor.convertToHtml(page, document))
