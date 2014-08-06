@@ -28,7 +28,6 @@ class PageReferenceFactory {
         def path = removeHash(original)
 
         if (PathUtils.getExtension(path) && !(PathUtils.getExtension(path) in SourceCollector.PAGE_SOURCE_EXTENSIONS)) {
-//            return path.absolute ? Paths.get(path.toString().substring(1)) : path
             return gaidenConfig.outputDirectory.resolve(path.absolute ? Paths.get(path.toString().substring(1)) : path)
         }
 
