@@ -18,8 +18,6 @@ package gaiden
 
 import groovy.transform.CompileStatic
 
-import java.nio.file.Path
-
 /**
  * A node of TOC.
  *
@@ -28,23 +26,12 @@ import java.nio.file.Path
 @CompileStatic
 class TocNode {
 
-    /** The path of the page source */
-    Path path
-    /** The title of the page */
-    String title
+    /** The numbers of the header */
+    List<Integer> numbers
 
-    /** The page source */
-    PageSource pageSource
+    /** The page */
+    Page page
 
-    /** The previous TOC node */
-    TocNode previous
-    /** The next TOC node */
-    TocNode next
-    /** The parent TOC node */
-    TocNode parent
-
-    /** The {@code List} of TOC nodes children */
-    List<TocNode> children
-
-    PageReference pageReference
+    /** The header */
+    Header header
 }

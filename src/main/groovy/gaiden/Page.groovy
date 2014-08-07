@@ -17,6 +17,7 @@
 package gaiden
 
 import groovy.transform.CompileStatic
+import org.pegdown.ast.RootNode
 
 import java.nio.file.Path
 
@@ -29,19 +30,23 @@ import java.nio.file.Path
 @CompileStatic
 class Page {
 
-    /** A page source */
+    /** the page source */
     PageSource source
 
-    /** Headers of content */
+    /** the headers of content */
     List<Header> headers
 
-    /** A output content */
-    String content
+    /** the AST of content */
+    RootNode contentNode
 
-    /**
-     * Returns a relative path from the output directory.
-     */
-    Path getPath() {
-        source.outputPath
+    /** The metadata of page */
+    Map metadata
+
+    String relativize(Page page) {
+        relativize(page.source.outputPath)
+    }
+
+    String relativize(Path path) {
+        source.outputPath.parent.relativize(path).toString()
     }
 }

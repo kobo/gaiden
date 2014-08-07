@@ -18,8 +18,8 @@ package gaiden.command
 
 import gaiden.exception.GaidenException
 import gaiden.message.MessageSource
+import gaiden.util.PathUtils
 import groovy.transform.CompileStatic
-import org.apache.commons.io.FileUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -53,7 +53,7 @@ class CreateProjectCommand extends AbstractCommand {
             throw new GaidenException("command.create.project.already.exists.error", [projectDirectory])
         }
 
-        FileUtils.copyDirectory(gaidenConfig.defaultTemplateDirectory.toFile(), projectDirectory.toFile())
+        PathUtils.copyFiles(gaidenConfig.projectTemplateDirectory, projectDirectory)
         println messageSource.getMessage("command.create.project.success.message", [projectDirectory])
     }
 }

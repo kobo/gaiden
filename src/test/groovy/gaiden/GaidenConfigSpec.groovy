@@ -16,86 +16,40 @@
 
 package gaiden
 
-import gaiden.message.MessageSource
-import spock.lang.Specification
+import spock.lang.AutoCleanup
 
-import java.nio.file.Paths
+import java.nio.file.Files
 
-class GaidenConfigSpec extends Specification {
+class GaidenConfigSpec extends GaidenSpec {
 
-    def gaidenConfig = new GaidenConfig()
+    @AutoCleanup("deleteDir")
+    def gaidenConfigFile = Files.createTempFile("GaidenConfig", "groovy")
 
-    def "'initialize' should initialize a configuration file"() {
-        when:
-            gaidenConfig.initialize(Paths.get("src/test/resources/config/ValidConfig.groovy"))
-
-        then:
-            with(gaidenConfig) {
-                title == "Test Title"
-                tocTitle == "Test TOC Title"
-                templateFilePath == "test/templates/layout.html"
-                tocFilePath == "test/pages/toc.groovy"
-                tocOutputFilePath == "test/toc.html"
-                pagesDirectoryPath == "test/pages"
-                staticDirectoryPath == "test/static"
-                outputDirectoryPath == "test/build/html"
-                inputEncoding == "UTF-8"
-                outputEncoding == "UTF-8"
-            }
-    }
-
-    def "'initialize' should initialize the defaults configuration other than values set"() {
-        when:
-            gaidenConfig.initialize(Paths.get("src/test/resources/config/OnlyTitleConfig.groovy"))
-
-        then:
-            with(gaidenConfig) {
-                title == "Test Title"
-                tocTitle == "Table of contents"
-                templateFilePath == "templates/layout.html"
-                tocFilePath == "pages/toc.groovy"
-                tocOutputFilePath == "toc.html"
-                pagesDirectoryPath == ""
-                staticDirectoryPath == "static"
-                outputDirectoryPath == "build"
-                inputEncoding == "UTF-8"
-                outputEncoding == "UTF-8"
-            }
-    }
-
-    def "'initialize' should initialize a configuration file with deprecated parameters"() {
-        setup:
-            def savedSystemErr = System.err
-            def printStream = Mock(PrintStream)
-            System.err = printStream
-
-        and:
-            def messageSource = Stub(MessageSource)
-            messageSource.getMessage("config.deprecated.parameter.message", _ as List) >> "Test Message"
-            gaidenConfig.messageSource = messageSource
+    def "initialize the configuration with GaidenConfig.groovy"() {
+        given:
+            gaidenConfigFile.write '''
+            | title = "Test Title"
+            | templateFilePath = "test/templates/layout.html"
+            | tocFilePath = "test/pages/toc.groovy"
+            | pagesDirectoryPath = "test/pages"
+            | assetsDirectoryPath = "test/assets"
+            | outputDirectoryPath = "test/build/html"
+            | inputEncoding = "UTF-8"
+            | outputEncoding = "UTF-8"
+            '''.stripMargin()
+            def gaidenConfig = new GaidenConfig()
+            gaidenConfig.pagesDirectory
 
         when:
-            gaidenConfig.initialize(Paths.get("src/test/resources/config/DeprecatedConfig.groovy"))
+            gaidenConfig.initialize(gaidenConfigFile)
 
         then:
-            with(gaidenConfig) {
-                title == "Gaiden"
-                tocTitle == "Table of contents"
-                templateFilePath == "templates/deprecated.html"
-                tocFilePath == "pages/deprecated-toc.groovy"
-                tocOutputFilePath == "deprecated-toc.html"
-                pagesDirectoryPath == "deprecated-pages"
-                staticDirectoryPath == "deprecated-static"
-                outputDirectoryPath == "deprecated-build"
-                inputEncoding == "UTF-8"
-                outputEncoding == "UTF-8"
-            }
-
-        and:
-            6 * printStream.println("WARNING: Test Message")
-
-        cleanup:
-            System.err = savedSystemErr
+            gaidenConfig.title == "Test Title"
+            gaidenConfig.templateFile == gaidenConfig.projectDirectory.resolve("test/templates/layout.html")
+            gaidenConfig.pagesDirectory == gaidenConfig.projectDirectory.resolve("test/pages")
+            gaidenConfig.assetsDirectory == gaidenConfig.projectDirectory.resolve("test/assets")
+            gaidenConfig.outputDirectory == gaidenConfig.projectDirectory.resolve("test/build/html")
+            gaidenConfig.inputEncoding == "UTF-8"
+            gaidenConfig.outputEncoding == "UTF-8"
     }
-
 }

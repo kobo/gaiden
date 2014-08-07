@@ -16,11 +16,11 @@
 
 package gaiden.markdown
 
+import gaiden.Document
 import gaiden.GaidenConfig
 import gaiden.Header
-import gaiden.PageReferenceFactory
+import gaiden.Page
 import gaiden.PageSource
-import gaiden.context.PageBuildContext
 import gaiden.message.MessageSource
 import groovy.transform.CompileStatic
 import org.pegdown.Extensions
@@ -46,9 +46,6 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
     @Autowired
     MessageSource messageSource
 
-    @Autowired
-    PageReferenceFactory pageReferenceFactory
-
     GaidenMarkdownProcessor() {
         super(Extensions.ALL - Extensions.HARDWRAPS)
     }
@@ -62,6 +59,7 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
     }
 
     /**
+     * FIXME:
      * Converts the given markdown nodes to HTML.
      *
      * @param context the context to be built
@@ -69,9 +67,9 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
      * @return the HTML
      * @throws ParsingTimeoutException if the input cannot be parsed within the configured parsing timeout
      */
-    String convertToHtml(RootNode rootNode, PageBuildContext context, PageSource pageSource) throws ParsingTimeoutException {
-        def linkRenderer = new GaidenLinkRenderer(context, pageSource, gaidenConfig.pagesDirectory, messageSource, pageReferenceFactory)
-        def imageRenderer = new ImageRenderer(pageSource, gaidenConfig.staticDirectory, gaidenConfig.outputDirectory, messageSource)
-        new GaidenToHtmlSerializer(linkRenderer, imageRenderer).toHtml(rootNode)
+    String convertToHtml(Page page, Document document) throws ParsingTimeoutException {
+        def linkRenderer = new GaidenLinkRenderer(page: page, document: document, messageSource: messageSource)
+        def imageRenderer = new ImageRenderer(page, gaidenConfig.assetsDirectory, gaidenConfig.outputDirectory, messageSource)
+        new GaidenToHtmlSerializer(linkRenderer, imageRenderer).toHtml(page.contentNode)
     }
 }

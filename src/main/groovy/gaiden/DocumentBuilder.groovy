@@ -16,11 +16,11 @@
 
 package gaiden
 
-import gaiden.context.BuildContext
-import gaiden.context.PageBuildContext
 import groovy.transform.CompileStatic
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+
+import java.nio.file.Files
 
 /**
  * A document builder builds from a document source to a document.
@@ -38,25 +38,51 @@ class DocumentBuilder {
     @Autowired
     TocBuilder tocBuilder
 
+    @Autowired
+    GaidenConfig gaidenConfig
+
     /**
      * Builds a document from a document source.
      *
      * @param context the context to be built
      * @return {@link Document}'s instance
      */
-    Document build(BuildContext context) {
-        def toc = buildToc(context)
-        def pages = buildPages(new PageBuildContext(documentSource: context.documentSource, toc: toc))
-        new Document(toc: toc, pages: pages)
+    Document build(DocumentSource documentSource) {
+        def pageReferences = getPageReferences()
+        def pages = buildPages(documentSource, pageReferences)
+        def pageOrder = getPageOrder(pageReferences, pages)
+        def toc = buildToc(pageOrder)
+
+        new Document(toc: toc, pages: pages, pageOrder: pageOrder)
     }
 
-    private Toc buildToc(BuildContext context) {
-        tocBuilder.build(context)
+    private List<PageReference> getPageReferences() {
+        def pagesParser = new PagesParser()
+        pagesParser.pagesDirectory = gaidenConfig.pagesDirectory
+        pagesParser.parse(gaidenConfig.pagesFile.getText(gaidenConfig.inputEncoding))
     }
 
-    private List<Page> buildPages(PageBuildContext context) {
-        context.documentSource.pageSources.collect { PageSource pageSource ->
-            pageBuilder.build(context, pageSource)
+    private static List<Page> getPageOrder(List<PageReference> pageReferences, List<Page> pages) {
+        def pageOrder = []
+        pageReferences.each { PageReference pageReference ->
+            def page = pages.find { Files.isSameFile(it.source.path, pageReference.path) }
+            if (!page) {
+                // TODO warning log
+                return
+            }
+            pageOrder << page
+        }
+        pageOrder
+    }
+
+    private Toc buildToc(List<Page> pageOrder) {
+        tocBuilder.build(pageOrder)
+    }
+
+    private List<Page> buildPages(DocumentSource documentSource, List<PageReference> pageReferences) {
+        documentSource.pageSources.collect { PageSource pageSource ->
+            def pageReference = pageReferences.find { Files.isSameFile(it.path, pageSource.path) }
+            pageBuilder.build(pageSource, pageReference)
         }
     }
 }

@@ -49,6 +49,7 @@ dependencies {
     compile 'org.slf4j:jcl-over-slf4j:1.7.7'
 
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+    testCompile 'net.htmlparser.jericho:jericho-html:3.3'
 
     // optional dependencies for using Spock
     testRuntime 'cglib:cglib-nodep:2.2.2'       // enables mocking of classes (in addition to interfaces)

@@ -19,8 +19,8 @@ package gaiden.command
 import gaiden.Document
 import gaiden.DocumentBuilder
 import gaiden.DocumentWriter
+import gaiden.GaidenConfig
 import gaiden.SourceCollector
-import gaiden.context.BuildContext
 import groovy.transform.CompileStatic
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -48,14 +48,16 @@ class BuildCommand extends AbstractCommand {
     @Autowired
     DocumentWriter documentWriter
 
+    @Autowired
+    GaidenConfig gaidenConfig
+
     /**
      * Executes building.
      */
     @Override
     void execute(List<String> arguments, OptionAccessor optionAccessor) {
         def documentSource = sourceCollector.collect()
-        def context = new BuildContext(documentSource: documentSource)
-        Document document = documentBuilder.build(context)
+        Document document = documentBuilder.build(documentSource)
         documentWriter.write(document)
     }
 }

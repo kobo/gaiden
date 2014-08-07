@@ -16,13 +16,13 @@
 
 package gaiden
 
+import gaiden.markdown.GaidenMarkdownProcessor
 import gaiden.util.PathUtils
 import groovy.transform.CompileStatic
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import java.nio.file.Files
-import java.nio.file.Path
 
 /**
  * A document writer writes a {@link Document} to files.
@@ -37,6 +37,12 @@ class DocumentWriter {
     @Autowired
     GaidenConfig gaidenConfig
 
+    @Autowired
+    TemplateEngine templateEngine
+
+    @Autowired
+    GaidenMarkdownProcessor markdownProcessor
+
     /**
      * Writes a {@link Document} to file.
      *
@@ -47,35 +53,35 @@ class DocumentWriter {
             Files.createDirectories(gaidenConfig.outputDirectory)
         }
 
-        writePages(document.pages)
-        writeToc(document.toc)
-
+        writePages(document)
         copyStaticFiles()
 
         println "Built document at ${gaidenConfig.outputDirectory.toAbsolutePath()}"
     }
 
-    private void writePages(List<Page> pages) {
-        pages.each { Page page ->
-            writeToFile(page.path, page.content)
+    private void writePages(Document document) {
+        document.pages.each { Page page ->
+            writePage(page, document)
         }
     }
 
-    private void writeToc(Toc toc) {
-        if (!toc) {
-            return
+    private void writePage(Page page, Document document) {
+        if (Files.notExists(page.source.outputPath.parent)) {
+            Files.createDirectories(page.source.outputPath.parent)
         }
-        writeToFile(toc.path, toc.content)
-    }
 
-    private void writeToFile(Path path, String content) {
-        if (Files.notExists(path.parent)) {
-            Files.createDirectories(path.parent)
-        }
-        Files.write(path, content.getBytes(gaidenConfig.outputEncoding))
+        def binding = new BindingBuilder()
+            .setGaidenConfig(gaidenConfig)
+            .setPage(page)
+            .setDocument(document)
+            .setContent(markdownProcessor.convertToHtml(page, document))
+            .build()
+
+        def content = templateEngine.make(binding)
+        Files.write(page.source.outputPath, content.getBytes(gaidenConfig.outputEncoding))
     }
 
     private void copyStaticFiles() {
-        PathUtils.copyFiles(gaidenConfig.staticDirectory, gaidenConfig.outputDirectory)
+        PathUtils.copyFiles(gaidenConfig.assetsDirectory, gaidenConfig.outputDirectory)
     }
 }

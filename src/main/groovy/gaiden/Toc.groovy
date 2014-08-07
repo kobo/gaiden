@@ -18,8 +18,6 @@ package gaiden
 
 import groovy.transform.CompileStatic
 
-import java.nio.file.Path
-
 /**
  * A table of contents.
  *
@@ -29,27 +27,15 @@ import java.nio.file.Path
 @CompileStatic
 class Toc {
 
-    /** A root node of TOC */
-    TocNode root
-
-    /** A list of TOC node */
     List<TocNode> tocNodes
 
-    /** A relative path from the output directory */
-    Path path
+    List<TocNode> getDocumentToc() {
+        tocNodes
+    }
 
-    /** A output content */
-    String content
-
-    /**
-     * Finds TOC node which matches the specified page reference.
-     *
-     * @param pageReference the page reference
-     * @return TOC node found
-     */
-    TocNode findTocNode(Path path) {
-        tocNodes.find {
-            it.pageSource?.path == path
-        }
+    List<TocNode> getPageToc(Page page) {
+        tocNodes.findAll { TocNode tocNode ->
+            tocNode.page == page
+        } as List<TocNode>
     }
 }

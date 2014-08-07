@@ -16,7 +16,7 @@
 
 package gaiden.markdown
 
-import gaiden.PageSource
+import gaiden.Page
 import gaiden.message.MessageSource
 import gaiden.util.UrlUtils
 import groovy.transform.CompileStatic
@@ -24,7 +24,6 @@ import groovy.transform.CompileStatic
 import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.Path
-import java.nio.file.Paths
 
 /**
  * A Renderer for image node.
@@ -35,13 +34,13 @@ import java.nio.file.Paths
 @CompileStatic
 class ImageRenderer {
 
-    private PageSource pageSource
+    private Page page
     private Path staticDirectory
     private Path outputDirectory
     private MessageSource messageSource
 
-    ImageRenderer(PageSource pageSource, Path staticDirectory, Path outputDirectory, MessageSource messageSource) {
-        this.pageSource = pageSource
+    ImageRenderer(Page page, Path staticDirectory, Path outputDirectory, MessageSource messageSource) {
+        this.page = page
         this.staticDirectory = staticDirectory
         this.outputDirectory = outputDirectory
         this.messageSource = messageSource
@@ -71,28 +70,14 @@ class ImageRenderer {
             return new ImageElement(src: imagePath, alt: alt)
         }
 
-        def relativeImagePath = getRelativeImagePath(imagePath)
-        new ImageElement(src: relativeImagePath, alt: alt)
-    }
-
-    private String getRelativeImagePath(String imagePath) {
-        def imageFile = getImageFile(imagePath)
-
-        if (Files.notExists(imageFile)) {
+        def image = page.source.path.parent.resolve(imagePath)
+        if (Files.notExists(image)) {
             // It is required to normalize path such as '/path/to/../images/sample.png'.
-            System.err.println("WARNING: " + messageSource.getMessage("image.reference.not.exists.message", [imagePath, pageSource.path]))
-            return imagePath
+            System.err.println("WARNING: " + messageSource.getMessage("image.reference.not.exists.message", [imagePath, page.source.path]))
+            return new ImageElement(src: imagePath, alt: alt)
         }
 
-        pageSource.outputPath.parent.relativize(outputDirectory.resolve(staticDirectory.relativize(imageFile.toRealPath(LinkOption.NOFOLLOW_LINKS)))).toString()
-    }
-
-    private Path getImageFile(String imagePath) {
-        def path = Paths.get(imagePath)
-        if (path.absolute) {
-            return staticDirectory.resolve(imagePath.substring(1))
-        } else {
-            return staticDirectory.resolve(outputDirectory.relativize(pageSource.outputPath.parent).resolve(imagePath))
-        }
+        def outputImage = outputDirectory.resolve(staticDirectory.relativize(image.toRealPath(LinkOption.NOFOLLOW_LINKS)))
+        return new ImageElement(src: page.relativize(outputImage), alt: alt)
     }
 }

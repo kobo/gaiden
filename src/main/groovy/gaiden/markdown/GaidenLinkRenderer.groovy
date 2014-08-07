@@ -16,10 +16,9 @@
 
 package gaiden.markdown
 
-import gaiden.PageReferenceFactory
-import gaiden.PageSource
+import gaiden.Document
+import gaiden.Page
 import gaiden.SourceCollector
-import gaiden.context.PageBuildContext
 import gaiden.message.MessageSource
 import gaiden.util.UrlUtils
 import groovy.transform.CompileStatic
@@ -28,8 +27,8 @@ import org.pegdown.LinkRenderer
 import org.pegdown.ast.ExpLinkNode
 import org.pegdown.ast.RefLinkNode
 
-import java.nio.file.Path
-import java.nio.file.Paths
+import java.nio.file.Files
+import java.nio.file.LinkOption
 
 import static org.pegdown.FastEncoder.*
 
@@ -42,19 +41,9 @@ import static org.pegdown.FastEncoder.*
 @CompileStatic
 class GaidenLinkRenderer extends LinkRenderer {
 
-    private PageBuildContext context
-    private PageSource pageSource
-    private Path pagesDirectory
-    private MessageSource messageSource
-    private PageReferenceFactory pageReferenceFactory
-
-    GaidenLinkRenderer(PageBuildContext context, PageSource pageSource, Path pagesDirectory, MessageSource messageSource, PageReferenceFactory pageReferenceFactory) {
-        this.context = context
-        this.pageSource = pageSource
-        this.pagesDirectory = pagesDirectory
-        this.messageSource = messageSource
-        this.pageReferenceFactory = pageReferenceFactory
-    }
+    Page page
+    Document document
+    MessageSource messageSource
 
     @Override
     LinkRenderer.Rendering render(ExpLinkNode node, String text) {
@@ -71,34 +60,27 @@ class GaidenLinkRenderer extends LinkRenderer {
             return createRendering(url, title, text)
         }
 
-        def pageReference = pageReferenceFactory.get(Paths.get(url), pageSource)
-        def targetPageSource = context.documentSource.findPageSource(pageReference)
-        if (!targetPageSource) {
-            if (isPageSourceExtension(pageReference.path.toString())) {
-                System.err.println("WARNING: " + messageSource.getMessage("output.page.reference.not.exists.message", [url, pageSource.path]))
-            }
-
+        def parts = url.split("#")
+        def path = parts[0]
+        if (!(FilenameUtils.getExtension(path) in SourceCollector.PAGE_SOURCE_EXTENSIONS)) {
             return createRendering(url, title, text)
         }
 
-        def relativePath = pageSource.outputPath.parent.relativize(targetPageSource.outputPath).toString()
-        return createRendering("${relativePath}${pageReference.hash}", title, text)
+        def filePath = page.source.path.parent.resolve(path)
+        if (Files.notExists(filePath)) {
+            System.err.println("WARNING: " + messageSource.getMessage("output.page.reference.not.exists.message", [url, page.source.path]))
+            return createRendering(url, title, text)
+        }
+
+        def destPage = document.pages.find {
+            Files.isSameFile(it.source.path, filePath)
+        }
+
+        return createRendering("${page.relativize(destPage)}${parts.size() > 1 ? "#${parts[1]}" : ""}", title, text)
     }
 
     private LinkRenderer.Rendering createRendering(String url, String title, String text) {
         LinkRenderer.Rendering rendering = new LinkRenderer.Rendering(url, text)
         return title ? rendering.withAttribute("title", encode(title)) : rendering
-    }
-
-    /**
-     * Checks the extension of filename is a page source extension.
-     *
-     * @return {@code true} if the extension of filename is a page source extension
-     * @see SourceCollector#PAGE_SOURCE_EXTENSIONS
-     */
-    private static boolean isPageSourceExtension(String path) {
-        def extension = FilenameUtils.getExtension(path)
-
-        !extension || extension in SourceCollector.PAGE_SOURCE_EXTENSIONS
     }
 }

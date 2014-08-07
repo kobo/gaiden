@@ -16,7 +16,6 @@
 
 package gaiden
 
-import gaiden.context.PageBuildContext
 import gaiden.markdown.GaidenMarkdownProcessor
 import groovy.transform.CompileStatic
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,39 +34,21 @@ class PageBuilder {
     @Autowired
     GaidenMarkdownProcessor markdownProcessor
 
-    @Autowired
-    TemplateEngine templateEngine
-
-    @Autowired
-    GaidenConfig gaidenConfig
-
-    @Autowired
-    PageReferenceFactory pageReferenceFactory
-
     /**
      * Build from a page source to a page.
      *
-     * @param context the context to be built
      * @param pageSource the page source to be built
      * @return {@link Page}'s instance
      */
-    Page build(PageBuildContext context, PageSource pageSource) {
-        buildPage(context, pageSource)
+    Page build(PageSource pageSource, PageReference pageReference) {
+        buildPage(pageSource, pageReference)
     }
 
-    private Page buildPage(PageBuildContext context, PageSource pageSource) {
-        def rootNode = markdownProcessor.parseMarkdown(pageSource)
+    private Page buildPage(PageSource pageSource, PageReference pageReference) {
+        def contentNode = markdownProcessor.parseMarkdown(pageSource)
+        def headers = markdownProcessor.getHeaders(contentNode)
+        def metadata = pageReference?.metadata
 
-        def headers = markdownProcessor.getHeaders(rootNode)
-        def content = markdownProcessor.convertToHtml(rootNode, context, pageSource)
-
-        def binding = new BindingBuilder(gaidenConfig, pageReferenceFactory)
-            .setContent(content)
-            .setPageBuildContext(context)
-            .setPageSource(pageSource)
-            .build()
-        def pageContent = templateEngine.make(binding)
-
-        new Page(source: pageSource, headers: headers, content: pageContent)
+        new Page(source: pageSource, headers: headers, contentNode: contentNode, metadata: metadata)
     }
 }

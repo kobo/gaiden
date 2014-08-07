@@ -38,7 +38,7 @@ class GaidenMain {
      * @param args all command line args
      */
     static void main(String... args) {
-        new GaidenMain().executeCommand(args)
+        new GaidenMain().run(args)
     }
 
     protected void run(String... args) {
