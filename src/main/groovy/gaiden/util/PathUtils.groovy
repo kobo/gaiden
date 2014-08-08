@@ -48,13 +48,17 @@ class PathUtils {
         Paths.get(FilenameUtils.removeExtension(path.toString()))
     }
 
+    static void copyFile(Path src, Path dest) {
+        if (Files.notExists(dest.parent)) {
+            Files.createDirectories(dest.parent)
+        }
+        Files.copy(src, dest, REPLACE_EXISTING)
+    }
+
     static void copyFiles(Path src, Path dest) {
         src.eachFileRecurse(FileType.FILES) { Path srcFile ->
             def destFile = dest.resolve(src.relativize(srcFile))
-            if (Files.notExists(destFile.parent)) {
-                Files.createDirectories(destFile.parent)
-            }
-            Files.copy(srcFile, destFile, REPLACE_EXISTING)
+            copyFile(srcFile, destFile)
         }
     }
 

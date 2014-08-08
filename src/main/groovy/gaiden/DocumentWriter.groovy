@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  * A document writer writes a {@link Document} to files.
@@ -58,7 +59,7 @@ class DocumentWriter {
         }
 
         writePages(document)
-        copyStaticFiles()
+        copyAssets()
 
         println "Built document at ${gaidenConfig.outputDirectory.toAbsolutePath()}"
     }
@@ -86,7 +87,16 @@ class DocumentWriter {
         Files.write(page.source.outputPath, content.getBytes(gaidenConfig.outputEncoding))
     }
 
-    private void copyStaticFiles() {
-        PathUtils.copyFiles(gaidenConfig.assetsDirectory, gaidenConfig.outputDirectory)
+    private void copyAssets() {
+        PathUtils.eachFileRecurse(gaidenConfig.pagesDirectory, [gaidenConfig.outputDirectory, gaidenConfig.templateFile.parent]) { Path src ->
+            if (isAsset(src)) {
+                def dest = gaidenConfig.outputDirectory.resolve(gaidenConfig.pagesDirectory.relativize(src))
+                PathUtils.copyFile(src, dest)
+            }
+        }
+    }
+
+    private boolean isAsset(Path path) {
+        PathUtils.getExtension(path)?.toLowerCase() in gaidenConfig.assetTypes
     }
 }

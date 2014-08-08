@@ -24,6 +24,7 @@ import groovy.transform.CompileStatic
 import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * A Renderer for image node.
@@ -35,13 +36,11 @@ import java.nio.file.Path
 class ImageRenderer {
 
     private Page page
-    private Path staticDirectory
     private Path outputDirectory
     private MessageSource messageSource
 
-    ImageRenderer(Page page, Path staticDirectory, Path outputDirectory, MessageSource messageSource) {
+    ImageRenderer(Page page, Path outputDirectory, MessageSource messageSource) {
         this.page = page
-        this.staticDirectory = staticDirectory
         this.outputDirectory = outputDirectory
         this.messageSource = messageSource
     }
@@ -66,7 +65,7 @@ class ImageRenderer {
      * @return {@link ImageElement}'s instance
      */
     ImageElement render(String imagePath, String alt) {
-        if (UrlUtils.isUrl(imagePath)) {  // URL
+        if (UrlUtils.isUrl(imagePath) || Paths.get(imagePath).absolute) {
             return new ImageElement(src: imagePath, alt: alt)
         }
 
@@ -76,8 +75,6 @@ class ImageRenderer {
             System.err.println("WARNING: " + messageSource.getMessage("image.reference.not.exists.message", [imagePath, page.source.path]))
             return new ImageElement(src: imagePath, alt: alt)
         }
-
-        def outputImage = outputDirectory.resolve(staticDirectory.relativize(image.toRealPath(LinkOption.NOFOLLOW_LINKS)))
-        return new ImageElement(src: page.relativize(outputImage), alt: alt)
+        return new ImageElement(src: page.source.path.parent.relativize(image.toRealPath(LinkOption.NOFOLLOW_LINKS)).toString(), alt: alt)
     }
 }

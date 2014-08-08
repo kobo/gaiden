@@ -36,7 +36,6 @@ import java.nio.file.Paths
 @CompileStatic
 class GaidenConfig {
 
-    static final String DEFAULT_ASSETS_DIRECTORY = "assets"
     static final String DEFAULT_BUILD_DIRECTORY = "build"
     static final String DEFAULT_TEMPLATE_FILE = "templates/layout.html"
     static final String DEFAULT_ENCODING = "UTF-8"
@@ -65,9 +64,6 @@ class GaidenConfig {
     /** The path of page source files directory */
     Path pagesDirectory = defaultProjectDirectory
 
-    /** The path of static files directory */
-    Path assetsDirectory = defaultProjectDirectory.resolve(DEFAULT_ASSETS_DIRECTORY)
-
     /** The path of directory to be outputted a document */
     Path outputDirectory = defaultProjectDirectory.resolve(DEFAULT_BUILD_DIRECTORY)
 
@@ -90,6 +86,8 @@ class GaidenConfig {
 
     boolean numbering = true
 
+    List<String> assetTypes = ["jpg", "jpeg", "png", "gif"]
+
     void setProjectDirectoryPath(String projectDirectory) {
         this.projectDirectory = Paths.get(projectDirectory)
     }
@@ -100,10 +98,6 @@ class GaidenConfig {
 
     void setPagesDirectoryPath(String pagesDirectory) {
         this.pagesDirectory = projectDirectory.resolve(pagesDirectory)
-    }
-
-    void setAssetsDirectoryPath(String assetsDirectory) {
-        this.assetsDirectory = projectDirectory.resolve(assetsDirectory)
     }
 
     void setOutputDirectoryPath(String outputDirectory) {
