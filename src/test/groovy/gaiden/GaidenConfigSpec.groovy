@@ -23,7 +23,7 @@ import java.nio.file.Files
 class GaidenConfigSpec extends GaidenSpec {
 
     @AutoCleanup("deleteDir")
-    def gaidenConfigFile = Files.createTempFile("GaidenConfig", "groovy")
+    def gaidenConfigFile = Files.createTempFile("config", "groovy")
 
     def "initialize the configuration with GaidenConfig.groovy"() {
         given:

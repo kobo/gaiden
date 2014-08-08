@@ -41,8 +41,8 @@ class GaidenConfig {
     static final String DEFAULT_TEMPLATE_FILE = "templates/layout.html"
     static final String DEFAULT_ENCODING = "UTF-8"
 
-    static final String GAIDEN_CONFIG_FILENAME = "GaidenConfig.groovy"
-    static final String PAGES_FILENAME = "Pages.groovy"
+    static final String GAIDEN_CONFIG_FILENAME = "config.groovy"
+    static final String PAGES_FILENAME = "pages.groovy"
     static final String DEFAULT_PROJECT_TEMPLATE_DIRECTORY = "template"
 
     private static Path getDefaultProjectDirectory() {
