@@ -62,6 +62,8 @@ test {
     }
 }
 
+defaultTasks 'install'
+
 task distribution(dependsOn: 'distZip')
 
 task release(dependsOn: 'distribution')
