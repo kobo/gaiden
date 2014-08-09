@@ -20,6 +20,8 @@ import gaiden.markdown.GaidenMarkdownProcessor
 import gaiden.message.MessageSource
 import gaiden.util.PathUtils
 import groovy.transform.CompileStatic
+import net.htmlparser.jericho.Source
+import net.htmlparser.jericho.SourceFormatter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -84,7 +86,17 @@ class DocumentWriter {
             .build()
 
         def content = templateEngine.make(binding)
-        Files.write(page.source.outputPath, content.getBytes(gaidenConfig.outputEncoding))
+        Files.write(page.source.outputPath, format(content).getBytes(gaidenConfig.outputEncoding))
+    }
+
+    private String format(String content) {
+        if (!gaidenConfig.format) {
+            return content
+        }
+        def source = new Source(content)
+        def writer = new StringWriter()
+        new SourceFormatter(source).setIndentString("  ").writeTo(writer)
+        return writer.toString()
     }
 
     private void copyAssets() {

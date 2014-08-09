@@ -86,6 +86,8 @@ class GaidenConfig {
 
     boolean numbering = true
 
+    boolean format = true
+
     List<String> assetTypes = ["jpg", "jpeg", "png", "gif"]
 
     void setProjectDirectoryPath(String projectDirectory) {
