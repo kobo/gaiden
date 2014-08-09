@@ -114,36 +114,40 @@ class BindingBuilder {
 
     private String getDocumentToc(args) {
         def params = args instanceof Map ? args : [:]
-        def indent = ' ' * (params["indent"] as Integer ?: 2)
         def depth = params["depth"] as Integer ?: gaidenConfig.documentTocDepth
 
         StringBuilder sb = new StringBuilder()
         def currentLevel = 0
-        document.toc.documentToc.each { TocNode tocNode ->
+        List<TocNode> tocNodes = document.toc.documentToc
+        tocNodes.each { TocNode tocNode ->
             if (tocNode.header.level > depth) {
                 return
             }
 
             if (currentLevel < tocNode.header.level) {
+                sb << "<ul>"
+                currentLevel++
                 (tocNode.header.level - currentLevel).times {
-                    sb << "${indent * currentLevel}<ul>\n"
+                    sb << "<li><ul>"
                     currentLevel++
                 }
             } else if (currentLevel > tocNode.header.level) {
+                sb << "</li>"
                 (currentLevel - tocNode.header.level).times {
                     currentLevel--
-                    sb << "${indent * currentLevel}</ul>\n"
+                    sb << "</ul></li>"
                 }
+            } else {
+                sb << "</li>"
             }
 
             def isFirstHeaderInPage = document.toc.getPageToc(tocNode.page).first() == tocNode
             def hash = isFirstHeaderInPage ? "" : "#${URLEncoder.encode(tocNode.header.title, gaidenConfig.outputEncoding)}"
             def number = gaidenConfig.numbering ? "<span class=\"number\">${tocNode.numbers.join(".")}.</span>" : ""
-            sb << "${indent * currentLevel}<li><a href=\"${page.relativize(tocNode.page)}${hash}\">${number}${tocNode.header.title}</a></li>\n"
+            sb << "<li><a href=\"${page.relativize(tocNode.page)}${hash}\">${number}${tocNode.header.title}</a>"
         }
         currentLevel.times {
-            currentLevel--
-            sb << "${indent * currentLevel}</ul>\n"
+            sb << "</li></ul>"
         }
         sb.toString()
     }
