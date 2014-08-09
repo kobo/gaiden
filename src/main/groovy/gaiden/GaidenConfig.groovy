@@ -84,6 +84,8 @@ class GaidenConfig {
 
     int documentTocDepth = 3
 
+    int pageTocDepth = 6
+
     boolean numbering = true
 
     int numberingDepth = 3

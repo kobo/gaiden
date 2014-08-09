@@ -78,6 +78,7 @@ class BindingBuilder {
             prevPage   : prevPage,
             nextPage   : nextPage,
             documentToc: this.&getDocumentToc,
+            pageToc    : this.&getPageToc,
             render     : this.&render,
         ]
     }
@@ -115,13 +116,13 @@ class BindingBuilder {
 
     private String getDocumentToc(args) {
         def params = args instanceof Map ? args : [:]
-        def depth = params["depth"] as Integer ?: gaidenConfig.documentTocDepth
+        def maxDepth = params["depth"] as Integer ?: gaidenConfig.documentTocDepth
 
         StringBuilder sb = new StringBuilder()
         def currentLevel = 0
         document.pageOrder.each { Page destPage ->
             destPage.headers.eachWithIndex { Header header, int index ->
-                if (header.level > depth) {
+                if (header.level > maxDepth) {
                     return
                 }
 
@@ -151,6 +152,55 @@ class BindingBuilder {
         currentLevel.times {
             sb << "</li></ul>"
         }
+        sb.toString()
+    }
+
+    private String getPageToc(args) {
+        if (!page.headers) {
+            return ""
+        }
+
+        def params = args instanceof Map ? args : [:]
+        def maxDepth = params["depth"] as Integer ?: gaidenConfig.pageTocDepth
+
+        def minLevel = page.headers*.level.min()
+        if (maxDepth < minLevel) {
+            return ""
+        }
+
+        def currentLevel = minLevel - 1
+        StringBuilder sb = new StringBuilder()
+
+        page.headers.eachWithIndex { Header header, int index ->
+            if (header.level > maxDepth) {
+                return
+            }
+
+            if (currentLevel < header.level) {
+                sb << "<ul>"
+                currentLevel++
+                (header.level - currentLevel).times {
+                    sb << "<li><ul>"
+                    currentLevel++
+                }
+            } else if (currentLevel > header.level) {
+                sb << "</li>"
+                (currentLevel - header.level).times {
+                    currentLevel--
+                    sb << "</ul></li>"
+                }
+            } else {
+                sb << "</li>"
+            }
+
+            def hash = "#${header.hash}"
+            def number = gaidenConfig.numbering && header.level <= gaidenConfig.numberingDepth ? "<span class=\"number\">${header.number}</span>" : ""
+            sb << "<li><a href=\"${hash}\">${number}${header.title}</a>"
+        }
+        (currentLevel - minLevel + 1).times {
+            sb << "</li></ul>"
+        }
+
         sb.toString()
     }
 
