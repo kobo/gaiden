@@ -6,6 +6,9 @@
   </head>
   <body>
     <div>${render('nav.md')}</div>
+    <% if (metadata.tags) { %>
+    <div>${metadata.tags?.join(",")}</div>
+    <% } %>
     <div>
       ${documentToc()}
     </div>

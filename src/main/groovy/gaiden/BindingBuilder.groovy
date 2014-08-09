@@ -73,6 +73,7 @@ class BindingBuilder {
         [
             title      : escapeHtml4(gaidenConfig.title),
             content    : content,
+            metadata   : page.metadata,
             resource   : this.&getResource,
             prevPage   : prevPage,
             nextPage   : nextPage,
