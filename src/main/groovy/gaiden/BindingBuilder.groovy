@@ -142,8 +142,9 @@ class BindingBuilder {
                 }
 
                 def hash = index == 0 ? "" : "#${header.hash}"
+                def current = index == 0 && page == destPage ? " class=\"current\"" : ""
                 def number = gaidenConfig.numbering && header.level <= gaidenConfig.numberingDepth ? "<span class=\"number\">${header.number}</span>" : ""
-                sb << "<li><a href=\"${page.relativize(destPage)}${hash}\">${number}${header.title}</a>"
+                sb << "<li><a href=\"${page.relativize(destPage)}${hash}\"${current}>${number}${header.title}</a>"
             }
         }
         currentLevel.times {
