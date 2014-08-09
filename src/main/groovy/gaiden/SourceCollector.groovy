@@ -22,7 +22,6 @@ import org.apache.commons.io.FilenameUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-import java.nio.file.LinkOption
 import java.nio.file.Path
 
 /**
@@ -51,7 +50,7 @@ class SourceCollector {
 
     private List<PageSource> collectPageSources() {
         def pageSources = []
-        PathUtils.eachFileRecurse(gaidenConfig.pagesDirectory, [gaidenConfig.outputDirectory, gaidenConfig.templateFile.parent]) { Path path ->
+        PathUtils.eachFileRecurse(gaidenConfig.pagesDirectory, [gaidenConfig.outputDirectory, gaidenConfig.projectThemesDirectory]) { Path path ->
             if (isPageSourceFile(path)) {
                 pageSources << createPageSource(path)
             }

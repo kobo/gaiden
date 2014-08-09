@@ -28,6 +28,6 @@ class CreateProjectCommandSpec extends FunctionalSpec {
             command.execute(["new-project"])
 
         then:
-            assertDirectory(projectDirectory.resolve("new-project"), gaidenConfig.projectTemplateDirectory)
+            assertDirectory(projectDirectory.resolve("new-project"), gaidenConfig.initialProjectTemplateDirectory)
     }
 }

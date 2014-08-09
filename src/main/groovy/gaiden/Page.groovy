@@ -40,7 +40,7 @@ class Page {
     RootNode contentNode
 
     /** The metadata of page */
-    Map metadata
+    Map<String, Object> metadata
 
     String relativize(Page page) {
         relativize(page.source.outputPath)

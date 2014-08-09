@@ -1,78 +1,71 @@
 <html>
   <head>
+    <meta charset="UTF-8">
     <title>Gaiden</title>
-    <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../css/main.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/prettify.css">
+    <link rel="stylesheet" href="../css/style.css">
   </head>
   <body>
-    <div>
-      <ul>
-        <li>item1</li>
-        <li>item2</li>
-        <li>item3</li>
-      </ul>
+    <div class="wrapper">
+      <div class="header">
+        <i class="fa fa-bars toc-toggle"></i>
+        <span class="title"><a href="#">Gaiden</a></span>
+      </div>
+      <div class="toc">
+        <ul>
+          <li><a href="../README.html"><span class="number">1.</span>Test</a></li>
+          <li>
+            <a href="README.html"><span class="number">2.</span>Chapter 2</a>
+            <ul>
+              <li>
+                <a href="section1.html" class="current"><span class="number">2.1.</span>section 2.1</a>
+                <ul>
+                  <li><a href="section1.html#ID-c7c6c4d595414195a076cda99da6eb0113c2b487"><span class="number">2.1.1.</span>section 2.1.1</a></li>
+                  <li><a href="section1.html#ID-5459ac25608c77c38933269408efc5e18eb30131"><span class="number">2.1.2.</span>section 2.1.2</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="../chapter3/README.html"><span class="number">3.</span>Chapter 3</a>
+            <ul>
+              <li>
+                <a href="../chapter3/section1.html"><span class="number">3.1.</span>section 3.1</a>
+                <ul>
+                  <li><a href="../chapter3/section1.html#ID-8296542e95f2ee9f61103976d9c7b8ea6bf50335"><span class="number">3.1.1.</span>section 3.1.1</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="content content-toc-visible">
+        <div class="content-nav">
+          <a class="prev-page" href="README.html"><i class="fa fa-angle-left"></i>Chapter 2</a>
+          <a class="next-page" href="../chapter3/README.html">Chapter 3<i class="fa fa-angle-right"></i></a>
+        </div>
+        <div class="main-content">
+          <h2 id="ID-614a87943e45e8e926c8de88594eddea7492722d"><span class="number">2.1.</span>section 2.1</h2>
+          <p>section 2.1 content</p>
+          <h3 id="ID-c7c6c4d595414195a076cda99da6eb0113c2b487"><span class="number">2.1.1.</span>section 2.1.1</h3>
+          <p>section 2.1.1 content</p>
+          <h4 id="ID-9910090b26a80910ae1c4fef83b6aacc03d7ccd8">section 2.1.1.1</h4>
+          <p>section 2.1.1.1 content</p>
+          <h4 id="ID-f85d58a6b585c8665693ccb51a80bb0f778f3024">section 2.1.1.2</h4>
+          <p>section 2.1.1.2 content</p>
+          <h3 id="ID-5459ac25608c77c38933269408efc5e18eb30131"><span class="number">2.1.2.</span>section 2.1.2</h3>
+          <p>section 2.1.2 content</p>
+        </div>
+        <div class="footer footer-toc-visible">
+          <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a>.</p>
+        </div>
+      </div>
     </div>
-    <div>tag1</div>
-    <div>
-      <ul>
-        <li><a href="../README.html"><span class="number">1.</span>Test</a></li>
-        <li>
-          <a href="README.html"><span class="number">2.</span>Chapter 2</a>
-          <ul>
-            <li>
-              <a href="section1.html" class="current"><span class="number">2.1.</span>section 2.1</a>
-              <ul>
-                <li><a href="section1.html#ID-c7c6c4d595414195a076cda99da6eb0113c2b487"><span class="number">2.1.1.</span>section 2.1.1</a></li>
-                <li><a href="section1.html#ID-5459ac25608c77c38933269408efc5e18eb30131"><span class="number">2.1.2.</span>section 2.1.2</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <a href="../chapter3/README.html"><span class="number">3.</span>Chapter 3</a>
-          <ul>
-            <li>
-              <a href="../chapter3/section1.html"><span class="number">3.1.</span>section 3.1</a>
-              <ul>
-                <li><a href="../chapter3/section1.html#ID-8296542e95f2ee9f61103976d9c7b8ea6bf50335"><span class="number">3.1.1.</span>section 3.1.1</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <div>
-      <a href="README.html">Chapter 2</a>
-      <a href="../chapter3/README.html">Chapter 3</a>
-    </div>
-    <div>
-      <ul>
-        <li>
-          <a href="#ID-614a87943e45e8e926c8de88594eddea7492722d"><span class="number">2.1.</span>section 2.1</a>
-          <ul>
-            <li>
-              <a href="#ID-c7c6c4d595414195a076cda99da6eb0113c2b487"><span class="number">2.1.1.</span>section 2.1.1</a>
-              <ul>
-                <li><a href="#ID-9910090b26a80910ae1c4fef83b6aacc03d7ccd8">section 2.1.1.1</a></li>
-                <li><a href="#ID-f85d58a6b585c8665693ccb51a80bb0f778f3024">section 2.1.1.2</a></li>
-              </ul>
-            </li>
-            <li><a href="#ID-5459ac25608c77c38933269408efc5e18eb30131"><span class="number">2.1.2.</span>section 2.1.2</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <div>
-      <h2 id="ID-614a87943e45e8e926c8de88594eddea7492722d"><span class="number">2.1.</span>section 2.1</h2>
-      <p>section 2.1 content</p>
-      <h3 id="ID-c7c6c4d595414195a076cda99da6eb0113c2b487"><span class="number">2.1.1.</span>section 2.1.1</h3>
-      <p>section 2.1.1 content</p>
-      <h4 id="ID-9910090b26a80910ae1c4fef83b6aacc03d7ccd8">section 2.1.1.1</h4>
-      <p>section 2.1.1.1 content</p>
-      <h4 id="ID-f85d58a6b585c8665693ccb51a80bb0f778f3024">section 2.1.1.2</h4>
-      <p>section 2.1.1.2 content</p>
-      <h3 id="ID-5459ac25608c77c38933269408efc5e18eb30131"><span class="number">2.1.2.</span>section 2.1.2</h3>
-      <p>section 2.1.2 content</p>
-    </div>
+    <script src="../js/jquery-2.1.1.min.js"></script>
+    <script src="../js/prettify.js"></script>
+    <script src="../js/application.js"></script>
   </body>
 </html>

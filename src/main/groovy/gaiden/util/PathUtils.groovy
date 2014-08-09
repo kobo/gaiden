@@ -56,6 +56,10 @@ class PathUtils {
     }
 
     static void copyFiles(Path src, Path dest) {
+        if (Files.notExists(src)) {
+            return
+        }
+
         src.eachFileRecurse(FileType.FILES) { Path srcFile ->
             def destFile = dest.resolve(src.relativize(srcFile))
             copyFile(srcFile, destFile)

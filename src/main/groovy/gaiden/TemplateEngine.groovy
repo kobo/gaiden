@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component
 @CompileStatic
 class TemplateEngine {
 
-    private Template template
+    private Map<String, Template> templateCache = [:]
 
     @Autowired
     GaidenConfig gaidenConfig
@@ -43,10 +43,17 @@ class TemplateEngine {
      * @param binding variables of placeholder, this variables overwrite a base binding variables
      * @return a result produced
      */
-    String make(Map binding) {
-        if (!template) {
-            template = new SimpleTemplateEngine().createTemplate(gaidenConfig.templateFile.text)
-        }
+    String make(String templateName, Map binding) {
+        def template = getTemplate(templateName)
         template.make(binding)
+    }
+
+    private Template getTemplate(String layoutName) {
+        if (templateCache.containsKey(layoutName)) {
+            return templateCache[layoutName]
+        }
+        def template = new SimpleTemplateEngine().createTemplate(gaidenConfig.getLayoutFile(layoutName).text)
+        templateCache[layoutName] = template
+        return template
     }
 }

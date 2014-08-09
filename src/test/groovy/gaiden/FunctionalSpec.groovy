@@ -70,7 +70,7 @@ abstract class FunctionalSpec extends GaidenSpec {
         gaidenConfig.projectDirectory = projectDirectory
         gaidenConfig.gaidenConfigFile = projectDirectory.resolve(GaidenConfig.GAIDEN_CONFIG_FILENAME)
         gaidenConfig.pagesDirectory = projectDirectory
-        gaidenConfig.templateFile = projectDirectory.resolve(GaidenConfig.DEFAULT_TEMPLATE_FILE)
+        gaidenConfig.projectThemesDirectory = projectDirectory.resolve(GaidenConfig.DEFAULT_THEMES_DIRECTORY)
         gaidenConfig.pagesFile = projectDirectory.resolve(GaidenConfig.PAGES_FILENAME)
     }
 

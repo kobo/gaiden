@@ -53,7 +53,7 @@ class CreateProjectCommand extends AbstractCommand {
             throw new GaidenException("command.create.project.already.exists.error", [projectDirectory])
         }
 
-        PathUtils.copyFiles(gaidenConfig.projectTemplateDirectory, projectDirectory)
+        PathUtils.copyFiles(gaidenConfig.initialProjectTemplateDirectory, projectDirectory)
         println messageSource.getMessage("command.create.project.success.message", [projectDirectory])
     }
 }

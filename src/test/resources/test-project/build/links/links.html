@@ -1,83 +1,83 @@
 <html>
   <head>
+    <meta charset="UTF-8">
     <title>Gaiden</title>
-    <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../css/main.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/prettify.css">
+    <link rel="stylesheet" href="../css/style.css">
   </head>
   <body>
-    <div>
-      <ul>
-        <li>item1</li>
-        <li>item2</li>
-        <li>item3</li>
-      </ul>
-    </div>
-    <div>
-      <ul>
-        <li><a href="../README.html"><span class="number">1.</span>Test</a></li>
-        <li>
-          <a href="../chapter2/README.html"><span class="number">2.</span>Chapter 2</a>
+    <div class="wrapper">
+      <div class="header">
+        <i class="fa fa-bars toc-toggle"></i>
+        <span class="title"><a href="#">Gaiden</a></span>
+      </div>
+      <div class="toc">
+        <ul>
+          <li><a href="../README.html"><span class="number">1.</span>Test</a></li>
+          <li>
+            <a href="../chapter2/README.html"><span class="number">2.</span>Chapter 2</a>
+            <ul>
+              <li>
+                <a href="../chapter2/section1.html"><span class="number">2.1.</span>section 2.1</a>
+                <ul>
+                  <li><a href="../chapter2/section1.html#ID-c7c6c4d595414195a076cda99da6eb0113c2b487"><span class="number">2.1.1.</span>section 2.1.1</a></li>
+                  <li><a href="../chapter2/section1.html#ID-5459ac25608c77c38933269408efc5e18eb30131"><span class="number">2.1.2.</span>section 2.1.2</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="../chapter3/README.html"><span class="number">3.</span>Chapter 3</a>
+            <ul>
+              <li>
+                <a href="../chapter3/section1.html"><span class="number">3.1.</span>section 3.1</a>
+                <ul>
+                  <li><a href="../chapter3/section1.html#ID-8296542e95f2ee9f61103976d9c7b8ea6bf50335"><span class="number">3.1.1.</span>section 3.1.1</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="content content-toc-visible">
+        <div class="content-nav">
+          <a class="prev-page" href="../chapter3/README.html"><i class="fa fa-angle-left"></i>Chapter 3</a>
+          <a class="next-page" href="../README.html">Test<i class="fa fa-angle-right"></i></a>
+        </div>
+        <div class="main-content">
+          <h2 id="ID-4f0aa52d656a3d75867f784b7e9c5d23bf1321c0">link</h2>
+          <h3 id="ID-71e0d65232f05a83359f095ddebc5be72e21d59a">HTML Links</h3>
           <ul>
+            <li><a href="http://example.com/" title="Title">an example</a></li>
+            <li><a href="http://example.net/">This link</a></li>
+            <li><a href="/about/">About</a></li>
+            <li><a href="http://example.com/" title="Optional Title Here">an example</a></li>
+          </ul>
+          <h3 id="ID-7afeee998a620498a6de9ed394876515823158a5">Page Links</h3>
+          <ul>
+            <li><a href="links.html">TO links.md</a></li>
+            <li><a href="README.html">TO README.md</a></li>
+            <li><a href="README.html">TO ./README.md</a></li>
+            <li><a href="../README.html">TO ../README.md</a></li>
             <li>
-              <a href="../chapter2/section1.html"><span class="number">2.1.</span>section 2.1</a>
-              <ul>
-                <li><a href="../chapter2/section1.html#ID-c7c6c4d595414195a076cda99da6eb0113c2b487"><span class="number">2.1.1.</span>section 2.1.1</a></li>
-                <li><a href="../chapter2/section1.html#ID-5459ac25608c77c38933269408efc5e18eb30131"><span class="number">2.1.2.</span>section 2.1.2</a></li>
-              </ul>
+              <p><a href="#hash">TO #hash</a></p>
             </li>
+            <li><a href="links.html#hash">TO links.md#hash</a></li>
+            <li><a href="README.html#hash">TO README.md#hash</a></li>
+            <li><a href="README.html#hash">TO ./README.md#hash</a></li>
+            <li><a href="../README.html#hash">TO ../README.md#hash</a></li>
           </ul>
-        </li>
-        <li>
-          <a href="../chapter3/README.html"><span class="number">3.</span>Chapter 3</a>
-          <ul>
-            <li>
-              <a href="../chapter3/section1.html"><span class="number">3.1.</span>section 3.1</a>
-              <ul>
-                <li><a href="../chapter3/section1.html#ID-8296542e95f2ee9f61103976d9c7b8ea6bf50335"><span class="number">3.1.1.</span>section 3.1.1</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
+        </div>
+        <div class="footer footer-toc-visible">
+          <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a>.</p>
+        </div>
+      </div>
     </div>
-    <div>
-      <a href="../chapter3/README.html">Chapter 3</a>
-      <a href="../README.html">Test</a>
-    </div>
-    <div>
-      <ul>
-        <li>
-          <a href="#ID-4f0aa52d656a3d75867f784b7e9c5d23bf1321c0"><span class="number"></span>link</a>
-          <ul>
-            <li><a href="#ID-71e0d65232f05a83359f095ddebc5be72e21d59a"><span class="number"></span>HTML Links</a></li>
-            <li><a href="#ID-7afeee998a620498a6de9ed394876515823158a5"><span class="number"></span>Page Links</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <div>
-      <h2 id="ID-4f0aa52d656a3d75867f784b7e9c5d23bf1321c0">link</h2>
-      <h3 id="ID-71e0d65232f05a83359f095ddebc5be72e21d59a">HTML Links</h3>
-      <ul>
-        <li><a href="http://example.com/" title="Title">an example</a></li>
-        <li><a href="http://example.net/">This link</a></li>
-        <li><a href="/about/">About</a></li>
-        <li><a href="http://example.com/" title="Optional Title Here">an example</a></li>
-      </ul>
-      <h3 id="ID-7afeee998a620498a6de9ed394876515823158a5">Page Links</h3>
-      <ul>
-        <li><a href="links.html">TO links.md</a></li>
-        <li><a href="README.html">TO README.md</a></li>
-        <li><a href="README.html">TO ./README.md</a></li>
-        <li><a href="../README.html">TO ../README.md</a></li>
-        <li>
-          <p><a href="#hash">TO #hash</a></p>
-        </li>
-        <li><a href="links.html#hash">TO links.md#hash</a></li>
-        <li><a href="README.html#hash">TO README.md#hash</a></li>
-        <li><a href="README.html#hash">TO ./README.md#hash</a></li>
-        <li><a href="../README.html#hash">TO ../README.md#hash</a></li>
-      </ul>
-    </div>
+    <script src="../js/jquery-2.1.1.min.js"></script>
+    <script src="../js/prettify.js"></script>
+    <script src="../js/application.js"></script>
   </body>
 </html>

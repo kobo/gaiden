@@ -29,10 +29,9 @@ class GaidenConfigSpec extends GaidenSpec {
         given:
             gaidenConfigFile.write '''
             | title = "Test Title"
-            | templateFilePath = "test/templates/layout.html"
-            | tocFilePath = "test/pages/toc.groovy"
             | pagesDirectoryPath = "test/pages"
             | outputDirectoryPath = "test/build/html"
+            | projectThemesDirectoryPath = "test/project/themes"
             | inputEncoding = "UTF-8"
             | outputEncoding = "UTF-8"
             '''.stripMargin()
@@ -44,10 +43,10 @@ class GaidenConfigSpec extends GaidenSpec {
 
         then:
             gaidenConfig.title == "Test Title"
-            gaidenConfig.templateFile == gaidenConfig.projectDirectory.resolve("test/templates/layout.html")
             gaidenConfig.pagesDirectory == gaidenConfig.projectDirectory.resolve("test/pages")
             gaidenConfig.outputDirectory == gaidenConfig.projectDirectory.resolve("test/build/html")
             gaidenConfig.inputEncoding == "UTF-8"
             gaidenConfig.outputEncoding == "UTF-8"
+            gaidenConfig.projectThemesDirectory == gaidenConfig.projectDirectory.resolve("test/project/themes")
     }
 }

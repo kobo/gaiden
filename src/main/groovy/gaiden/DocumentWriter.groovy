@@ -85,7 +85,7 @@ class DocumentWriter {
             .setContent(markdownProcessor.convertToHtml(page, document))
             .build()
 
-        def content = templateEngine.make(binding)
+        def content = templateEngine.make(page.metadata.layout as String, binding)
         Files.write(page.source.outputPath, format(content).getBytes(gaidenConfig.outputEncoding))
     }
 
@@ -100,7 +100,9 @@ class DocumentWriter {
     }
 
     private void copyAssets() {
-        PathUtils.eachFileRecurse(gaidenConfig.pagesDirectory, [gaidenConfig.outputDirectory, gaidenConfig.templateFile.parent]) { Path src ->
+        PathUtils.copyFiles(gaidenConfig.applicationAssetsDirectory, gaidenConfig.outputDirectory)
+        PathUtils.copyFiles(gaidenConfig.projectAssetsDirectory, gaidenConfig.outputDirectory)
+        PathUtils.eachFileRecurse(gaidenConfig.pagesDirectory, [gaidenConfig.outputDirectory, gaidenConfig.projectThemesDirectory]) { Path src ->
             if (isAsset(src)) {
                 def dest = gaidenConfig.outputDirectory.resolve(gaidenConfig.pagesDirectory.relativize(src))
                 PathUtils.copyFile(src, dest)

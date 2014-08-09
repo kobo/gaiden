@@ -36,13 +36,18 @@ import java.nio.file.Paths
 @CompileStatic
 class GaidenConfig {
 
-    static final String DEFAULT_BUILD_DIRECTORY = "build"
-    static final String DEFAULT_TEMPLATE_FILE = "templates/layout.html"
-    static final String DEFAULT_ENCODING = "UTF-8"
-
     static final String GAIDEN_CONFIG_FILENAME = "config.groovy"
     static final String PAGES_FILENAME = "pages.groovy"
+    static final String DEFAULT_ENCODING = "UTF-8"
+
+    static final String DEFAULT_BUILD_DIRECTORY = "build"
+    static final String DEFAULT_THEMES_DIRECTORY = "themes"
     static final String DEFAULT_PROJECT_TEMPLATE_DIRECTORY = "template"
+    static final String DEFAULT_LAYOUTS_DIRECTORY = "layouts"
+    static final String DEFAULT_ASSETS_DIRECTORY = "assets"
+
+    static final String DEFAULT_THEME = "default"
+    static final String DEFAULT_LAYOUT = "default"
 
     private static Path getDefaultProjectDirectory() {
         Paths.get(System.properties["user.dir"] as String)
@@ -57,9 +62,6 @@ class GaidenConfig {
 
     /** The path of project directory */
     Path projectDirectory = defaultProjectDirectory
-
-    /** The path of template file */
-    Path templateFile = defaultProjectDirectory.resolve(DEFAULT_TEMPLATE_FILE)
 
     /** The path of page source files directory */
     Path pagesDirectory = defaultProjectDirectory
@@ -80,7 +82,38 @@ class GaidenConfig {
     Path gaidenConfigFile = defaultProjectDirectory.resolve(GAIDEN_CONFIG_FILENAME)
 
     /** The path of project template directory */
-    Path projectTemplateDirectory = applicationDirectory.resolve(DEFAULT_PROJECT_TEMPLATE_DIRECTORY)
+    Path initialProjectTemplateDirectory = applicationDirectory.resolve(DEFAULT_PROJECT_TEMPLATE_DIRECTORY)
+
+    Path applicationThemesDirectory = applicationDirectory.resolve(DEFAULT_THEMES_DIRECTORY)
+
+    Path projectThemesDirectory = defaultProjectDirectory.resolve(DEFAULT_THEMES_DIRECTORY)
+
+    Path getApplicationLayoutsDirectory() {
+        applicationThemesDirectory.resolve(theme).resolve(DEFAULT_LAYOUTS_DIRECTORY)
+    }
+
+    Path getProjectLayoutsDirectory() {
+        projectThemesDirectory.resolve(theme).resolve(DEFAULT_LAYOUTS_DIRECTORY)
+    }
+
+    Path getApplicationAssetsDirectory() {
+        applicationThemesDirectory.resolve(theme).resolve(DEFAULT_ASSETS_DIRECTORY)
+    }
+
+    Path getProjectAssetsDirectory() {
+        projectThemesDirectory.resolve(theme).resolve(DEFAULT_ASSETS_DIRECTORY)
+    }
+
+    Path getLayoutFile(String layoutName) {
+        def filename = layoutName ?: DEFAULT_LAYOUT
+        def layoutFile = projectLayoutsDirectory.resolve("${filename}.html")
+        if (Files.exists(layoutFile)) {
+            return layoutFile
+        }
+        return applicationLayoutsDirectory.resolve("${filename}.html")
+    }
+
+    String theme = DEFAULT_THEME
 
     int documentTocDepth = 3
 
@@ -94,24 +127,28 @@ class GaidenConfig {
 
     List<String> assetTypes = ["jpg", "jpeg", "png", "gif"]
 
-    void setProjectDirectoryPath(String projectDirectory) {
-        this.projectDirectory = Paths.get(projectDirectory)
+    void setProjectDirectoryPath(String projectDirectoryPath) {
+        projectDirectory = Paths.get(projectDirectoryPath)
     }
 
-    void setTemplateFilePath(String templateFile) {
-        this.templateFile = projectDirectory.resolve(templateFile)
+    void setPagesDirectoryPath(String pagesDirectoryPath) {
+        pagesDirectory = projectDirectory.resolve(pagesDirectoryPath)
     }
 
-    void setPagesDirectoryPath(String pagesDirectory) {
-        this.pagesDirectory = projectDirectory.resolve(pagesDirectory)
+    void setOutputDirectoryPath(String outputDirectoryPath) {
+        outputDirectory = projectDirectory.resolve(outputDirectoryPath)
     }
 
-    void setOutputDirectoryPath(String outputDirectory) {
-        this.outputDirectory = projectDirectory.resolve(outputDirectory)
+    void setPagesFilePath(String pagesFilePath) {
+        pagesFile = projectDirectory.resolve(pagesFilePath)
     }
 
-    void setPagesFilePath(String pagesFile) {
-        this.pagesFile = projectDirectory.resolve(pagesFile)
+    void setApplicationThemesDirectoryPath(String applicationThemesDirectoryPath) {
+        applicationThemesDirectory = applicationDirectory.resolve(applicationThemesDirectoryPath)
+    }
+
+    void setProjectThemesDirectoryPath(String projectThemesDirectoryPath) {
+        projectThemesDirectory = projectDirectory.resolve(projectThemesDirectoryPath)
     }
 
     @PostConstruct
