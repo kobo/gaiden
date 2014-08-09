@@ -86,6 +86,8 @@ class GaidenConfig {
 
     boolean numbering = true
 
+    int numberingDepth = 3
+
     boolean format = true
 
     List<String> assetTypes = ["jpg", "jpeg", "png", "gif"]

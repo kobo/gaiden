@@ -16,9 +16,10 @@
 
 package gaiden.markdown
 
+import gaiden.GaidenConfig
+import gaiden.Page
 import groovy.transform.CompileStatic
 import org.pegdown.LinkRenderer
-import org.pegdown.Printer
 import org.pegdown.ToHtmlSerializer
 import org.pegdown.ast.HeaderNode
 
@@ -31,37 +32,45 @@ import org.pegdown.ast.HeaderNode
 @CompileStatic
 class GaidenToHtmlSerializer extends ToHtmlSerializer {
 
+    private GaidenConfig gaidenConfig
     private ImageRenderer imageRenderer
+    private Page page
 
-    GaidenToHtmlSerializer(LinkRenderer linkRenderer, ImageRenderer imageRenderer) {
+    GaidenToHtmlSerializer(GaidenConfig gaidenConfig, LinkRenderer linkRenderer, ImageRenderer imageRenderer, Page page) {
         super(linkRenderer)
+        this.gaidenConfig = gaidenConfig
         this.imageRenderer = imageRenderer
-    }
-
-    GaidenToHtmlSerializer(LinkRenderer linkRenderer, ImageRenderer imageRenderer, Printer printer) {
-        this(linkRenderer, imageRenderer)
-        this.printer = printer
+        this.page = page
     }
 
     @Override
-    void visit(HeaderNode node) {
-        super.visit(node)
+    void visit(HeaderNode headerNode) {
+        def header = page.headers.find { it.headerNode == headerNode }
+        def tag = "h${header.level}".toString()
+        printer.print('<').print(tag)
+        printAttributes([id: header.hash])
+        printer.print('>')
+        if (gaidenConfig.numbering && header.numbers && header.level <= gaidenConfig.numberingDepth) {
+            printer.print("<span class=\"number\">${header.number}</span>".toString())
+        }
+        visitChildren(headerNode)
+        printer.print('<').print('/').print(tag).print('>');
     }
 
     @Override
     protected void printImageTag(LinkRenderer.Rendering rendering) {
         def image = imageRenderer.render(rendering.href, rendering.text)
-        printer.print("<img");
+        printer.print("<img")
         printAttributes(src: image.src, alt: image.alt)
         printAttributes(rendering.attributes.collectEntries { LinkRenderer.Attribute attribute ->
             [(attribute.name): attribute.value]
         })
-        printer.print("/>");
+        printer.print("/>")
     }
 
     private void printAttributes(Map<String, String> attributes) {
         attributes.each {
-            printer.print(' ').print(it.key).print('=').print('"').print(it.value).print('"');
+            printer.print(' ').print(it.key).print('=').print('"').print(it.value).print('"')
         }
     }
 }

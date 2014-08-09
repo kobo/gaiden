@@ -36,9 +36,6 @@ class DocumentBuilder {
     PageBuilder pageBuilder
 
     @Autowired
-    TocBuilder tocBuilder
-
-    @Autowired
     GaidenConfig gaidenConfig
 
     /**
@@ -51,9 +48,9 @@ class DocumentBuilder {
         def pageReferences = getPageReferences()
         def pages = buildPages(documentSource, pageReferences)
         def pageOrder = getPageOrder(pageReferences, pages)
-        def toc = buildToc(pageOrder)
+        setHeaderNumbers(pageOrder)
 
-        new Document(toc: toc, pages: pages, pageOrder: pageOrder)
+        new Document(pages: pages, pageOrder: pageOrder)
     }
 
     private List<PageReference> getPageReferences() {
@@ -75,8 +72,27 @@ class DocumentBuilder {
         pageOrder
     }
 
-    private Toc buildToc(List<Page> pageOrder) {
-        tocBuilder.build(pageOrder)
+    private static void setHeaderNumbers(List<Page> pages) {
+        List<Integer> currentNumbers = []
+        pages.each { Page page ->
+            page.headers.each { Header header ->
+                if (currentNumbers.size() == header.level) {
+                    def last = currentNumbers.pop()
+                    currentNumbers.push(++last)
+                } else if (currentNumbers.size() < header.level) {
+                    (header.level - currentNumbers.size()).times {
+                        currentNumbers.push(1)
+                    }
+                } else {
+                    (currentNumbers.size() - header.level).times {
+                        currentNumbers.pop()
+                    }
+                    def last = currentNumbers.pop()
+                    currentNumbers.push(++last)
+                }
+                header.numbers = currentNumbers.collect { it }
+            }
+        }
     }
 
     private List<Page> buildPages(DocumentSource documentSource, List<PageReference> pageReferences) {

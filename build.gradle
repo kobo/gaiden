@@ -41,6 +41,7 @@ dependencies {
     compile 'org.pegdown:pegdown:1.4.2'
     compile 'commons-io:commons-io:2.4'
     compile 'commons-cli:commons-cli:1.2'
+    compile 'commons-codec:commons-codec:1.9'
     compile 'org.apache.commons:commons-lang3:3.2'
     compile('org.springframework:spring-context:4.0.6.RELEASE') {
         exclude(group: 'commons-logging', module: 'commons-logging')

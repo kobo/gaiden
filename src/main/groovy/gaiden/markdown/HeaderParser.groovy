@@ -18,6 +18,7 @@ package gaiden.markdown
 
 import gaiden.Header
 import groovy.transform.CompileStatic
+import org.apache.commons.codec.digest.DigestUtils
 import org.pegdown.LinkRenderer
 import org.pegdown.ToHtmlSerializer
 import org.pegdown.ast.HeaderNode
@@ -42,10 +43,32 @@ class HeaderParser extends ToHtmlSerializer {
 
     @Override
     void visit(HeaderNode headerNode) {
+        def title = new HeaderTextSerializer(headerNode).text
+        def hash = getHash(title, headerNode.level)
         headers << new Header(
-            title: new HeaderTextSerializer(headerNode).text,
+            title: title,
             level: headerNode.level,
+            hash: hash,
+            headerNode: headerNode
         )
+    }
+
+    private String getHash(String title, int level) {
+        def parentHeaders = getParentHeaders(level)
+        def parentHash = parentHeaders.collect { it.hash }.join("")
+        "ID-${DigestUtils.sha1Hex(parentHash + title)}"
+    }
+
+    private List<Header> getParentHeaders(int level) {
+        def currentLevel = level
+        def parentHeaders = []
+        headers.reverse().each { Header header ->
+            if (header.level < currentLevel) {
+                parentHeaders << header
+                currentLevel = header.level
+            }
+        }
+        parentHeaders
     }
 
     static class HeaderTextSerializer extends ToHtmlSerializer {
@@ -61,7 +84,7 @@ class HeaderParser extends ToHtmlSerializer {
             headerNode.children.each { Node node ->
                 node.accept(this)
             }
-            printer.getString()
+            printer.string
         }
     }
 }

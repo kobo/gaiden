@@ -70,6 +70,6 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
     String convertToHtml(Page page, Document document) throws ParsingTimeoutException {
         def linkRenderer = new GaidenLinkRenderer(page: page, document: document, messageSource: messageSource)
         def imageRenderer = new ImageRenderer(page, gaidenConfig.outputDirectory, messageSource)
-        new GaidenToHtmlSerializer(linkRenderer, imageRenderer).toHtml(page.contentNode)
+        new GaidenToHtmlSerializer(gaidenConfig, linkRenderer, imageRenderer, page).toHtml(page.contentNode)
     }
 }

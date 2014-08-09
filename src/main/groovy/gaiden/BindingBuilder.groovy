@@ -118,33 +118,33 @@ class BindingBuilder {
 
         StringBuilder sb = new StringBuilder()
         def currentLevel = 0
-        List<TocNode> tocNodes = document.toc.documentToc
-        tocNodes.each { TocNode tocNode ->
-            if (tocNode.header.level > depth) {
-                return
-            }
+        document.pageOrder.each { Page destPage ->
+            destPage.headers.eachWithIndex { Header header, int index ->
+                if (header.level > depth) {
+                    return
+                }
 
-            if (currentLevel < tocNode.header.level) {
-                sb << "<ul>"
-                currentLevel++
-                (tocNode.header.level - currentLevel).times {
-                    sb << "<li><ul>"
+                if (currentLevel < header.level) {
+                    sb << "<ul>"
                     currentLevel++
+                    (header.level - currentLevel).times {
+                        sb << "<li><ul>"
+                        currentLevel++
+                    }
+                } else if (currentLevel > header.level) {
+                    sb << "</li>"
+                    (currentLevel - header.level).times {
+                        currentLevel--
+                        sb << "</ul></li>"
+                    }
+                } else {
+                    sb << "</li>"
                 }
-            } else if (currentLevel > tocNode.header.level) {
-                sb << "</li>"
-                (currentLevel - tocNode.header.level).times {
-                    currentLevel--
-                    sb << "</ul></li>"
-                }
-            } else {
-                sb << "</li>"
-            }
 
-            def isFirstHeaderInPage = document.toc.getPageToc(tocNode.page).first() == tocNode
-            def hash = isFirstHeaderInPage ? "" : "#${URLEncoder.encode(tocNode.header.title, gaidenConfig.outputEncoding)}"
-            def number = gaidenConfig.numbering ? "<span class=\"number\">${tocNode.numbers.join(".")}.</span>" : ""
-            sb << "<li><a href=\"${page.relativize(tocNode.page)}${hash}\">${number}${tocNode.header.title}</a>"
+                def hash = index == 0 ? "" : "#${header.hash}"
+                def number = gaidenConfig.numbering && header.level <= gaidenConfig.numberingDepth ? "<span class=\"number\">${header.number}</span>" : ""
+                sb << "<li><a href=\"${page.relativize(destPage)}${hash}\">${number}${header.title}</a>"
+            }
         }
         currentLevel.times {
             sb << "</li></ul>"

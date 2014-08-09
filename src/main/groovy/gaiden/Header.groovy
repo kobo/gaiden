@@ -17,9 +17,20 @@
 package gaiden
 
 import groovy.transform.CompileStatic
+import org.pegdown.ast.HeaderNode
 
 @CompileStatic
 class Header {
     String title
     int level
+    String hash
+    List<Integer> numbers
+    HeaderNode headerNode
+
+    String getNumber() {
+        if (!numbers) {
+            return ""
+        }
+        numbers.join(".") + "."
+    }
 }

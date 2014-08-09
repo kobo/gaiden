@@ -28,7 +28,6 @@ import groovy.transform.CompileStatic
 class Document {
     List<Page> pages
     List<Page> pageOrder
-    Toc toc
 
     Page previousPageOf(Page page) {
         if (pageOrder.first() == page) {
