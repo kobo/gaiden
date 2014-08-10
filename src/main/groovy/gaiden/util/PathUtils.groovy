@@ -48,6 +48,12 @@ class PathUtils {
         Paths.get(FilenameUtils.removeExtension(path.toString()))
     }
 
+    static List<Path> list(Path path, FileType fileType = FileType.ANY) {
+        def paths = []
+        path.eachFile(fileType) { paths << it }
+        paths
+    }
+
     static void copyFile(Path src, Path dest) {
         if (Files.notExists(dest.parent)) {
             Files.createDirectories(dest.parent)

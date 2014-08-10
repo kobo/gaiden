@@ -16,6 +16,8 @@
 
 package gaiden
 
+import gaiden.util.PathUtils
+import groovy.io.FileType
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 import org.codehaus.groovy.control.CompilerConfiguration
@@ -111,6 +113,20 @@ class GaidenConfig {
             return layoutFile
         }
         return applicationLayoutsDirectory.resolve("${filename}.html")
+    }
+
+    Path getApplicationThemeDirectory(String theme = this.theme) {
+        applicationThemesDirectory.resolve(theme)
+    }
+
+    Path getProjectThemeDirectory(String theme = this.theme) {
+        projectThemesDirectory.resolve(theme)
+    }
+
+    List<String> getInstalledThemes() {
+        PathUtils.list(applicationThemesDirectory, FileType.DIRECTORIES).collect {
+            it.fileName.toString()
+        }
     }
 
     String theme = DEFAULT_THEME
