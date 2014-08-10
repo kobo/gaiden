@@ -42,11 +42,14 @@ class Page {
     /** The metadata of page */
     Map<String, Object> metadata
 
+    /** The output path of page */
+    Path outputPath
+
     String relativize(Page page) {
-        relativize(page.source.outputPath)
+        relativize(page.outputPath)
     }
 
     String relativize(Path path) {
-        source.outputPath.parent.relativize(path).toString()
+        this.outputPath.parent.relativize(path).toString()
     }
 }

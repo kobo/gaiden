@@ -63,11 +63,8 @@ class SourceCollector {
     }
 
     private PageSource createPageSource(Path path) {
-        def relativePath = gaidenConfig.pagesDirectory.relativize(path)
-        def outputPath = gaidenConfig.outputDirectory.resolve(PathUtils.replaceExtension(relativePath, "html"))
         new PageSource(
             path: path,
-            outputPath: outputPath,
             intputEncoding: gaidenConfig.inputEncoding,
         )
     }

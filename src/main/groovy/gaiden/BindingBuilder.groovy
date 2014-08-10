@@ -109,7 +109,7 @@ class BindingBuilder {
 
     private String getResource(String path) {
         def resourceFile = Paths.get(path)
-        def src = page.source.outputPath
+        def src = page.outputPath
         def dest = gaidenConfig.outputDirectory.resolve(resourceFile.absolute ? Paths.get(resourceFile.toString().substring(1)) : resourceFile)
         src.parent.relativize(dest).toString()
     }

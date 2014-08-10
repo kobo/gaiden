@@ -17,6 +17,7 @@
 package gaiden
 
 import gaiden.markdown.GaidenMarkdownProcessor
+import gaiden.util.PathUtils
 import groovy.transform.CompileStatic
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -30,6 +31,9 @@ import org.springframework.stereotype.Component
 @Component
 @CompileStatic
 class PageBuilder {
+
+    @Autowired
+    GaidenConfig gaidenConfig
 
     @Autowired
     GaidenMarkdownProcessor markdownProcessor
@@ -49,6 +53,9 @@ class PageBuilder {
         def headers = markdownProcessor.getHeaders(contentNode)
         def metadata = pageReference?.metadata ?: Collections.emptyMap()
 
-        new Page(source: pageSource, headers: headers, contentNode: contentNode, metadata: metadata as Map<String, Object>)
+        def relativePath = gaidenConfig.pagesDirectory.relativize(pageSource.path)
+        def outputPath = gaidenConfig.outputDirectory.resolve(PathUtils.replaceExtension(relativePath, "html"))
+
+        new Page(source: pageSource, headers: headers, contentNode: contentNode, metadata: metadata as Map<String, Object>, outputPath: outputPath)
     }
 }

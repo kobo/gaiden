@@ -32,9 +32,6 @@ class PageSource {
     /** A relative path from the pages directory */
     Path path
 
-    /** A output page path */
-    Path outputPath
-
     String intputEncoding
 
     /** A content of source */

@@ -73,8 +73,8 @@ class DocumentWriter {
     }
 
     private void writePage(Page page, Document document) {
-        if (Files.notExists(page.source.outputPath.parent)) {
-            Files.createDirectories(page.source.outputPath.parent)
+        if (Files.notExists(page.outputPath.parent)) {
+            Files.createDirectories(page.outputPath.parent)
         }
 
         def binding = new BindingBuilder()
@@ -86,7 +86,7 @@ class DocumentWriter {
             .build()
 
         def content = templateEngine.make(page.metadata.layout as String, binding)
-        Files.write(page.source.outputPath, format(content).getBytes(gaidenConfig.outputEncoding))
+        Files.write(page.outputPath, format(content).getBytes(gaidenConfig.outputEncoding))
     }
 
     private String format(String content) {
