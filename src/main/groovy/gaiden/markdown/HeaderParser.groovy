@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.apache.commons.codec.digest.DigestUtils
 import org.pegdown.LinkRenderer
 import org.pegdown.ToHtmlSerializer
+import org.pegdown.ast.GaidenHeaderNode
 import org.pegdown.ast.HeaderNode
 import org.pegdown.ast.Node
 import org.pegdown.ast.RootNode
@@ -44,7 +45,7 @@ class HeaderParser extends ToHtmlSerializer {
     @Override
     void visit(HeaderNode headerNode) {
         def title = new HeaderTextSerializer(headerNode).text
-        def hash = getHash(title, headerNode.level)
+        def hash = getHash(title, headerNode)
         headers << new Header(
             title: title,
             level: headerNode.level,
@@ -53,10 +54,24 @@ class HeaderParser extends ToHtmlSerializer {
         )
     }
 
-    private String getHash(String title, int level) {
-        def parentHeaders = getParentHeaders(level)
+    private String getHash(String title, HeaderNode headerNode) {
+        if (headerNode instanceof GaidenHeaderNode) {
+            def gaidenHeaderNode = headerNode as GaidenHeaderNode
+            if (gaidenHeaderNode.specialAttributes?.id) {
+                return gaidenHeaderNode.specialAttributes?.id
+            }
+        }
+
+        if (title ==~ /[a-zA-Z][a-zA-Z0-9\-_:\. ]+/) {
+            def hash = title.replaceAll(" ", "-").toLowerCase()
+            if (!headers.find { Header header -> header.hash == hash }) {
+                return hash
+            }
+        }
+
+        def parentHeaders = getParentHeaders(headerNode.level)
         def parentHash = parentHeaders.collect { it.hash }.join("")
-        "ID-${DigestUtils.sha1Hex(parentHash + title)}"
+        "id-${DigestUtils.sha1Hex(parentHash + title)}"
     }
 
     private List<Header> getParentHeaders(int level) {

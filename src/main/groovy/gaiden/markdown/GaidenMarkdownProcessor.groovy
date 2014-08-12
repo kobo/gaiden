@@ -23,7 +23,9 @@ import gaiden.Page
 import gaiden.PageSource
 import gaiden.message.MessageSource
 import groovy.transform.CompileStatic
-import org.pegdown.Extensions
+import org.parboiled.Parboiled
+import org.pegdown.GaidenParser
+import org.pegdown.Parser
 import org.pegdown.ParsingTimeoutException
 import org.pegdown.PegDownProcessor
 import org.pegdown.ast.RootNode
@@ -47,29 +49,20 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
     MessageSource messageSource
 
     GaidenMarkdownProcessor() {
-        super(Extensions.ALL - Extensions.HARDWRAPS)
+        super(Parboiled.createParser(GaidenParser) as Parser)
     }
 
     RootNode parseMarkdown(PageSource pageSource) {
         parseMarkdown(pageSource.content.toCharArray())
     }
 
-    List<Header> getHeaders(RootNode rootNode) {
-        new HeaderParser(rootNode).headers
-    }
-
-    /**
-     * FIXME:
-     * Converts the given markdown nodes to HTML.
-     *
-     * @param context the context to be built
-     * @param pageSource the page source to convert
-     * @return the HTML
-     * @throws ParsingTimeoutException if the input cannot be parsed within the configured parsing timeout
-     */
     String convertToHtml(Page page, Document document) throws ParsingTimeoutException {
         def linkRenderer = new GaidenLinkRenderer(page: page, document: document, messageSource: messageSource)
         def imageRenderer = new ImageRenderer(page, gaidenConfig.outputDirectory, messageSource)
         new GaidenToHtmlSerializer(gaidenConfig, linkRenderer, imageRenderer, page).toHtml(page.contentNode)
+    }
+
+    static List<Header> getHeaders(RootNode rootNode) {
+        new HeaderParser(rootNode).headers
     }
 }

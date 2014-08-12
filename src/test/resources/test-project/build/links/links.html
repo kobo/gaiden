@@ -23,8 +23,8 @@
               <li>
                 <a href="../chapter2/section1.html"><span class="number">2.1.</span>section 2.1</a>
                 <ul>
-                  <li><a href="../chapter2/section1.html#ID-c7c6c4d595414195a076cda99da6eb0113c2b487"><span class="number">2.1.1.</span>section 2.1.1</a></li>
-                  <li><a href="../chapter2/section1.html#ID-5459ac25608c77c38933269408efc5e18eb30131"><span class="number">2.1.2.</span>section 2.1.2</a></li>
+                  <li><a href="../chapter2/section1.html#section-2.1.1"><span class="number">2.1.1.</span>section 2.1.1</a></li>
+                  <li><a href="../chapter2/section1.html#secion-212"><span class="number">2.1.2.</span>section 2.1.2</a></li>
                 </ul>
               </li>
             </ul>
@@ -35,7 +35,7 @@
               <li>
                 <a href="../chapter3/section1.html"><span class="number">3.1.</span>section 3.1</a>
                 <ul>
-                  <li><a href="../chapter3/section1.html#ID-8296542e95f2ee9f61103976d9c7b8ea6bf50335"><span class="number">3.1.1.</span>section 3.1.1</a></li>
+                  <li><a href="../chapter3/section1.html#section-3.1.1"><span class="number">3.1.1.</span>section 3.1.1</a></li>
                 </ul>
               </li>
             </ul>
@@ -48,27 +48,33 @@
           <a class="next-page" href="../README.html">Test<i class="fa fa-angle-right"></i></a>
         </div>
         <div class="main-content">
-          <h2 id="ID-4f0aa52d656a3d75867f784b7e9c5d23bf1321c0">link</h2>
-          <h3 id="ID-71e0d65232f05a83359f095ddebc5be72e21d59a">HTML Links</h3>
+          <h2 id="link">link</h2>
+          <h3 id="html-links">HTML Links</h3>
           <ul>
             <li><a href="http://example.com/" title="Title">an example</a></li>
             <li><a href="http://example.net/">This link</a></li>
             <li><a href="/about/">About</a></li>
             <li><a href="http://example.com/" title="Optional Title Here">an example</a></li>
           </ul>
-          <h3 id="ID-7afeee998a620498a6de9ed394876515823158a5">Page Links</h3>
+          <h3 id="page-links">Page Links</h3>
           <ul>
             <li><a href="links.html">TO links.md</a></li>
             <li><a href="README.html">TO README.md</a></li>
             <li><a href="README.html">TO ./README.md</a></li>
             <li><a href="../README.html">TO ../README.md</a></li>
-            <li>
-              <p><a href="#hash">TO #hash</a></p>
-            </li>
+          </ul>
+          <h3 id="page-links-with-hash">Page Links with Hash</h3>
+          <ul>
+            <li><a href="#hash">TO #hash</a></li>
             <li><a href="links.html#hash">TO links.md#hash</a></li>
             <li><a href="README.html#hash">TO README.md#hash</a></li>
             <li><a href="README.html#hash">TO ./README.md#hash</a></li>
             <li><a href="../README.html#hash">TO ../README.md#hash</a></li>
+          </ul>
+          <h3 id="page-links-with-special-attributes">Page Links with Special Attributes</h3>
+          <ul>
+            <li><a href="links.html" id="link1">TO links.md</a></li>
+            <li><a href="http://example.com/" title="Optional Title Here" id="link2">an example</a></li>
           </ul>
         </div>
         <div class="footer footer-toc-visible">

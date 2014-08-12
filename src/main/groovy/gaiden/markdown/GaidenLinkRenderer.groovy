@@ -24,11 +24,14 @@ import gaiden.util.UrlUtils
 import groovy.transform.CompileStatic
 import org.apache.commons.io.FilenameUtils
 import org.pegdown.LinkRenderer
+import org.pegdown.ast.ExpImageNode
 import org.pegdown.ast.ExpLinkNode
+import org.pegdown.ast.GaidenExpImageNode
+import org.pegdown.ast.GaidenExpLinkNode
 import org.pegdown.ast.RefLinkNode
+import org.pegdown.ast.SpecialAttributesNode
 
 import java.nio.file.Files
-import java.nio.file.LinkOption
 
 import static org.pegdown.FastEncoder.*
 
@@ -47,12 +50,34 @@ class GaidenLinkRenderer extends LinkRenderer {
 
     @Override
     LinkRenderer.Rendering render(ExpLinkNode node, String text) {
-        this.render(node.url, node.title, text)
+        def rendering = this.render(node.url, node.title, text)
+        if (node instanceof GaidenExpLinkNode) {
+            withSpecialAttributes(rendering, node.specialAttributesNode)
+        }
+        rendering
+    }
+
+    @Override
+    LinkRenderer.Rendering render(ExpImageNode node, String text) {
+        def rendering = super.render(node, text)
+        if (node instanceof GaidenExpImageNode) {
+            withSpecialAttributes(rendering, node.specialAttributesNode)
+        }
+        rendering
     }
 
     @Override
     LinkRenderer.Rendering render(RefLinkNode node, String url, String title, String text) {
         this.render(url, title, text)
+    }
+
+    protected void withSpecialAttributes(LinkRenderer.Rendering rendering, SpecialAttributesNode specialAttributesNode) {
+        if (specialAttributesNode.id) {
+            rendering.withAttribute("id", specialAttributesNode.id)
+        }
+        if (specialAttributesNode.classes) {
+            rendering.withAttribute("class", specialAttributesNode.classes.join(" "))
+        }
     }
 
     protected LinkRenderer.Rendering render(String url, String title, String text) {
