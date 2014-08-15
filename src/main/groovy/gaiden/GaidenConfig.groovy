@@ -124,6 +124,12 @@ class GaidenConfig {
         projectThemesDirectory.resolve(theme)
     }
 
+    Path topPage
+
+    void setTopPage(String topPage) {
+        this.topPage = pagesDirectory.resolve(topPage)
+    }
+
     List<String> getInstalledThemes() {
         PathUtils.list(applicationThemesDirectory, FileType.DIRECTORIES).collect {
             it.fileName.toString()

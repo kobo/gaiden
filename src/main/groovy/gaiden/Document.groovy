@@ -30,14 +30,14 @@ class Document {
     List<Page> pageOrder
 
     Page previousPageOf(Page page) {
-        if (pageOrder.first() == page) {
+        if (!pageOrder.contains(page) || pageOrder.first() == page) {
             return null
         }
         pageOrder[pageOrder.indexOf(page) - 1]
     }
 
     Page nextPageOf(Page page) {
-        if (pageOrder.last() == page) {
+        if (!pageOrder.contains(page) || pageOrder.last() == page) {
             return null
         }
         pageOrder[pageOrder.indexOf(page) + 1]

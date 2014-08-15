@@ -75,6 +75,7 @@ class BindingBuilder {
             content    : content,
             metadata   : page.metadata,
             resource   : this.&getResource,
+            topPage    : topPage,
             prevPage   : prevPage,
             nextPage   : nextPage,
             documentToc: this.&getDocumentToc,
@@ -84,16 +85,31 @@ class BindingBuilder {
         ]
     }
 
+    private Map getTopPage() {
+        if (gaidenConfig.topPage) {
+            def topPage = document.pages.find { Page page ->
+                Files.isSameFile(page.source.path, gaidenConfig.topPage)
+            }
+            if (topPage) {
+                return toMap(topPage)
+            }
+        }
+
+        def topPage = document.pageOrder.first()
+        if (topPage) {
+            return toMap(topPage)
+        }
+
+        return Collections.emptyMap()
+    }
+
     private Map getPrevPage() {
         def previousPage = document.previousPageOf(page)
         if (!previousPage) {
             return Collections.emptyMap()
         }
 
-        return [
-            path : page.relativize(previousPage),
-            title: escapeHtml4(previousPage.headers?.first()?.title),
-        ]
+        return toMap(previousPage)
     }
 
     private Map getNextPage() {
@@ -102,9 +118,13 @@ class BindingBuilder {
             return Collections.emptyMap()
         }
 
+        return toMap(nextPage)
+    }
+
+    private Map toMap(Page destPage) {
         return [
-            path : page.relativize(nextPage),
-            title: escapeHtml4(nextPage.headers?.first()?.title),
+            path : page.relativize(destPage),
+            title: escapeHtml4(destPage.headers?.first()?.title),
         ]
     }
 
