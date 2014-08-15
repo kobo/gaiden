@@ -22,6 +22,8 @@ import groovy.transform.CompileStatic
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import java.nio.file.Path
+
 /**
  * A markdown page builder builds from a markdown to a HTML.
  *
@@ -52,10 +54,17 @@ class PageBuilder {
         def contentNode = markdownProcessor.parseMarkdown(pageSource)
         def headers = markdownProcessor.getHeaders(contentNode)
         def metadata = pageReference?.metadata ?: Collections.emptyMap()
-
-        def relativePath = gaidenConfig.pagesDirectory.relativize(pageSource.path)
-        def outputPath = gaidenConfig.outputDirectory.resolve(PathUtils.replaceExtension(relativePath, "html"))
+        def outputPath = getOutputPath(pageSource)
 
         new Page(source: pageSource, headers: headers, contentNode: contentNode, metadata: metadata as Map<String, Object>, outputPath: outputPath)
+    }
+
+    private Path getOutputPath(PageSource pageSource) {
+        if (pageSource.path.fileName.toString().toLowerCase() == "readme.md" && gaidenConfig.readmeToIndex) {
+            def relativePath = gaidenConfig.pagesDirectory.relativize(pageSource.path.parent)
+            return gaidenConfig.outputDirectory.resolve(relativePath.resolve("index.html"))
+        }
+        def relativePath = gaidenConfig.pagesDirectory.relativize(pageSource.path)
+        return gaidenConfig.outputDirectory.resolve(PathUtils.replaceExtension(relativePath, "html"))
     }
 }
