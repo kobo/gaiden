@@ -22,7 +22,7 @@ class BuildCommandSpec extends FunctionalSpec {
 
     def "build a document"() {
         given:
-            setProjectDirectory("src/test/resources/test-project")
+            setupProjectDirectory("src/test/resources/test-project")
             def command = applicationContext.getBean(BuildCommand)
 
         when:

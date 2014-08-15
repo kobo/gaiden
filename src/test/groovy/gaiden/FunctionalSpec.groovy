@@ -56,8 +56,9 @@ abstract class FunctionalSpec extends GaidenSpec {
         applicationContext = gaidenApplication.applicationContext
         gaidenConfig = applicationContext.getBean(GaidenConfig)
 
-        setProjectDirectory(projectDirectory.toString())
         gaidenConfig.outputDirectory = outputDirectory
+
+        setupProjectDirectory(projectDirectory.toString())
         Files.createFile(gaidenConfig.gaidenConfigFile)
     }
 
@@ -65,13 +66,17 @@ abstract class FunctionalSpec extends GaidenSpec {
         restoreSystemProperties()
     }
 
-    void setProjectDirectory(String path) {
+    void setupProjectDirectory(String path) {
         def projectDirectory = Paths.get(path).toRealPath(LinkOption.NOFOLLOW_LINKS)
         gaidenConfig.projectDirectory = projectDirectory
         gaidenConfig.gaidenConfigFile = projectDirectory.resolve(GaidenConfig.GAIDEN_CONFIG_FILENAME)
         gaidenConfig.pagesDirectory = projectDirectory
         gaidenConfig.projectThemesDirectory = projectDirectory.resolve(GaidenConfig.DEFAULT_THEMES_DIRECTORY)
         gaidenConfig.pagesFile = projectDirectory.resolve(GaidenConfig.PAGES_FILENAME)
+
+        if (Files.exists(gaidenConfig.gaidenConfigFile)) {
+            gaidenConfig.initialize()
+        }
     }
 
     void assertOutputDirectory(String path) {

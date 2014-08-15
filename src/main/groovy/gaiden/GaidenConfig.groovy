@@ -20,7 +20,6 @@ import gaiden.util.PathUtils
 import groovy.io.FileType
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
-import org.codehaus.groovy.control.CompilerConfiguration
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
@@ -37,6 +36,8 @@ import java.nio.file.Paths
 @Component
 @CompileStatic
 class GaidenConfig {
+
+    private ConfigObject configObject
 
     static final String GAIDEN_CONFIG_FILENAME = "config.groovy"
     static final String PAGES_FILENAME = "pages.groovy"
@@ -180,11 +181,18 @@ class GaidenConfig {
             return
         }
 
-        CompilerConfiguration configuration = new CompilerConfiguration()
-        configuration.scriptBaseClass = DelegatingScript.name
-        GroovyShell shell = new GroovyShell(new Binding(), configuration)
-        DelegatingScript script = shell.parse(configFile.text) as DelegatingScript
-        script.setDelegate(this)
-        script.run()
+        configObject = new ConfigSlurper().parse(configFile.toUri().toURL())
+        configObject.keySet().each { String key ->
+            if (this.hasProperty(key)) {
+                this.setProperty(key, configObject.get(key))
+            }
+        }
+    }
+
+    @CompileStatic(TypeCheckingMode.SKIP)
+    def propertyMissing(String name) {
+        if (configObject) {
+            return configObject.get(name)
+        }
     }
 }

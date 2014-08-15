@@ -34,6 +34,8 @@ class GaidenConfigSpec extends GaidenSpec {
             | projectThemesDirectoryPath = "test/project/themes"
             | inputEncoding = "UTF-8"
             | outputEncoding = "UTF-8"
+            | dynamicProperty = "dynamic"
+            | dynamic.nested = "nested"
             '''.stripMargin()
             def gaidenConfig = new GaidenConfig()
             gaidenConfig.pagesDirectory
@@ -48,5 +50,7 @@ class GaidenConfigSpec extends GaidenSpec {
             gaidenConfig.inputEncoding == "UTF-8"
             gaidenConfig.outputEncoding == "UTF-8"
             gaidenConfig.projectThemesDirectory == gaidenConfig.projectDirectory.resolve("test/project/themes")
+            gaidenConfig.dynamicProperty == "dynamic"
+            gaidenConfig.dynamic.nested == "nested"
     }
 }

@@ -80,6 +80,7 @@ class BindingBuilder {
             documentToc: this.&getDocumentToc,
             pageToc    : this.&getPageToc,
             render     : this.&render,
+            config     : gaidenConfig,
         ]
     }
 
