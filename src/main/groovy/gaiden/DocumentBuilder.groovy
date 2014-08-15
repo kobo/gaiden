@@ -67,6 +67,9 @@ class DocumentBuilder {
                 // TODO warning log
                 return
             }
+            if (pageReference.metadata.skipToc) {
+                return
+            }
             pageOrder << page
         }
         pageOrder
