@@ -53,13 +53,16 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
     }
 
     RootNode parseMarkdown(PageSource pageSource) {
-        parseMarkdown(pageSource.content.toCharArray())
+        def content = gaidenConfig.filter.before(pageSource.content)
+        return parseMarkdown(content.toCharArray())
     }
 
     String convertToHtml(Page page, Document document) throws ParsingTimeoutException {
         def linkRenderer = new GaidenLinkRenderer(page: page, document: document, messageSource: messageSource)
         def imageRenderer = new ImageRenderer(page, gaidenConfig.outputDirectory, messageSource)
-        new GaidenToHtmlSerializer(gaidenConfig, linkRenderer, imageRenderer, page).toHtml(page.contentNode)
+        def html = new GaidenToHtmlSerializer(gaidenConfig, linkRenderer, imageRenderer, page).toHtml(page.contentNode)
+
+        return gaidenConfig.filter.after(html)
     }
 
     static List<Header> getHeaders(RootNode rootNode) {

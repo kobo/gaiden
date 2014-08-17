@@ -4,3 +4,4 @@
 "chapter3/README.md"
 "chapter3/section1.md"(layout: "simple")
 "top.md"(skipToc: true)
+"filter.md"(skipToc: true, layout: "filter")
