@@ -1,6 +1,6 @@
 testProperty = "Test Property Value"
 
-topPage = "top.md"
+homePage = "home.md"
 
 filter = {
     before { text ->

@@ -36,7 +36,7 @@ class GaidenConfigSpec extends GaidenSpec {
             | outputEncoding = "UTF-8"
             | dynamicProperty = "dynamic"
             | dynamic.nested = "nested"
-            | topPage = "README.md"
+            | homePage = "README.md"
             '''.stripMargin()
             def gaidenConfig = new GaidenConfig()
             gaidenConfig.pagesDirectory
@@ -51,7 +51,7 @@ class GaidenConfigSpec extends GaidenSpec {
             gaidenConfig.inputEncoding == "UTF-8"
             gaidenConfig.outputEncoding == "UTF-8"
             gaidenConfig.projectThemesDirectory == gaidenConfig.projectDirectory.resolve("test/project/themes")
-            gaidenConfig.topPage == gaidenConfig.pagesDirectory.resolve("README.md")
+            gaidenConfig.homePage == gaidenConfig.pagesDirectory.resolve("README.md")
             gaidenConfig.dynamicProperty == "dynamic"
             gaidenConfig.dynamic.nested == "nested"
     }

@@ -124,10 +124,10 @@ class GaidenConfig {
         projectThemesDirectory.resolve(theme)
     }
 
-    Path topPage
+    Path homePage
 
-    void setTopPage(String topPage) {
-        this.topPage = pagesDirectory.resolve(topPage)
+    void setHomePage(String homePage) {
+        this.homePage = pagesDirectory.resolve(homePage)
     }
 
     List<String> getInstalledThemes() {

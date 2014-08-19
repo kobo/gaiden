@@ -3,5 +3,5 @@
 "chapter2/section1.md"(tags: ["tag1"])
 "chapter3/README.md"
 "chapter3/section1.md"(layout: "simple")
-"top.md"(skipToc: true)
+"home.md"(skipToc: true)
 "filter.md"(skipToc: true, layout: "filter")
