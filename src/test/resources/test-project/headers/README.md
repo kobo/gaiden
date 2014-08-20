@@ -85,3 +85,5 @@ Header2{#myid36}
 
 Header2   {#myid37 .class-1 .class_2}
 -------
+
+# Header1 <span>inline html</span> [link](http://example.com) `<code block>`

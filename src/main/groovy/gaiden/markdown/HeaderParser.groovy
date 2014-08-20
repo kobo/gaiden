@@ -99,7 +99,7 @@ class HeaderParser extends ToHtmlSerializer {
             headerNode.children.each { Node node ->
                 node.accept(this)
             }
-            printer.string
+            printer.string.replaceAll(/<.+?>/, "")
         }
     }
 }
