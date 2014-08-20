@@ -45,6 +45,13 @@ class Page {
     /** The output path of page */
     Path outputPath
 
+    String getTitle() {
+        if (metadata.title) {
+            return metadata.title
+        }
+        return headers ? headers.first().title : ""
+    }
+
     String relativize(Page page) {
         relativize(page.outputPath)
     }
