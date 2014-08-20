@@ -61,10 +61,10 @@ class PageBuilder {
 
     private Path getOutputPath(PageSource pageSource) {
         if (pageSource.path.fileName.toString().toLowerCase() == "readme.md" && gaidenConfig.readmeToIndex) {
-            def relativePath = gaidenConfig.pagesDirectory.relativize(pageSource.path.parent)
+            def relativePath = gaidenConfig.sourceDirectory.relativize(pageSource.path.parent)
             return gaidenConfig.outputDirectory.resolve(relativePath.resolve("index.html"))
         }
-        def relativePath = gaidenConfig.pagesDirectory.relativize(pageSource.path)
+        def relativePath = gaidenConfig.sourceDirectory.relativize(pageSource.path)
         return gaidenConfig.outputDirectory.resolve(PathUtils.replaceExtension(relativePath, "html"))
     }
 }

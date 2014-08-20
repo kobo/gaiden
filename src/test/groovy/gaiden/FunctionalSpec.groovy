@@ -70,7 +70,7 @@ abstract class FunctionalSpec extends GaidenSpec {
         def projectDirectory = Paths.get(path).toRealPath(LinkOption.NOFOLLOW_LINKS)
         gaidenConfig.projectDirectory = projectDirectory
         gaidenConfig.gaidenConfigFile = projectDirectory.resolve(GaidenConfig.GAIDEN_CONFIG_FILENAME)
-        gaidenConfig.pagesDirectory = projectDirectory
+        gaidenConfig.sourceDirectory = projectDirectory
         gaidenConfig.projectThemesDirectory = projectDirectory.resolve(GaidenConfig.DEFAULT_THEMES_DIRECTORY)
         gaidenConfig.pagesFile = projectDirectory.resolve(GaidenConfig.PAGES_FILENAME)
 

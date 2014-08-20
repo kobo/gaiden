@@ -104,9 +104,9 @@ class DocumentWriter {
     private void copyAssets() {
         PathUtils.copyFiles(gaidenConfig.applicationAssetsDirectory, gaidenConfig.outputDirectory)
         PathUtils.copyFiles(gaidenConfig.projectAssetsDirectory, gaidenConfig.outputDirectory)
-        PathUtils.eachFileRecurse(gaidenConfig.pagesDirectory, [gaidenConfig.outputDirectory, gaidenConfig.projectThemesDirectory]) { Path src ->
+        PathUtils.eachFileRecurse(gaidenConfig.sourceDirectory, [gaidenConfig.outputDirectory, gaidenConfig.projectThemesDirectory]) { Path src ->
             if (isAsset(src)) {
-                def dest = gaidenConfig.outputDirectory.resolve(gaidenConfig.pagesDirectory.relativize(src))
+                def dest = gaidenConfig.outputDirectory.resolve(gaidenConfig.sourceDirectory.relativize(src))
                 PathUtils.copyFile(src, dest)
             }
         }

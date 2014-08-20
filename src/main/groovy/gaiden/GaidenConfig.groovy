@@ -66,8 +66,8 @@ class GaidenConfig {
     /** The path of project directory */
     Path projectDirectory = defaultProjectDirectory
 
-    /** The path of page source files directory */
-    Path pagesDirectory = defaultProjectDirectory
+    /** The path of source files directory */
+    Path sourceDirectory = defaultProjectDirectory
 
     /** The path of directory to be outputted a document */
     Path outputDirectory = defaultProjectDirectory.resolve(DEFAULT_BUILD_DIRECTORY)
@@ -127,7 +127,7 @@ class GaidenConfig {
     Path homePage
 
     void setHomePage(String homePage) {
-        this.homePage = pagesDirectory.resolve(homePage)
+        this.homePage = sourceDirectory.resolve(homePage)
     }
 
     List<String> getInstalledThemes() {
@@ -156,8 +156,8 @@ class GaidenConfig {
         projectDirectory = Paths.get(projectDirectoryPath)
     }
 
-    void setPagesDirectoryPath(String pagesDirectoryPath) {
-        pagesDirectory = projectDirectory.resolve(pagesDirectoryPath)
+    void setSourceDirectoryPath(String sourceDirectoryPath) {
+        sourceDirectory = projectDirectory.resolve(sourceDirectoryPath)
     }
 
     void setOutputDirectoryPath(String outputDirectoryPath) {

@@ -28,7 +28,7 @@ class PagesParser {
 
     private List<PageReference> pageReferences = []
 
-    Path pagesDirectory
+    Path sourceDirectory
 
     List<PageReference> parse(String text) {
         CompilerConfiguration configuration = new CompilerConfiguration()
@@ -42,7 +42,7 @@ class PagesParser {
     }
 
     def methodMissing(String name, args) {
-        def path = pagesDirectory.resolve(Paths.get(name))
+        def path = sourceDirectory.resolve(Paths.get(name))
         def metadata = args.find { it instanceof Map } ?: Collections.emptyMap()
         pageReferences << new PageReference(path: path, metadata: metadata as Map<String, String>)
 

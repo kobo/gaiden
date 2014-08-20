@@ -29,7 +29,7 @@ class GaidenConfigSpec extends GaidenSpec {
         given:
             gaidenConfigFile.write '''
             | title = "Test Title"
-            | pagesDirectoryPath = "test/pages"
+            | sourceDirectoryPath = "test/source"
             | outputDirectoryPath = "test/build/html"
             | projectThemesDirectoryPath = "test/project/themes"
             | inputEncoding = "UTF-8"
@@ -39,19 +39,19 @@ class GaidenConfigSpec extends GaidenSpec {
             | homePage = "README.md"
             '''.stripMargin()
             def gaidenConfig = new GaidenConfig()
-            gaidenConfig.pagesDirectory
+            gaidenConfig.sourceDirectory
 
         when:
             gaidenConfig.initialize(gaidenConfigFile)
 
         then:
             gaidenConfig.title == "Test Title"
-            gaidenConfig.pagesDirectory == gaidenConfig.projectDirectory.resolve("test/pages")
+            gaidenConfig.sourceDirectory == gaidenConfig.projectDirectory.resolve("test/source")
             gaidenConfig.outputDirectory == gaidenConfig.projectDirectory.resolve("test/build/html")
             gaidenConfig.inputEncoding == "UTF-8"
             gaidenConfig.outputEncoding == "UTF-8"
             gaidenConfig.projectThemesDirectory == gaidenConfig.projectDirectory.resolve("test/project/themes")
-            gaidenConfig.homePage == gaidenConfig.pagesDirectory.resolve("README.md")
+            gaidenConfig.homePage == gaidenConfig.sourceDirectory.resolve("README.md")
             gaidenConfig.dynamicProperty == "dynamic"
             gaidenConfig.dynamic.nested == "nested"
     }

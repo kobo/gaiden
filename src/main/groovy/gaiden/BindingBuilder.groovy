@@ -226,7 +226,7 @@ class BindingBuilder {
     }
 
     private String render(String filePath) {
-        def file = gaidenConfig.pagesDirectory.resolve(filePath)
+        def file = gaidenConfig.sourceDirectory.resolve(filePath)
         if (Files.notExists(file)) {
             System.err.println("WARNING: " + messageSource.getMessage("output.page.reference.not.exists.message", [filePath, gaidenConfig.getLayoutFile(page.metadata.layout as String)]))
             return ""

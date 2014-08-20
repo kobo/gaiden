@@ -13,8 +13,8 @@
 // The path of TOC output file
 //tocOutputFilePath = "toc.html"
 
-// The path of page source files directory
-//pagesDirectoryPath = "pages"
+// The path of source files directory
+//sourceDirectoryPath = "."
 
 // The path of static files directory
 //staticDirectoryPath = "static"

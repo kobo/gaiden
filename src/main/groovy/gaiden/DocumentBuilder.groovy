@@ -55,7 +55,7 @@ class DocumentBuilder {
 
     private List<PageReference> getPageReferences() {
         def pagesParser = new PagesParser()
-        pagesParser.pagesDirectory = gaidenConfig.pagesDirectory
+        pagesParser.sourceDirectory = gaidenConfig.sourceDirectory
         pagesParser.parse(gaidenConfig.pagesFile.getText(gaidenConfig.inputEncoding))
     }
 
