@@ -10,7 +10,7 @@ import org.pegdown.ast.*;
 public class GaidenParser extends Parser {
 
     public GaidenParser() {
-        super(ALL, PegDownProcessor.DEFAULT_MAX_PARSING_TIME, DefaultParseRunnerProvider);
+        super(ALL & ~HARDWRAPS, PegDownProcessor.DEFAULT_MAX_PARSING_TIME, DefaultParseRunnerProvider);
     }
 
     public Rule SetextHeading1() {
