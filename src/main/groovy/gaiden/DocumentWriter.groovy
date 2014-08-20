@@ -80,6 +80,7 @@ class DocumentWriter {
         def binding = new BindingBuilder()
             .setGaidenConfig(gaidenConfig)
             .setMessageSource(messageSource)
+            .setMarkdownProcessor(markdownProcessor)
             .setPage(page)
             .setDocument(document)
             .setContent(markdownProcessor.convertToHtml(page, document))

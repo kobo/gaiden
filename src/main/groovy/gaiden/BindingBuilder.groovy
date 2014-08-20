@@ -34,6 +34,7 @@ import static org.apache.commons.lang3.StringEscapeUtils.*
 class BindingBuilder {
 
     private MessageSource messageSource
+    private GaidenMarkdownProcessor markdownProcessor
     private GaidenConfig gaidenConfig
     private Page page
     private Document document
@@ -41,6 +42,11 @@ class BindingBuilder {
 
     BindingBuilder setMessageSource(MessageSource messageSource) {
         this.messageSource = messageSource
+        return this
+    }
+
+    BindingBuilder setMarkdownProcessor(GaidenMarkdownProcessor markdownProcessor) {
+        this.markdownProcessor = markdownProcessor
         return this
     }
 
@@ -227,12 +233,11 @@ class BindingBuilder {
 
     private String render(String filePath) {
         def file = gaidenConfig.sourceDirectory.resolve(filePath)
-        if (Files.notExists(file)) {
+        def page = document.pages.find { Files.isSameFile(it.source.path, file) }
+        if (!page) {
             System.err.println("WARNING: " + messageSource.getMessage("output.page.reference.not.exists.message", [filePath, gaidenConfig.getLayoutFile(page.metadata.layout as String)]))
             return ""
         }
-
-        def processor = new GaidenMarkdownProcessor()
-        processor.markdownToHtml(file.text)
+        markdownProcessor.convertToHtml(page, document)
     }
 }
