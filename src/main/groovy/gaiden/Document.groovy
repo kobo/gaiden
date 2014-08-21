@@ -26,6 +26,9 @@ import groovy.transform.CompileStatic
  */
 @CompileStatic
 class Document {
+
+    Page homePage
+
     List<Page> pages
     List<Page> pageOrder
 

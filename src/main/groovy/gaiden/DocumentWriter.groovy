@@ -62,8 +62,6 @@ class DocumentWriter {
 
         writePages(document)
         copyAssets()
-
-        println "Built document at ${gaidenConfig.outputDirectory.toAbsolutePath()}"
     }
 
     private void writePages(Document document) {

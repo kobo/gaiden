@@ -59,5 +59,7 @@ class BuildCommand extends AbstractCommand {
         def documentSource = sourceCollector.collect()
         Document document = documentBuilder.build(documentSource)
         documentWriter.write(document)
+
+        println "Built document at ${document.homePage?.outputPath?.toUri() ?: gaidenConfig.outputDirectory.toUri()}"
     }
 }

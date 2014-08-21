@@ -92,21 +92,11 @@ class BindingBuilder {
     }
 
     private Map getHomePage() {
-        if (gaidenConfig.homePage) {
-            def homePage = document.pages.find { Page page ->
-                Files.isSameFile(page.source.path, gaidenConfig.homePage)
-            }
-            if (homePage) {
-                return toMap(homePage)
-            }
+        if (!document.homePage) {
+            return Collections.emptyMap()
         }
 
-        def homePage = document.pageOrder.first()
-        if (homePage) {
-            return toMap(homePage)
-        }
-
-        return Collections.emptyMap()
+        return toMap(document.homePage)
     }
 
     private Map getPrevPage() {

@@ -48,9 +48,10 @@ class DocumentBuilder {
         def pageReferences = getPageReferences()
         def pages = buildPages(documentSource, pageReferences)
         def pageOrder = getPageOrder(pageReferences, pages)
+        def homePage = getHomePage(pages, pageOrder)
         setHeaderNumbers(pageOrder)
 
-        new Document(pages: pages, pageOrder: pageOrder)
+        new Document(homePage: homePage, pages: pages, pageOrder: pageOrder)
     }
 
     private List<PageReference> getPageReferences() {
@@ -103,5 +104,22 @@ class DocumentBuilder {
             def pageReference = pageReferences.find { Files.isSameFile(it.path, pageSource.path) }
             pageBuilder.build(pageSource, pageReference)
         }
+    }
+
+    private Page getHomePage(List<Page> pages, List<Page> pageOrder) {
+        if (gaidenConfig.homePage) {
+            def found = pages.find { Page page ->
+                Files.isSameFile(page.source.path, gaidenConfig.homePage)
+            }
+            if (found) {
+                return found
+            }
+        }
+
+        if (pageOrder) {
+            return pageOrder.first()
+        }
+
+        return null
     }
 }
