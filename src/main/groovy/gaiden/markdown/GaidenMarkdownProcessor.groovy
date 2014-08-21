@@ -17,6 +17,7 @@
 package gaiden.markdown
 
 import gaiden.Document
+import gaiden.Filter
 import gaiden.GaidenConfig
 import gaiden.Header
 import gaiden.Page
@@ -53,7 +54,9 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
     }
 
     RootNode parseMarkdown(PageSource pageSource) {
-        def content = gaidenConfig.filter.before(pageSource.content)
+        def content = gaidenConfig.filters.inject(pageSource.content) { String text, Filter filter ->
+            filter.doBefore(text)
+        } as String
         return parseMarkdown(content.toCharArray())
     }
 
@@ -62,7 +65,9 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
         def imageRenderer = new ImageRenderer(page, gaidenConfig.outputDirectory, messageSource)
         def html = new GaidenToHtmlSerializer(gaidenConfig, linkRenderer, imageRenderer, page).toHtml(page.contentNode)
 
-        return gaidenConfig.filter.after(html)
+        return gaidenConfig.filters.inject(html) { String text, Filter filter ->
+            filter.doAfter(text)
+        } as String
     }
 
     static List<Header> getHeaders(RootNode rootNode) {

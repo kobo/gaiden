@@ -1,10 +1,34 @@
 package gaiden
 
-interface Filter {
+import groovy.transform.CompileStatic
 
-    String before(String text)
+@CompileStatic
+class Filter {
 
-    String after(String text)
+    String name
 
-    String afterTemplate(String text)
+    Closure before
+    Closure after
+    Closure afterTemplate
+
+    String doBefore(String text) {
+        if (before) {
+            return before.call(text)
+        }
+        return text
+    }
+
+    String doAfter(String text) {
+        if (after) {
+            return after.call(text)
+        }
+        return text
+    }
+
+    String doAfterTemplate(String text) {
+        if (afterTemplate) {
+            return afterTemplate.call(text)
+        }
+        return text
+    }
 }

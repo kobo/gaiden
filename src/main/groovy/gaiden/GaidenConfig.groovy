@@ -176,11 +176,11 @@ class GaidenConfig {
         projectThemesDirectory = projectDirectory.resolve(projectThemesDirectoryPath)
     }
 
-    Filter filter = new EmptyFilter()
+    List<Filter> filters = Collections.emptyList()
 
-    void setFilter(Closure closure) {
+    void setFilters(Closure closure) {
         def filterBuilder = new FilterBuilder()
-        filter = filterBuilder.build(closure)
+        filters = filterBuilder.build(closure)
     }
 
     @PostConstruct
@@ -207,17 +207,5 @@ class GaidenConfig {
         if (configObject) {
             return configObject.get(name)
         }
-    }
-
-    private static class EmptyFilter implements Filter {
-
-        @Override
-        String before(String text) { text }
-
-        @Override
-        String after(String text) { text }
-
-        @Override
-        String afterTemplate(String text) { text }
     }
 }
