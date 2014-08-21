@@ -16,6 +16,7 @@
 
 package gaiden
 
+import gaiden.exception.GaidenException
 import gaiden.markdown.GaidenMarkdownProcessor
 import gaiden.message.MessageSource
 import groovy.transform.CompileStatic
@@ -135,26 +136,27 @@ class BindingBuilder {
         def params = args instanceof Map ? args : [:]
         def maxDepth = params["depth"] as Integer ?: gaidenConfig.documentTocDepth
 
+        List<Integer> levels = []
         StringBuilder sb = new StringBuilder()
-        def currentLevel = 0
+
         document.pageOrder.each { Page destPage ->
             destPage.headers.eachWithIndex { Header header, int index ->
                 if (header.level > maxDepth) {
                     return
                 }
 
-                if (currentLevel < header.level) {
+                if (!levels || levels.last() < header.level) {
                     sb << "<ul>"
-                    currentLevel++
-                    (header.level - currentLevel).times {
-                        sb << "<li><ul>"
-                        currentLevel++
+                    levels << header.level
+                } else if (levels.last() > header.level) {
+                    if (!levels.contains(header.level)) {
+                        throw new GaidenException("illegal.header.level", [gaidenConfig.sourceDirectory.relativize(destPage.source.path), header.title, header.level, levels.join(",")])
                     }
-                } else if (currentLevel > header.level) {
+
                     sb << "</li>"
-                    (currentLevel - header.level).times {
-                        currentLevel--
+                    while (levels.last() != header.level) {
                         sb << "</ul></li>"
+                        levels.pop()
                     }
                 } else {
                     sb << "</li>"
@@ -166,7 +168,7 @@ class BindingBuilder {
                 sb << "<li><a href=\"${page.relativize(destPage)}${hash}\"${current}>${number}${header.title}</a>"
             }
         }
-        currentLevel.times {
+        levels.size().times {
             sb << "</li></ul>"
         }
         sb.toString()
@@ -180,12 +182,7 @@ class BindingBuilder {
         def params = args instanceof Map ? args : [:]
         def maxDepth = params["depth"] as Integer ?: gaidenConfig.pageTocDepth
 
-        def minLevel = page.headers*.level.min()
-        if (maxDepth < minLevel) {
-            return ""
-        }
-
-        def currentLevel = minLevel - 1
+        List<Integer> levels = []
         StringBuilder sb = new StringBuilder()
 
         page.headers.eachWithIndex { Header header, int index ->
@@ -193,18 +190,18 @@ class BindingBuilder {
                 return
             }
 
-            if (currentLevel < header.level) {
+            if (!levels || levels.last() < header.level) {
                 sb << "<ul>"
-                currentLevel++
-                (header.level - currentLevel).times {
-                    sb << "<li><ul>"
-                    currentLevel++
+                levels << header.level
+            } else if (levels.last() > header.level) {
+                if (!levels.contains(header.level)) {
+                    throw new GaidenException("illegal.header.level", [gaidenConfig.sourceDirectory.relativize(page.source.path), header.title, header.level, levels.join(",")])
                 }
-            } else if (currentLevel > header.level) {
+
                 sb << "</li>"
-                (currentLevel - header.level).times {
-                    currentLevel--
+                while (levels.last() != header.level) {
                     sb << "</ul></li>"
+                    levels.pop()
                 }
             } else {
                 sb << "</li>"
@@ -214,7 +211,7 @@ class BindingBuilder {
             def number = gaidenConfig.numbering && header.level <= gaidenConfig.numberingDepth ? "<span class=\"number\">${header.number}</span>" : ""
             sb << "<li><a href=\"${hash}\">${number}${header.title}</a>"
         }
-        (currentLevel - minLevel + 1).times {
+        levels.size().times {
             sb << "</li></ul>"
         }
 
