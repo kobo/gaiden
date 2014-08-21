@@ -34,28 +34,29 @@ body {
 }
 
 h1, h2 {
-    margin-top: 30px;
+    margin-top: 1.5em;
     margin-bottom: 20px;
 }
 
 h3, h4, h5, h6 {
-    margin-top: 25px;
+    margin-top: 1.5em;
     margin-bottom: 15px;
 }
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: 300;
+    margin-left: -5px;
 }
 
 p {
     line-height: 1.5em;
-    margin: 20px 0;
+    margin: 0 0 11.5px;
 }
 
 blockquote {
     font-size: 100%;
     color: #777;
-    padding: 20px;
+    padding: 10px 20px;
 }
 
 blockquote h1, blockquote h2, blockquote h3, blockquote h4, blockquote h5, blockquote h6 {
@@ -78,11 +79,6 @@ table th {
     font-weight: 700;
 }
 
-.table-responsive {
-    border: none;
-    width: auto;
-}
-
 img {
     max-width: 100%;
     height: auto;
@@ -98,19 +94,38 @@ code {
     border-radius: 0;
 }
 
+dt {
+    margin-top: 1em;
+    margin-bottom: .2em;
+}
+
+dd {
+    margin-left: 2em;
+}
+
+.table-responsive {
+    border: none;
+    width: auto;
+}
+
+.number {
+    padding-right: .5em;
+}
+
 /*
  * Header
  */
 .header {
     position: fixed;
     width: 100%;
-    background: #2980b9;
+    background: #34495e;
     color: #fff;
     height: 50px;
     display: table;
+    z-index: 99;
 }
 
-.header .toc-toggle {
+.header .sidebar-toggle {
     vertical-align: middle;
     display: table-cell;
     width: 50px;
@@ -133,14 +148,14 @@ code {
     text-decoration: none;
 }
 
-.toc-toggle + .title {
+.sidebar-toggle + .title {
     padding: 0;
 }
 
 /*
- * Toc
+ * Sidebar
  */
-.toc {
+.sidebar {
     position: fixed;
     top: 50px;
     left: 0;
@@ -148,41 +163,44 @@ code {
     height: 100%;
     overflow: auto;
     border-right: 1px solid #ccc;
-    padding: 15px 0 20px 0;
+    padding: 1em .5em 1.5em .5em;
     background: #eee;
+    z-index: 88;
 }
 
-.toc > ul {
+.sidebar > ul {
     margin: 0 20px 50px 0;
 }
 
-.toc ul, .toc li {
+.sidebar ul, .sidebar li {
     list-style-type: none;
 }
 
-.toc ul {
+.sidebar ul {
     padding: 0;
+    margin-left: -.5em;
 }
 
-.toc li {
+.sidebar li {
     padding: 4px 0 0 25px;
 }
 
-.toc a {
+.sidebar a {
     color: #333;
 }
 
-.toc .current > a {
+.sidebar a.current,
+.sidebar a.current .number {
     font-weight: 700;
 }
 
-@media screen and (max-width: 480px) {
-    .toc {
+@media screen and (max-width: 768px) {
+    .sidebar {
         display: none;
         width: 100%;
     }
 
-    .toc > ul {
+    .sidebar > ul {
         margin: 0 20px 20px 0;
     }
 }
@@ -194,13 +212,14 @@ code {
     padding: 70px 60px 20px 60px;
 }
 
-.content-toc-visible {
+.content-sidebar-visible {
     margin: 0 0 0 250px;
 }
 
 .content-nav {
     width: 100%;
     overflow: auto;
+    margin-bottom: 3em;
 }
 
 .content-nav .prev-page {
@@ -228,7 +247,11 @@ code {
     padding: 0 0 50px 0;
 }
 
-@media screen and (max-width: 480px) {
+.main-content > h1:first-child {
+    margin-top: 0;
+}
+
+@media screen and (max-width: 768px) {
     .content {
         margin: 0;
         padding: 70px 30px 20px 30px;
@@ -247,7 +270,7 @@ code {
     left: 0;
 }
 
-.footer-toc-visible {
+.footer-sidebar-visible {
     padding: 0 0 0 250px;
 }
 
@@ -257,7 +280,7 @@ code {
     padding: 10px 0;
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 768px) {
     .footer {
         padding: 0;
     }
@@ -267,7 +290,34 @@ code {
         padding: 10px 0;
     }
 
-    .footer-toc-visible {
+    .footer-sidebar-visible {
         padding: 0;
     }
 }
+
+/*
+ * page toc
+ */
+.page-toc {
+    float: right;
+    border: 1px solid #ccc;
+    background-color: #eee;
+    padding: 1em 2em .5em 1em;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    margin: .5em 1.5em;
+}
+
+.page-toc ul {
+    margin-left: -1.5em;
+}
+
+@media screen and (max-width: 768px) {
+    .page-toc {
+        float: none;
+        width: 100%;
+        margin: 0 0 2em 0;
+    }
+}
+
