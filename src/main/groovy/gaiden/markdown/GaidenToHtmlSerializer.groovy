@@ -25,9 +25,11 @@ import org.pegdown.VerbatimSerializer
 import org.pegdown.ast.GaidenHeaderNode
 import org.pegdown.ast.GaidenReferenceNode
 import org.pegdown.ast.HeaderNode
+import org.pegdown.ast.MarkdownInsideHtmlBlockNode
 import org.pegdown.ast.RefImageNode
 import org.pegdown.ast.RefLinkNode
 import org.pegdown.ast.ReferenceNode
+import org.pegdown.ast.SuperNode
 
 /**
  * A Serializer for rendering nodes to HTML.
@@ -101,6 +103,21 @@ class GaidenToHtmlSerializer extends ToHtmlSerializer {
         } else {
             printLink(linkRenderer.render(node, refNode.getUrl(), refNode.getTitle(), text), refNode)
         }
+    }
+
+    @Override
+    void visit(SuperNode node) {
+        if (node instanceof MarkdownInsideHtmlBlockNode) {
+            printMarkdownInsideHtmlBlock(node)
+            return
+        }
+        super.visit(node)
+    }
+
+    private void printMarkdownInsideHtmlBlock(MarkdownInsideHtmlBlockNode node) {
+        printer.print(node.startTag.replaceAll(/ markdown=(1|'1'|"1"|'span'|"span"|'block'|"block")/, ""))
+        visitChildren(node)
+        printer.print('</').print(node.tagName).print('>')
     }
 
     @Override

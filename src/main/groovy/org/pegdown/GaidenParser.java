@@ -2,7 +2,9 @@ package org.pegdown;
 
 import org.parboiled.Rule;
 import org.parboiled.annotations.Cached;
+import org.parboiled.common.ArrayBuilder;
 import org.parboiled.support.StringBuilderVar;
+import org.parboiled.support.StringVar;
 import org.parboiled.support.Var;
 import org.pegdown.ast.*;
 
@@ -169,5 +171,73 @@ public class GaidenParser extends Parser {
 
     public Rule ClassAttribute() {
         return Sequence(".", OneOrMore(FirstOf(AnyOf("-_"), NormalChar())));
+    }
+
+    public Rule Block() {
+        return Sequence(
+            ZeroOrMore(BlankLine()),
+            FirstOf(new ArrayBuilder<Rule>()
+                    .add(plugins.getBlockPluginRules())
+                    .add(BlockQuote(), Verbatim())
+                    .addNonNulls(ext(ABBREVIATIONS) ? Abbreviation() : null)
+                    .add(Reference(), HorizontalRule(), Heading(), OrderedList(), BulletList(), MarkdownInsideHtmlBlock(), HtmlBlock())
+                    .addNonNulls(ext(TABLES) ? Table() : null)
+                    .addNonNulls(ext(DEFINITIONS) ? DefinitionList() : null)
+                    .addNonNulls(ext(FENCED_CODE_BLOCKS) ? FencedCodeBlock() : null)
+                    .add(Para(), Inlines())
+                    .get()
+            )
+        );
+    }
+
+    public Rule MarkdownInsideHtmlBlock() {
+        return NodeSequence(
+            MarkdownInsideHtmlBlockInTags(),
+            OneOrMore(BlankLine())
+        );
+    }
+
+    public Rule MarkdownInsideHtmlBlockInTags() {
+        StringVar tagName = new StringVar();
+        return Sequence(
+            Test(MarkdownInsideHtmlBlockOpen(tagName)), // get the type of tag if there is one
+            MarkdownInsideHtmlTagBlock(tagName) // specifically match that type of tag
+        );
+    }
+
+    @Cached
+    public Rule MarkdownInsideHtmlTagBlock(StringVar tagName) {
+        Var<String> startTag = new Var<>();
+        StringVar insideBlock = new StringVar();
+        return Sequence(
+            MarkdownInsideHtmlBlockOpen(tagName),
+            startTag.set(match()),
+            ZeroOrMore(
+                FirstOf(
+                    HtmlTagBlock(tagName),
+                    Sequence(TestNot(HtmlBlockClose(tagName)), ANY)
+                )
+            ),
+            insideBlock.append(match()),
+            HtmlBlockClose(tagName),
+            push(new MarkdownInsideHtmlBlockNode(tagName.get(), startTag.get(), withIndicesShifted(parseInternal(insideBlock.appended("\n").get().toCharArray()), (Integer) peek()).getChildren()))
+        );
+    }
+
+    public Rule MarkdownInsideHtmlBlockOpen(StringVar tagName) {
+        Var<Boolean> hasMarkdownAttr = new Var<>();
+        return Sequence('<', Spn1(), DefinedHtmlTagName(tagName), Spn1(), OneOrMore(FirstOf(MarkdownAttribute(hasMarkdownAttr), HtmlAttribute())), hasMarkdownAttr.isSet(), '>');
+    }
+
+    public Rule MarkdownAttribute(Var<Boolean> hasMarkdownAttr) {
+        return Sequence(
+            "markdown",
+            Spn1(),
+            '=',
+            Spn1(),
+            FirstOf("1", "\"1\"", "'1'", "\"span\"", "'span'", "\"block\"", "'block'"),
+            Spn1(),
+            hasMarkdownAttr.set(true)
+        );
     }
 }
