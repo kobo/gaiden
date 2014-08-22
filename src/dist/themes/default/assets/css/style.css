@@ -66,6 +66,7 @@ blockquote h1, blockquote h2, blockquote h3, blockquote h4, blockquote h5, block
 table {
     border: 1px solid #ccc;
     font-size: 100%;
+    margin: 1.5em 0;
 }
 
 table td, table th {
@@ -95,12 +96,20 @@ code {
 }
 
 dt {
-    margin-top: 1em;
-    margin-bottom: .2em;
+    margin: 1em 0 .2em 1em;
 }
 
 dd {
-    margin-left: 2em;
+    margin-left: 2.5em;
+}
+
+li {
+  margin-top: 3px;
+}
+
+.prettyprint {
+    background-color: #eee;
+    border: 0;
 }
 
 .table-responsive {
@@ -182,7 +191,7 @@ dd {
 }
 
 .sidebar li {
-    padding: 4px 0 0 25px;
+    margin: 3px 0 0 25px;
 }
 
 .sidebar a {
