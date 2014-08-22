@@ -7,14 +7,15 @@
     <link rel="stylesheet" href="../css/font-awesome.min.css">
     <link rel="stylesheet" href="../css/prettify.css">
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/my.css">
   </head>
   <body>
     <div class="wrapper">
       <div class="header">
-        <i class="fa fa-bars toc-toggle"></i>
+        <i class="fa fa-bars sidebar-toggle"></i>
         <span class="title"><a href="../home.html">Gaiden</a></span>
       </div>
-      <div class="toc">
+      <div class="sidebar">
         <ul>
           <li><a href="../index.html"><span class="number">1.</span>Test</a></li>
           <li>
@@ -42,22 +43,28 @@
           </li>
         </ul>
       </div>
-      <div class="content content-toc-visible">
+      <div class="content">
         <div class="content-nav">
           <a class="prev-page" href="../index.html"><i class="fa fa-angle-left"></i>Test</a>
           <a class="next-page" href="section1.html">custom title<i class="fa fa-angle-right"></i></a>
+        </div>
+        <div class="page-toc">
+          <ul>
+            <li><a href="#chapter-2"><span class="number">2.</span>Chapter 2</a></li>
+          </ul>
         </div>
         <div class="main-content">
           <h1 id="chapter-2"><span class="number">2.</span>Chapter 2</h1>
           <p>This is the chapter 2</p>
         </div>
-        <div class="footer footer-toc-visible">
-          <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a>.</p>
+        <div class="footer">
+          <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a></p>
         </div>
       </div>
     </div>
     <script src="../js/jquery-2.1.1.min.js"></script>
     <script src="../js/prettify.js"></script>
     <script src="../js/application.js"></script>
+    <script src="../js/my.js"></script>
   </body>
 </html>

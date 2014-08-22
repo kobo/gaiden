@@ -7,14 +7,15 @@
     <link rel="stylesheet" href="../css/font-awesome.min.css">
     <link rel="stylesheet" href="../css/prettify.css">
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/my.css">
   </head>
   <body>
     <div class="wrapper">
       <div class="header">
-        <i class="fa fa-bars toc-toggle"></i>
+        <i class="fa fa-bars sidebar-toggle"></i>
         <span class="title"><a href="../home.html">Gaiden</a></span>
       </div>
-      <div class="toc">
+      <div class="sidebar">
         <ul>
           <li><a href="../index.html"><span class="number">1.</span>Test</a></li>
           <li>
@@ -42,10 +43,27 @@
           </li>
         </ul>
       </div>
-      <div class="content content-toc-visible">
+      <div class="content">
         <div class="content-nav">
           <a class="prev-page" href="index.html"><i class="fa fa-angle-left"></i>Chapter 2</a>
           <a class="next-page" href="../chapter3/index.html">Chapter 3<i class="fa fa-angle-right"></i></a>
+        </div>
+        <div class="page-toc">
+          <ul>
+            <li>
+              <a href="#section-2.1"><span class="number">2.1.</span>section 2.1</a>
+              <ul>
+                <li>
+                  <a href="#section-2.1.1"><span class="number">2.1.1.</span>section 2.1.1</a>
+                  <ul>
+                    <li><a href="#section-2.1.1.1">section 2.1.1.1</a></li>
+                    <li><a href="#section-2.1.1.2">section 2.1.1.2</a></li>
+                  </ul>
+                </li>
+                <li><a href="#secion-212"><span class="number">2.1.2.</span>section 2.1.2</a></li>
+              </ul>
+            </li>
+          </ul>
         </div>
         <div class="main-content">
           <h2 id="section-2.1"><span class="number">2.1.</span>section 2.1</h2>
@@ -59,13 +77,14 @@
           <h3 id="secion-212"><span class="number">2.1.2.</span>section 2.1.2</h3>
           <p>section 2.1.2 content</p>
         </div>
-        <div class="footer footer-toc-visible">
-          <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a>.</p>
+        <div class="footer">
+          <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a></p>
         </div>
       </div>
     </div>
     <script src="../js/jquery-2.1.1.min.js"></script>
     <script src="../js/prettify.js"></script>
     <script src="../js/application.js"></script>
+    <script src="../js/my.js"></script>
   </body>
 </html>
