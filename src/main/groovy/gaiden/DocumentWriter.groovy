@@ -88,7 +88,7 @@ class DocumentWriter {
         def formattedContent = format(content)
         def filteredContent = gaidenConfig.filters.inject(formattedContent) { String text, Filter filter ->
             filter.doAfterTemplate(text)
-        }  as String
+        } as String
         Files.write(page.outputPath, filteredContent.getBytes(gaidenConfig.outputEncoding))
     }
 

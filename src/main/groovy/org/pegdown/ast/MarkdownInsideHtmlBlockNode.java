@@ -3,20 +3,20 @@ package org.pegdown.ast;
 import java.util.List;
 
 public class MarkdownInsideHtmlBlockNode extends SuperNode {
-    private String tagName;
-    private String startTag;
+    private String beginTag;
+    private String endTag;
 
-    public MarkdownInsideHtmlBlockNode(String tagName, String startTag, List<Node> children) {
+    public MarkdownInsideHtmlBlockNode(String beginTag, List<Node> children, String endTag) {
         super(children);
-        this.tagName = tagName;
-        this.startTag = startTag;
+        this.beginTag = beginTag;
+        this.endTag = endTag;
     }
 
-    public String getTagName() {
-        return tagName;
+    public String getBeginTag() {
+        return beginTag;
     }
 
-    public String getStartTag() {
-        return startTag;
+    public String getEndTag() {
+        return endTag;
     }
 }

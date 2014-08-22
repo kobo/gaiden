@@ -115,9 +115,9 @@ class GaidenToHtmlSerializer extends ToHtmlSerializer {
     }
 
     private void printMarkdownInsideHtmlBlock(MarkdownInsideHtmlBlockNode node) {
-        printer.print(node.startTag.replaceAll(/ markdown=(1|'1'|"1"|'span'|"span"|'block'|"block")/, ""))
+        printer.print(node.beginTag.replaceAll(/ +markdown=(['"]?)(1|span|block)\1/, ""))
         visitChildren(node)
-        printer.print('</').print(node.tagName).print('>')
+        printer.print(node.endTag)
     }
 
     @Override
