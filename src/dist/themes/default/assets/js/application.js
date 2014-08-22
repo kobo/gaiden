@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors
+ * Copyright 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,49 +15,117 @@
  */
 
 $(function () {
-    var $content = $('.content');
-    var $toc = $('.toc');
-    var $tocToggle = $('.toc-toggle');
-    var $footer = $('.footer');
-    var $navLink = $('.content-nav a');
+    // Sidebar
+    (function () {
+        var $content = $('.content');
+        var $sidebar = $('.sidebar');
+        var $sidebarToggle = $('.sidebar-toggle');
+        var $footer = $('.footer');
+        var $navLink = $('.content-nav a');
 
-    function hideToc() {
-        $toc.hide();
-        $content.removeClass('content-toc-visible');
-        $footer.removeClass('footer-toc-visible');
-    }
+        var hideSidebar = function () {
+            $sidebar.hide();
+            $content.removeClass('content-sidebar-visible');
+            $footer.removeClass('footer-sidebar-visible');
+        }
+        var showSidebar = function () {
+            if (location.search.indexOf('sidebar=no') >= 0) {
+                location.href = location.href.replace(/\?sidebar=no/, '');
+                return false;
+            }
+            $sidebar.show();
+            $content.addClass('content-sidebar-visible');
+            $footer.addClass('footer-sidebar-visible');
+        }
+        var goUrlWithNoSidebarParam = function (anchor) {
+            location.href = anchor.href.replace(anchor.hash, '') + "?sidebar=no" + anchor.hash;
+        }
 
-    function showToc() {
-        $toc.show();
-        $content.addClass('content-toc-visible');
-        $footer.addClass('footer-toc-visible');
-    }
+        // Toggle a sidebar
+        $sidebarToggle.on('click', function (e) {
+            if ($sidebar.is(':visible')) {
+                hideSidebar();
+            } else {
+                showSidebar();
+            }
+        });
 
-    // bind events
+        // Keep a status of a sidebar after clicking a navLink
+        $navLink.on('click', function (e) {
+            if (!$sidebar.is(':visible')) {
+                e.preventDefault();
+                goUrlWithNoSidebarParam(this);
+            }
+        });
 
-    $tocToggle.on('click', function () {
-        if ($toc.is(':visible')) {
-            hideToc();
+        // Hide a sidemenu if a small screen mode.
+        $sidebar.find("a").on("click", function (e) {
+            if (window.matchMedia('(max-width: 768px)').matches) {
+                e.preventDefault();
+                goUrlWithNoSidebarParam(this);
+            }
+        });
+
+        // Initialize
+        if (location.search.indexOf('sidebar=no') >= 0) {
+            hideSidebar();
         } else {
-            showToc();
+            showSidebar();
         }
-    });
-    $navLink.on('click', function (e) {
-        if (!$toc.is(':visible')) {
-            e.preventDefault();
-            location.href = $(this).attr('href') + "?toc=hidden";
+    })();
+
+    // Pretty print of code
+    (function () {
+        $('pre').addClass('prettyprint');
+        prettyPrint();
+    })();
+
+    // Responsive support for <table>
+    (function () {
+        $('table').wrap('<div class="table-responsive"></div>');
+    })();
+
+    // Fix a scroll offset for a link within a page
+    (function () {
+        $(document).on("click", "a", function (e) {
+            if (location.pathname.replace(/^\//, '') !== this.pathname.replace(/^\//, '') || location.hostname !== this.hostname) {
+                return true;
+            }
+
+            var $targetById = $(this.hash);
+            var $targetByAnchor = $('[name="' + this.hash.slice(1) + '"]');
+            var target = $targetById.length ? $targetById : ($targetByAnchor.length ? $targetByAnchor : false);
+            if (!target) {
+                return false;
+            }
+
+            // Set a hash for an address bar (this operation causes scrolling)
+            location.hash = this.hash;
+
+            // Fixing offset
+            // The duration of animate() requires more than 1.
+            // If not, it cannot be work in case of a direct access.
+            var headerOffset = $(".header").height() + 5;
+            $('html, body').animate({ scrollTop: target.offset().top - headerOffset }, 1);
+
+            // Hightlight a current link of sidebar
+            $(".sidebar a.current").removeClass("current");
+            $(".sidebar a").each(function () {
+                if (this.href === location.href) {
+                    $(this).addClass("current");
+                }
+            });
+
+            // Blinking the target element
+            target.fadeTo('fast', 0.5).fadeTo('slow', 1.0)
+                  .fadeTo('fast', 0.5).fadeTo('slow', 1.0);
+            return false;
+        });
+
+        // For a direct access
+        if (location.hash && location.hash !== '#') {
+            $('a[href="' + location.hash + '"]').click();
         }
-    });
-
-    // initialize
-
-    if (location.search.indexOf('toc=hidden') !== -1) {
-        hideToc();
-    }
-
-    $('pre').addClass('prettyprint');
-    prettyPrint();
-
-    $('table').wrap('<div class="table-responsive"></div>');
+    })();
 });
 

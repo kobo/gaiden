@@ -7,17 +7,18 @@
     <link rel="stylesheet" href="${resource('/css/font-awesome.min.css')}">
     <link rel="stylesheet" href="${resource('/css/prettify.css')}">
     <link rel="stylesheet" href="${resource('/css/style.css')}">
+    <link rel="stylesheet" href="${resource('/css/my.css')}">
   </head>
   <body>
     <div class="wrapper">
       <div class="header">
-        <i class="fa fa-bars toc-toggle"></i>
+        <i class="fa fa-bars sidebar-toggle"></i>
         <span class="title"><a href="${homePage?.path ?: '#'}">$title</a></span>
       </div>
-      <div class="toc">
+      <div class="sidebar">
         ${documentToc()}
       </div>
-      <div class="content content-toc-visible">
+      <div class="content">
         <div class="content-nav">
           <% if (prevPage) { %>
           <a class="prev-page" href="${prevPage.path}"><i class="fa fa-angle-left"></i>${prevPage.title}</a>
@@ -26,17 +27,22 @@
           <a class="next-page" href="${nextPage.path}">${nextPage.title}<i class="fa fa-angle-right"></i></a>
           <% } %>
         </div>
+        <% if (metadata.showPageToc != null ? metadata.showPageToc : true) { %>
+        <div class="page-toc">
+          ${pageToc(depth: metadata.pageTocDepth ?: config.pageTocDepth)}
+        </div>
+        <% } %>
         <div class="main-content">
           $content
         </div>
-        <div class="footer footer-toc-visible">
-          <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a>.</p>
+        <div class="footer">
+          <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a></p>
         </div>
       </div>
     </div>
-
     <script src="${resource('/js/jquery-2.1.1.min.js')}"></script>
     <script src="${resource('/js/prettify.js')}"></script>
     <script src="${resource('/js/application.js')}"></script>
+    <script src="${resource('/js/my.js')}"></script>
   </body>
 </html>
