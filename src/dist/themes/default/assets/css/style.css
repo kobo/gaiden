@@ -189,8 +189,8 @@ dd {
     color: #333;
 }
 
-.sidebar a.current,
-.sidebar a.current .number {
+.sidebar a.active,
+.sidebar a.active .number {
     font-weight: 700;
 }
 

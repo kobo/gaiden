@@ -162,10 +162,11 @@ class BindingBuilder {
                     sb << "</li>"
                 }
 
-                def hash = index == 0 ? "" : "#${header.hash}"
-                def current = index == 0 && page == destPage ? " class=\"current\"" : ""
-                def number = gaidenConfig.numbering && header.level <= gaidenConfig.numberingDepth ? "<span class=\"number\">${header.number}</span>" : ""
-                sb << "<li><a href=\"${page.relativize(destPage)}${hash}\"${current}>${number}${header.title}</a>"
+                def isFirstOfPage = index == 0
+                def mainHref = page.relativize(destPage) + (isFirstOfPage ? "" : "#${header.hash}")
+                def altHash = isFirstOfPage && !header.hash.empty ? " data-alt-hash=\"${header.hash}\"" : ""
+                def number = gaidenConfig.numbering && (header.level <= gaidenConfig.numberingDepth) ? "<span class=\"number\">${header.number}</span>" : ""
+                sb << "<li><a href=\"${mainHref}\"${altHash}>${number}${header.title}</a>"
             }
         }
         levels.size().times {
