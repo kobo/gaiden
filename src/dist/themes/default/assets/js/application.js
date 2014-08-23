@@ -87,38 +87,61 @@ $(function () {
 
     // Fix a scroll offset for a link within a page
     (function () {
+        var activateLinkOfSidebar = function () {
+            // Refresh an active link
+            $(".sidebar a.active").removeClass("active");
+            $(".sidebar a").each(function () {
+                var altHash = $(this).data("alt-hash");
+                if (this.href === location.href          // perfect match
+                        || this.href + '#' === location.href // the actual href has a just empty hash '#'
+                        || (altHash && this.href.replace(/#.*$/, '') + "#" + altHash === location.href)) { // an alternative hash for a first head of a page
+                    $(this).addClass("active");
+                }
+            });
+
+            // If no active link exists, try to match with ignoring a hash.
+            if (!$(".sidebar a.active").length) {
+                $(".sidebar a").each(function () {
+                    if (this.href === location.href.replace(/#.*$/, '')) {
+                        $(this).addClass("active");
+                    }
+                });
+            }
+        }
+
         $(document).on("click", "a", function (e) {
+            // In the case of going to another page
             if (location.pathname.replace(/^\//, '') !== this.pathname.replace(/^\//, '') || location.hostname !== this.hostname) {
                 return true;
             }
+            // Since here, for scrolling within a current page
 
-            var $targetById = $(this.hash);
-            var $targetByAnchor = $('[name="' + this.hash.slice(1) + '"]');
-            var target = $targetById.length ? $targetById : ($targetByAnchor.length ? $targetByAnchor : false);
-            if (!target) {
-                return false;
+            // Find a target link
+            var target = null;
+            if (this.hash) {
+                var $targetById = $(this.hash);
+                var $targetByAnchor = $('a[name="' + this.hash.slice(1) + '"]');
+                var target = $targetById.length ? $targetById : ($targetByAnchor.length ? $targetByAnchor : false);
+                if (!target) {
+                    return false;
+                }
             }
 
             // Set a hash for an address bar (this operation causes scrolling)
             location.hash = this.hash;
+            activateLinkOfSidebar();
 
-            // Fixing offset
-            // The duration of animate() requires more than 1.
-            // If not, it cannot be work in case of a direct access.
-            var headerOffset = $(".header").height() + 5;
-            $('html, body').animate({ scrollTop: target.offset().top - headerOffset }, 1);
+            if (target) {
+                // Fixing offset
+                // The duration of animate() requires more than 1.
+                // If not, it cannot be work in case of a direct access.
+                var headerOffset = $(".header").height() + 5;
+                $('html, body').animate({ scrollTop: target.offset().top - headerOffset }, 1);
 
-            // Hightlight a current link of sidebar
-            $(".sidebar a.current").removeClass("current");
-            $(".sidebar a").each(function () {
-                if (this.href === location.href) {
-                    $(this).addClass("current");
-                }
-            });
-
-            // Blinking the target element
-            target.fadeTo('fast', 0.5).fadeTo('slow', 1.0)
-                  .fadeTo('fast', 0.5).fadeTo('slow', 1.0);
+                // Blinking the target element
+                target.fadeTo('fast', 0.5).fadeTo('slow', 1.0)
+                      .fadeTo('fast', 0.5).fadeTo('slow', 1.0);
+            }
             return false;
         });
 
@@ -126,6 +149,9 @@ $(function () {
         if (location.hash && location.hash !== '#') {
             $('a[href="' + location.hash + '"]').click();
         }
+
+        // Initialize
+        activateLinkOfSidebar();
     })();
 });
 

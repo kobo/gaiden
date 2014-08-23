@@ -21,6 +21,8 @@ System.out.println("Hello");
 
 ## Definition list
 
+This is a definition list.
+
 Hoge
 :   This is a hoge.
 
@@ -55,4 +57,70 @@ Bar
 * _Italic?_
 * X*Italic?*X
 * X_Italic?_X
+
+
+## Table
+
+This is a table.
+
+|hoge|foo|bar|
+|----|---|---|
+|1   |2  |3  |
+
+And
+
+|hoge|foo|bar|
+|:--:|:--|--:|
+|1   |2  |3  |
+
+
+## List
+
+* This is a pen.
+* This is a pen.
+* This is a pen.
+    * This is a pen.
+    * This is a pen.
+    * This is a pen.
+* This is a pen.
+    * This is a pen.
+    * This is a pen.
+    * This is a pen.
+        * This is a pen.
+            * This is a pen.
+        * This is a pen.
+            * This is a pen.
+        * This is a pen.
+            * This is a pen.
+* This is a pen.
+    * This is a pen.
+    * This is a pen.
+    * This is a pen.
+        * This is a pen.
+        * This is a pen.
+        * This is a pen.
+
+1. This is a pen.
+1. This is a pen.
+1. This is a pen.
+    1. This is a pen.
+    1. This is a pen.
+    1. This is a pen.
+1. This is a pen.
+    1. This is a pen.
+    1. This is a pen.
+    1. This is a pen.
+        1. This is a pen.
+            1. This is a pen.
+        1. This is a pen.
+            1. This is a pen.
+        1. This is a pen.
+            1. This is a pen.
+1. This is a pen.
+    1. This is a pen.
+    1. This is a pen.
+    1. This is a pen.
+        1. This is a pen.
+        1. This is a pen.
+        1. This is a pen.
 
