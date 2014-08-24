@@ -62,11 +62,22 @@ class HeaderParser extends ToHtmlSerializer {
             }
         }
 
-        if (title ==~ /[a-zA-Z][a-zA-Z0-9\-_:\. ]+/) {
-            def hash = title.replaceAll(" ", "-").toLowerCase()
-            if (!headers.find { Header header -> header.hash == hash }) {
-                return hash
+        createHash(title, headerNode)
+    }
+
+    private String createHash(String title, HeaderNode headerNode) {
+        def hash = title.collect { String c ->
+            if (c ==~ /[a-zA-Z0-9\-_]/) {
+                return c
             }
+            if (c == " ") {
+                return "-"
+            }
+            return ""
+        }.join("").toLowerCase()
+
+        if (hash && !headers.find { Header header -> header.hash == hash }) {
+            return hash
         }
 
         def parentHeaders = getParentHeaders(headerNode.level)
