@@ -8,6 +8,8 @@
     "chapter3/section1.md"(layout: "simple")
 }
 
+"unnumbered.md"(numbering: false)
+
 "home.md"(hidden: true)
 "filter.md"(hidden: true, layout: "filter")
 "nav-holder.md"(hidden: true, layout: "render")
