@@ -52,6 +52,13 @@ class Page {
         return headers ? headers.first().title : ""
     }
 
+    List<Integer> getNumbers() {
+        if (!headers) {
+            return Collections.emptyList()
+        }
+        return headers.first().numbers
+    }
+
     String relativize(Page page) {
         relativize(page.outputPath)
     }

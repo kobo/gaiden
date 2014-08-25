@@ -21,10 +21,18 @@
       <div class="content">
         <div class="content-nav">
           <% if (prevPage) { %>
-          <a class="prev-page" href="${prevPage.path}"><i class="fa fa-angle-left"></i>${prevPage.title}</a>
+          <a class="prev-page" href="${prevPage.path}">
+            <i class="fa fa-angle-left"></i>
+            <% if (prevPage.numbers) { %><span class="number">${prevPage.numbers.join(".")}.</span><% } %>
+            ${prevPage.title}
+          </a>
           <% } %>
           <% if (nextPage) { %>
-          <a class="next-page" href="${nextPage.path}">${nextPage.title}<i class="fa fa-angle-right"></i></a>
+          <a class="next-page" href="${nextPage.path}">
+            <% if (nextPage.numbers) { %><span class="number">${nextPage.numbers.join(".")}.</span><% } %>
+            ${nextPage.title}
+            <i class="fa fa-angle-right"></i>
+          </a>
           <% } %>
         </div>
         <% if (metadata.showPageToc != null ? metadata.showPageToc : true) { %>

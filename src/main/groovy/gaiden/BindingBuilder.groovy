@@ -120,8 +120,9 @@ class BindingBuilder {
 
     private Map toMap(Page destPage) {
         return [
-            path : page.relativize(destPage),
-            title: escapeHtml4(destPage.title),
+            path   : page.relativize(destPage),
+            title  : destPage.title,
+            numbers: destPage.numbers,
         ]
     }
 
