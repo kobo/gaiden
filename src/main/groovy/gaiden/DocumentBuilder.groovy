@@ -88,19 +88,21 @@ class DocumentBuilder {
             }
 
             page.headers.each { Header header ->
-                if (header.level > gaidenConfig.numberingDepth) {
+                if (!(header.level in gaidenConfig.numberingOffset..gaidenConfig.numberingDepth)) {
                     return
                 }
 
-                if (currentNumbers.size() == header.level) {
+                def relativeLevelFromOffset = header.level - gaidenConfig.numberingOffset + 1
+
+                if (currentNumbers.size() == relativeLevelFromOffset) {
                     def last = currentNumbers.pop()
                     currentNumbers.push(++last)
-                } else if (currentNumbers.size() < header.level) {
-                    (header.level - currentNumbers.size()).times {
+                } else if (currentNumbers.size() < relativeLevelFromOffset) {
+                    (relativeLevelFromOffset - currentNumbers.size()).times {
                         currentNumbers.push(1)
                     }
                 } else {
-                    (currentNumbers.size() - header.level).times {
+                    (currentNumbers.size() - relativeLevelFromOffset).times {
                         currentNumbers.pop()
                     }
                     def last = currentNumbers.pop()
