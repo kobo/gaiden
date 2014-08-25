@@ -24,7 +24,7 @@ class Header {
     String title
     int level
     String hash
-    List<Integer> numbers
+    List<Integer> numbers = Collections.emptyList()
     HeaderNode headerNode
 
     String getNumber() {

@@ -165,8 +165,9 @@ class BindingBuilder {
                 def isFirstOfPage = index == 0
                 def mainHref = page.relativize(destPage) + (isFirstOfPage ? "" : "#${header.hash}")
                 def altHash = isFirstOfPage && !header.hash.empty ? " data-alt-hash=\"${header.hash}\"" : ""
-                def number = gaidenConfig.numbering && (header.level <= gaidenConfig.numberingDepth) ? "<span class=\"number\">${header.number}</span>" : ""
-                sb << "<li><a href=\"${mainHref}\"${altHash}>${number}${header.title}</a>"
+                def number = header.numbers ? "<span class=\"number\">${header.number}</span>" : ""
+                def cssClass = header.numbers ? "numbered" : "unnumbered"
+                sb << "<li class=\"${cssClass}\"><a href=\"${mainHref}\"${altHash}>${number}${header.title}</a>"
             }
         }
         levels.size().times {
@@ -209,8 +210,9 @@ class BindingBuilder {
             }
 
             def hash = "#${header.hash}"
-            def number = gaidenConfig.numbering && header.level <= gaidenConfig.numberingDepth ? "<span class=\"number\">${header.number}</span>" : ""
-            sb << "<li><a href=\"${hash}\">${number}${header.title}</a>"
+            def number = header.numbers ? "<span class=\"number\">${header.number}</span>" : ""
+            def cssClass = header.numbers ? "numbered" : "unnumbered"
+            sb << "<li class=\"${cssClass}\"><a href=\"${hash}\">${number}${header.title}</a>"
         }
         levels.size().times {
             sb << "</li></ul>"

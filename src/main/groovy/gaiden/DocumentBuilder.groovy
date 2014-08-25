@@ -76,10 +76,22 @@ class DocumentBuilder {
         pageOrder
     }
 
-    private static void setHeaderNumbers(List<Page> pages) {
+    private void setHeaderNumbers(List<Page> pages) {
+        if (!gaidenConfig.numbering) {
+            return
+        }
+
         List<Integer> currentNumbers = []
         pages.each { Page page ->
+            if (page.metadata.numbering == false) {
+                return
+            }
+
             page.headers.each { Header header ->
+                if (header.level > gaidenConfig.numberingDepth) {
+                    return
+                }
+
                 if (currentNumbers.size() == header.level) {
                     def last = currentNumbers.pop()
                     currentNumbers.push(++last)

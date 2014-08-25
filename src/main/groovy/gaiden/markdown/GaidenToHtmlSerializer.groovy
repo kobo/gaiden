@@ -77,7 +77,7 @@ class GaidenToHtmlSerializer extends ToHtmlSerializer {
         }
         printer.print('>')
 
-        if (gaidenConfig.numbering && header.numbers && header.level <= gaidenConfig.numberingDepth) {
+        if (header.numbers) {
             printer.print("<span class=\"number\">${header.number}</span>".toString())
         }
         visitChildren(gaidenHeaderNode)
