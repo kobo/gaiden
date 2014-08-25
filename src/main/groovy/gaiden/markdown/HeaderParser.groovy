@@ -17,6 +17,7 @@
 package gaiden.markdown
 
 import gaiden.Header
+import gaiden.PageReference
 import groovy.transform.CompileStatic
 import org.apache.commons.codec.digest.DigestUtils
 import org.pegdown.LinkRenderer
@@ -30,11 +31,13 @@ import org.pegdown.ast.RootNode
 class HeaderParser extends ToHtmlSerializer {
 
     private RootNode rootNode
+    private PageReference pageReference
     private List<Header> headers = []
 
-    HeaderParser(RootNode rootNode) {
+    HeaderParser(RootNode rootNode, PageReference pageReference) {
         super(new LinkRenderer())
         this.rootNode = rootNode
+        this.pageReference = pageReference
     }
 
     List<Header> getHeaders() {
@@ -46,9 +49,10 @@ class HeaderParser extends ToHtmlSerializer {
     void visit(HeaderNode headerNode) {
         def title = new HeaderTextSerializer(headerNode).text
         def hash = getHash(title, headerNode)
+        def baseLevel = pageReference?.baseLevel ?: 0
         headers << new Header(
             title: title,
-            level: headerNode.level,
+            level: baseLevel + headerNode.level,
             hash: hash,
             headerNode: headerNode
         )

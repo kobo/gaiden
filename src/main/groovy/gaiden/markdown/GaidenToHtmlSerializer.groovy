@@ -53,21 +53,35 @@ class GaidenToHtmlSerializer extends ToHtmlSerializer {
 
     @Override
     void visit(HeaderNode headerNode) {
-        def header = page.headers.find { it.headerNode == headerNode }
-        def tag = "h${header.level}".toString()
+        if (!(headerNode instanceof GaidenHeaderNode)) {
+            super.visit(headerNode as HeaderNode)
+            return
+        }
+
+        def gaidenHeaderNode = headerNode as GaidenHeaderNode
+        def header = page.headers.find { it.headerNode == gaidenHeaderNode }
+        def isLessThanOrEqualH6 = header.level in 1..6
+        def tag = isLessThanOrEqualH6 ? "h${header.level}".toString() : "div"
+
         printer.print('<').print(tag)
         printAttributes([id: header.hash])
-        if (headerNode instanceof GaidenHeaderNode) {
-            def gaidenHeaderNode = headerNode as GaidenHeaderNode
-            if (gaidenHeaderNode.specialAttributes?.classes) {
-                printAttributes([class: gaidenHeaderNode.specialAttributes.classes.join(" ")])
-            }
+        def classes = []
+        if (gaidenHeaderNode.specialAttributes?.classes) {
+            classes.addAll(gaidenHeaderNode.specialAttributes?.classes)
+        }
+        if (!isLessThanOrEqualH6) {
+            classes << "h${header.level}".toString()
+        }
+        if (classes) {
+            printAttributes([class: classes.join(" ")])
         }
         printer.print('>')
+
         if (gaidenConfig.numbering && header.numbers && header.level <= gaidenConfig.numberingDepth) {
             printer.print("<span class=\"number\">${header.number}</span>".toString())
         }
-        visitChildren(headerNode)
+        visitChildren(gaidenHeaderNode)
+
         printer.print('<').print('/').print(tag).print('>');
     }
 

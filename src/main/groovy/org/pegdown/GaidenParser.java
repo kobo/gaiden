@@ -29,22 +29,24 @@ public class GaidenParser extends Parser {
     }
 
     public Rule SetextHeading1() {
+        Var<GaidenHeaderNode> gaidenHeaderNodeVar = new Var<>();
         return Sequence(
-            SetextInline(), push(new GaidenHeaderNode(1, popAsNode())),
+            SetextInline(), push(gaidenHeaderNodeVar.setAndGet(new GaidenHeaderNode(1, popAsNode()))),
             ZeroOrMore(SetextInline(), addAsChild()),
             Sp(),
-            Optional(SpecialAttributes(), push(new GaidenHeaderNode((SpecialAttributesNode) pop(), (HeaderNode) pop()))),
+            Optional(SpecialAttributes(), gaidenHeaderNodeVar.get().setSpecialAttributes((SpecialAttributesNode) pop())),
             Sp(),
             Newline(), NOrMore('=', 3), Newline()
         );
     }
 
     public Rule SetextHeading2() {
+        Var<GaidenHeaderNode> gaidenHeaderNodeVar = new Var<>();
         return Sequence(
-            SetextInline(), push(new HeaderNode(2, popAsNode())),
+            SetextInline(), push(gaidenHeaderNodeVar.setAndGet(new GaidenHeaderNode(2, popAsNode()))),
             ZeroOrMore(SetextInline(), addAsChild()),
             Sp(),
-            Optional(SpecialAttributes(), push(new GaidenHeaderNode((SpecialAttributesNode) pop(), (HeaderNode) pop()))),
+            Optional(SpecialAttributes(), gaidenHeaderNodeVar.get().setSpecialAttributes((SpecialAttributesNode) pop())),
             Sp(),
             Newline(), NOrMore('-', 3), Newline()
         );
@@ -59,15 +61,16 @@ public class GaidenParser extends Parser {
     }
 
     public Rule AtxHeading() {
+        Var<GaidenHeaderNode> gaidenHeaderNodeVar = new Var<>();
         return Sequence(
             FirstOf("######", "#####", "####", "###", "##", "#"),
-            push(new HeaderNode(match().length())),
+            push(gaidenHeaderNodeVar.setAndGet(new GaidenHeaderNode(match().length()))),
             Sp(),
             OneOrMore(AtxInline(), addAsChild()),
             Sp(),
             ZeroOrMore('#'),
             Sp(),
-            Optional(SpecialAttributes(), push(new GaidenHeaderNode((SpecialAttributesNode) pop(), (HeaderNode) pop()))),
+            Optional(SpecialAttributes(), gaidenHeaderNodeVar.get().setSpecialAttributes((SpecialAttributesNode) pop())),
             Sp(),
             Newline()
         );

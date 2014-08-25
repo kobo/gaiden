@@ -6,20 +6,12 @@ import groovy.transform.CompileStatic;
 public class GaidenHeaderNode extends HeaderNode {
     private SpecialAttributesNode specialAttributes;
 
-    public GaidenHeaderNode(SpecialAttributesNode specialAttributes, HeaderNode headerNode) {
-        super(headerNode.getLevel());
-        for (Node node : headerNode.getChildren()) {
-            getChildren().add(node);
-        }
-        this.specialAttributes = specialAttributes;
+    public GaidenHeaderNode(int level) {
+        super(level);
     }
 
     public GaidenHeaderNode(int level, Node child) {
         super(level, child);
-    }
-
-    public GaidenHeaderNode(int level) {
-        super(level);
     }
 
     public boolean setSpecialAttributes(SpecialAttributesNode specialAttributes) {

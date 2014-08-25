@@ -26,4 +26,5 @@ import java.nio.file.Path
 class PageReference {
     Path path
     Map<String, String> metadata
+    int baseLevel
 }

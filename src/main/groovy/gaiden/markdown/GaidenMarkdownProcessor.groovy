@@ -21,6 +21,7 @@ import gaiden.Filter
 import gaiden.GaidenConfig
 import gaiden.Header
 import gaiden.Page
+import gaiden.PageReference
 import gaiden.PageSource
 import gaiden.message.MessageSource
 import groovy.transform.CompileStatic
@@ -70,7 +71,7 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
         } as String
     }
 
-    static List<Header> getHeaders(RootNode rootNode) {
-        new HeaderParser(rootNode).headers
+    static List<Header> getHeaders(RootNode rootNode, PageReference pageReference) {
+        new HeaderParser(rootNode, pageReference).headers
     }
 }

@@ -52,7 +52,7 @@ class PageBuilder {
 
     private Page buildPage(PageSource pageSource, PageReference pageReference) {
         def contentNode = markdownProcessor.parseMarkdown(pageSource)
-        def headers = markdownProcessor.getHeaders(contentNode)
+        def headers = markdownProcessor.getHeaders(contentNode, pageReference)
         def metadata = pageReference?.metadata ?: Collections.emptyMap()
         def outputPath = getOutputPath(pageSource)
 
