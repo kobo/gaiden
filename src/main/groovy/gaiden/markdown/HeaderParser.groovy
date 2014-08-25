@@ -70,7 +70,7 @@ class HeaderParser extends ToHtmlSerializer {
     }
 
     private String createHash(String title, HeaderNode headerNode) {
-        def hash = title.collect { String c ->
+        def hash = title.replaceAll("&.+?;", "").collect { String c ->
             if (c ==~ /[a-zA-Z0-9\-_]/) {
                 return c
             }
