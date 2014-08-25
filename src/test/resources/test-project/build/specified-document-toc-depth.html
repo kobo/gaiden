@@ -58,16 +58,22 @@
       </div>
       <div class="content">
         <div class="content-nav">
-          <a class="next-page" href="chapter2/index.html">Chapter 2<i class="fa fa-angle-right"></i></a>
+          <a class="prev-page" href="unnumbered.html"><i class="fa fa-angle-left"></i>Unnumbered Page</a>
+          <a class="next-page" href="specified-page-toc-depth.html">Specified Page Toc Depth Path<i class="fa fa-angle-right"></i></a>
         </div>
         <div class="page-toc">
           <ul>
-            <li class="numbered"><a href="#test"><span class="number">1.</span>Test</a></li>
+            <li class="numbered">
+              <a href="#specified-document-toc-depth-path"><span class="number">4.</span>Specified Document Toc Depth Path</a>
+              <ul>
+                <li class="numbered"><a href="#this-header-is-excluded-from-document-table-of-contents"><span class="number">4.1.</span>This header is excluded from Document Table of Contents</a></li>
+              </ul>
+            </li>
           </ul>
         </div>
         <div class="main-content">
-          <h1 id="test"><span class="number">1.</span>Test</h1>
-          <p>test</p>
+          <h1 id="specified-document-toc-depth-path"><span class="number">4.</span>Specified Document Toc Depth Path</h1>
+          <h2 id="this-header-is-excluded-from-document-table-of-contents"><span class="number">4.1.</span>This header is excluded from Document Table of Contents</h2>
         </div>
         <div class="footer">
           <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a></p>

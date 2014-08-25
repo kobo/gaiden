@@ -9,6 +9,8 @@
 }
 
 "unnumbered.md"(numbering: false)
+"specified-document-toc-depth.md"(documentTocDepth: 1)
+"specified-page-toc-depth.md"(pageTocDepth: 1)
 
 "home.md"(hidden: true)
 "filter.md"(hidden: true, layout: "filter")

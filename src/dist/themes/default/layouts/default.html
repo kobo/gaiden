@@ -29,7 +29,7 @@
         </div>
         <% if (metadata.showPageToc != null ? metadata.showPageToc : true) { %>
         <div class="page-toc">
-          ${pageToc(depth: metadata.pageTocDepth ?: config.pageTocDepth)}
+          ${pageToc()}
         </div>
         <% } %>
         <div class="main-content">

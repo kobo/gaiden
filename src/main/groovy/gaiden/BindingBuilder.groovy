@@ -140,8 +140,9 @@ class BindingBuilder {
         StringBuilder sb = new StringBuilder()
 
         document.pageOrder.each { Page destPage ->
+            def maxDepthOfPage = destPage.metadata.documentTocDepth as Integer ?: maxDepth
             destPage.headers.eachWithIndex { Header header, int index ->
-                if (header.level > maxDepth) {
+                if (header.level > maxDepthOfPage) {
                     return
                 }
 
@@ -182,7 +183,7 @@ class BindingBuilder {
         }
 
         def params = args instanceof Map ? args : [:]
-        def maxDepth = params["depth"] as Integer ?: gaidenConfig.pageTocDepth
+        def maxDepth = page.metadata.pageTocDepth as Integer ?: params["depth"] as Integer ?: gaidenConfig.pageTocDepth
 
         List<Integer> levels = []
         StringBuilder sb = new StringBuilder()
