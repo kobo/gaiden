@@ -14,155 +14,30 @@
  * limitations under the License.
  */
 
-import org.apache.tools.ant.filters.ReplaceTokens
-import org.gradle.internal.os.OperatingSystem
-
-apply plugin: 'groovy'
-apply plugin: 'application'
-
-apply plugin: 'codenarc'
-
-apply plugin: 'idea'
-
+defaultTasks 'clean', 'install'
 
 version = '0.4-SNAPSHOT'
-mainClassName = 'gaiden.GaidenMain'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+allprojects {
+    apply plugin: 'idea'
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.3.6'
-    compile 'org.apache.ant:ant:1.9.1'
-    compile 'org.pegdown:pegdown:1.4.2'
-    compile 'commons-io:commons-io:2.4'
-    compile 'commons-cli:commons-cli:1.2'
-    compile 'commons-codec:commons-codec:1.9'
-    compile 'org.apache.commons:commons-lang3:3.2'
-    compile('org.springframework:spring-context:4.0.6.RELEASE') {
-        exclude(group: 'commons-logging', module: 'commons-logging')
-    }
-    compile 'ch.qos.logback:logback-classic:1.1.2'
-    compile 'org.slf4j:jcl-over-slf4j:1.7.7'
-    compile 'net.htmlparser.jericho:jericho-html:3.3'
-
-    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
-
-    // optional dependencies for using Spock
-    testRuntime 'cglib:cglib-nodep:2.2.2'       // enables mocking of classes (in addition to interfaces)
-    testRuntime 'org.objenesis:objenesis:1.3'   // enables mocking of without default constructor (together with CGLIB)
-}
-
-test {
-    afterTest { desc, result ->
-        println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
+    repositories {
+        mavenCentral()
     }
 }
 
-defaultTasks 'clean', 'installApp'
+subprojects {
+    apply plugin: 'groovy'
+    apply plugin: 'application'
 
-task distribution(dependsOn: 'distZip')
+    version = rootProject.version
 
-task release(dependsOn: 'distribution')
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
 
-gradle.taskGraph.whenReady { taskGraph ->
-    if (!taskGraph.hasTask(release)) {
-        version = "$version-SNAPSHOT"
-    }
+    apply from: "$rootDir/gradle/codenarc.gradle"
 }
 
-startScripts {
-    doLast {
-        unixScript.text = unixScript.text.replace('$GAIDEN_OPTS', '$GAIDEN_OPTS -Dapp.home=$APP_HOME')
-        windowsScript.text = windowsScript.text.replace('%GAIDEN_OPTS%', '%GAIDEN_OPTS% -Dapp.home=%APP_HOME%')
-    }
-}
-
-def distFiles = files(
-    "${project.projectDir}/README.md",
-    "${project.projectDir}/NOTICE",
-    "${project.projectDir}/LICENSE",
-)
-
-applicationDistribution.from(distFiles) {
-    into '/'
-}
-
-codenarc {
-    configFile = new File('codenarc.groovy')
-    ignoreFailures = true
-    reportFormat = 'xml'
-}
-
-processResources {
-    filter ReplaceTokens, tokens: [
-        revision: revision,
-        version: version,
-        buildDate: new Date().format("yyyy-MM-dd HH:mm:ss.SSSZ"),
-        username: System.properties["user.name"],
-        javaVersion: System.properties["java.version"],
-        osName: System.properties["os.name"],
-        osVersion: System.properties["os.version"]
-    ]
-}
-
-def getRevision() {
-    if (!file(".git/HEAD").exists()) {
-        return
-    }
-
-    def baos = new ByteArrayOutputStream()
-    def execResult = exec {
-        ignoreExitValue = true
-        commandLine = ["git", "log", "-1", "--format=%H"]
-        if (OperatingSystem.current().windows) {
-            commandLine = ["cmd", "/c"] + commandLine
-        }
-        standardOutput = baos
-    }
-    if (execResult.exitValue == 0) {
-        return new String(baos.toByteArray(), "utf8").trim()
-    }
-
-    // Read commit id directly from filesystem
-    def headRef = file(".git/HEAD").text
-    headRef = headRef.replaceAll('ref: ', '').trim()
-    file(".git/$headRef").text.trim()
-}
-
-task createSampleProject << {
-    ext.sampleProject = file("$buildDir/sample-project")
-    copy {
-        into sampleProject
-        from file("src/sample/sample-project")
-    }
-
-    if (System.getProperty("gaiden.theme")) {
-        file("$sampleProject/config.groovy").append """theme = "${System.getProperty("gaiden.theme")}"\n"""
-    }
-
-    println "Created a sample project at $sampleProject"
-}
-
-task buildSampleProject(dependsOn: ["installApp", "createSampleProject"]) << {
-    executeCommand(["$buildDir/install/gaiden/bin/gaiden", "build"], createSampleProject.sampleProject)
-}
-
-def executeCommand(List command, File workDir, Map env = [:]) {
-    println ">> Executing command..."
-    println "\$ ${command.join(' ')}"
-    def builder = new ProcessBuilder(command as String[])
-    builder.directory(workDir)
-    def p = builder.start()
-    p.consumeProcessOutput(System.out as OutputStream, System.err as OutputStream) // Gradle's wrapper stream writes nothing to console
-    int statusCode = p.waitFor()
-    if (statusCode != 0) {
-        println "Exit for status code $statusCode"
-        throw new GradleScriptException("Exit for status code $statusCode while executing '${command.join(' ')}'", null)
-    }
-}
-
+apply from: "gradle/git.gradle"
+apply from: "gradle/distribution.gradle"
+apply from: "gradle/sample.gradle"

@@ -1,0 +1,19 @@
+apply plugin: 'distribution'
+
+task install(dependsOn: "installDist")
+
+distributions {
+    main {
+        contents {
+            into('bin') {
+                from { project(':gaiden-core').startScripts.outputs.files }
+                fileMode = 0755
+            }
+            into('lib') {
+                from project(':gaiden-core').configurations.runtime
+                from project(':gaiden-core').jar
+            }
+            from files('README.md', 'NOTICE', 'LICENSE')
+        }
+    }
+}

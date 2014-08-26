@@ -43,31 +43,22 @@ abstract class FunctionalSpec extends GaidenSpec {
     @AutoCleanup("deleteDir")
     Path outputDirectory = Files.createTempDirectory("outputDirectory")
 
-    def savedSystemOut
-    def savedSystemErr
-    def savedSystemSecurityManager
-
     def setup() {
-        saveSystemProperties()
-
-        System.properties["app.home"] = Paths.get("src/dist").toRealPath().toString()
-
         def gaidenApplication = new GaidenApplication()
         applicationContext = gaidenApplication.applicationContext
         gaidenConfig = applicationContext.getBean(GaidenConfig)
 
         gaidenConfig.outputDirectory = outputDirectory
 
-        setupProjectDirectory(projectDirectory.toString())
+        setupProjectDirectory(projectDirectory)
         Files.createFile(gaidenConfig.gaidenConfigFile)
     }
 
-    def cleanup() {
-        restoreSystemProperties()
+    void setupProjectDirectory(String path) {
+        setupProjectDirectory(project.resolve(path).toRealPath(LinkOption.NOFOLLOW_LINKS))
     }
 
-    void setupProjectDirectory(String path) {
-        def projectDirectory = Paths.get(path).toRealPath(LinkOption.NOFOLLOW_LINKS)
+    void setupProjectDirectory(Path projectDirectory) {
         gaidenConfig.projectDirectory = projectDirectory
         gaidenConfig.gaidenConfigFile = projectDirectory.resolve(GaidenConfig.GAIDEN_CONFIG_FILENAME)
         gaidenConfig.sourceDirectory = projectDirectory
@@ -80,7 +71,7 @@ abstract class FunctionalSpec extends GaidenSpec {
     }
 
     void assertOutputDirectory(String path) {
-        def expectedOutputDirectory = Paths.get(path)
+        def expectedOutputDirectory = project.resolve(path)
         expectedOutputDirectory.eachFileRecurse(FileType.FILES) { Path file ->
             def outputFile = outputDirectory.resolve(expectedOutputDirectory.relativize(file))
             assert Files.exists(outputFile)
@@ -104,17 +95,5 @@ abstract class FunctionalSpec extends GaidenSpec {
         def writer = new StringWriter()
         new SourceFormatter(source).setIndentString("  ").writeTo(writer)
         return writer.toString()
-    }
-
-    private void saveSystemProperties() {
-        savedSystemOut = System.out
-        savedSystemErr = System.err
-        savedSystemSecurityManager = System.securityManager
-    }
-
-    private void restoreSystemProperties() {
-        System.out = savedSystemOut
-        System.err = savedSystemErr
-        System.securityManager = savedSystemSecurityManager
     }
 }

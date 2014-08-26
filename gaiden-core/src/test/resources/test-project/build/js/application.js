@@ -107,6 +107,15 @@ $(function () {
                     }
                 });
             }
+
+            // If no active link exists, try to match to index.html
+            if (!$(".sidebar a.active").length) {
+                $(".sidebar a").each(function () {
+                    if (this.href === location.href.replace(/[^/]*(#.*)?$/, 'index.html')) {
+                        $(this).addClass("active");
+                    }
+                });
+            }
         }
 
         $(document).on("click", "a", function (e) {
