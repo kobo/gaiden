@@ -1,5 +1,8 @@
-// The base title of page
+// The title of this document
 //title = "Gaiden"
+
+// The version of this document
+//version = ""
 
 // The title of TOC
 //tocTitle = "Table of contents"

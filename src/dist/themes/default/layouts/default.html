@@ -24,13 +24,13 @@
           <a class="prev-page" href="${prevPage.path}">
             <i class="fa fa-angle-left"></i>
             <% if (prevPage.numbers) { %><span class="number">${prevPage.numbers.join(".")}.</span><% } %>
-            ${prevPage.title}
+            ${prevPage.title ?: "Previous"}
           </a>
           <% } %>
           <% if (nextPage) { %>
           <a class="next-page" href="${nextPage.path}">
             <% if (nextPage.numbers) { %><span class="number">${nextPage.numbers.join(".")}.</span><% } %>
-            ${nextPage.title}
+            ${nextPage.title ?: "Next"}
             <i class="fa fa-angle-right"></i>
           </a>
           <% } %>
@@ -44,7 +44,12 @@
           $content
         </div>
         <div class="footer">
-          <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a></p>
+          <div class="footer-container">
+            <% if (config.version) { %>
+            <p class="version text-muted">Version ${config.version}</p>
+            <% } %>
+            <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a></p>
+          </div>
         </div>
       </div>
     </div>
