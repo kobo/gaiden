@@ -36,6 +36,12 @@ interface GaidenCommand {
      *
      * @param args command arguments
      */
-    void execute(List args)
+    void execute(List<String> options)
 
+    /**
+     * Returns the command name.
+     *
+     * @return the command name
+     */
+    String getName()
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors
+ * Copyright 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,63 +16,13 @@
 
 package gaiden
 
-import gaiden.context.BuildContext
-import gaiden.message.MessageSource
-import spock.lang.AutoCleanup
 import spock.lang.Specification
+
+import java.nio.file.Paths
 
 abstract class GaidenSpec extends Specification {
 
-    def savedSystemOut
-    def savedSystemErr
-    def savedSystemSecurityManager
-
-    @AutoCleanup("delete")
-    def tocFile = File.createTempFile("toc", "groovy")
-
-    @AutoCleanup("deleteDir")
-    def pagesDirectory = File.createTempDir()
-
     def setup() {
-        saveSystemProperties()
-        setupMessageSource()
-        setupConfig()
-    }
-
-    def cleanup() {
-        restoreSystemProperties()
-    }
-
-    GaidenConfig getConfig() {
-        Holders.config
-    }
-
-    BuildContext createBuildContext(List<Map> pageSourceMaps) {
-        def pageSources = pageSourceMaps.collect { new PageSource(it) }
-        def documentSource = new DocumentSource(pageSources: pageSources)
-        new BuildContext(documentSource: documentSource)
-    }
-
-    private setupConfig() {
-        def configFile = new File("src/test/resources/config/ValidConfig.groovy")
-        assert configFile.exists()
-        Holders.config = new GaidenConfigLoader().load(configFile)
-        Holders.config.tocFilePath = tocFile.canonicalPath
-    }
-
-    private saveSystemProperties() {
-        savedSystemOut = System.out
-        savedSystemErr = System.err
-        savedSystemSecurityManager = System.securityManager
-    }
-
-    private void restoreSystemProperties() {
-        System.out = savedSystemOut
-        System.err = savedSystemErr
-        System.securityManager = savedSystemSecurityManager
-    }
-
-    private setupMessageSource() {
-        Holders.messageSource = new MessageSource()
+        System.properties["app.home"] = Paths.get("src/dist").toRealPath().toString()
     }
 }

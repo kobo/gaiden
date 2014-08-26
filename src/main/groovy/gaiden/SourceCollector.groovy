@@ -16,7 +16,13 @@
 
 package gaiden
 
-import gaiden.util.FileUtils
+import gaiden.util.PathUtils
+import groovy.transform.CompileStatic
+import org.apache.commons.io.FilenameUtils
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+
+import java.nio.file.Path
 
 /**
  * A source collector collects {@link PageSource} and builds {@link DocumentSource}.
@@ -24,17 +30,14 @@ import gaiden.util.FileUtils
  * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
  */
+@Component
+@CompileStatic
 class SourceCollector {
 
-    static final PAGE_SOURCE_EXTENSIONS = ['md', 'markdown']
+    static final List<String> PAGE_SOURCE_EXTENSIONS = ['md', 'markdown']
 
-    private File pagesDirectory
-    private String inputEncoding
-
-    SourceCollector(File pagesDirectory = Holders.config.pagesDirectory, String inputEncoding = Holders.config.inputEncoding) {
-        this.pagesDirectory = pagesDirectory
-        this.inputEncoding = inputEncoding
-    }
+    @Autowired
+    GaidenConfig gaidenConfig
 
     /**
      * Collect {@link PageSource} and then returns {@link DocumentSource}.
@@ -47,23 +50,22 @@ class SourceCollector {
 
     private List<PageSource> collectPageSources() {
         def pageSources = []
-        pagesDirectory.eachFileRecurse { file ->
-            if (isPageSourceFile(file)) {
-                pageSources << createPageSource(file)
+        PathUtils.eachFileRecurse(gaidenConfig.sourceDirectory, [gaidenConfig.outputDirectory, gaidenConfig.projectThemesDirectory]) { Path path ->
+            if (isPageSourceFile(path)) {
+                pageSources << createPageSource(path)
             }
         }
         pageSources
     }
 
-    private boolean isPageSourceFile(File file) {
-        file.name ==~ /.*\.(?:${PAGE_SOURCE_EXTENSIONS.join('|')})/
+    private static boolean isPageSourceFile(Path path) {
+        FilenameUtils.getExtension(path.toString()) in PAGE_SOURCE_EXTENSIONS
     }
 
-    private PageSource createPageSource(File file) {
+    private PageSource createPageSource(Path path) {
         new PageSource(
-            path: FileUtils.getRelativePathForDirectoryToFile(pagesDirectory, file),
-            content: file.getText(inputEncoding),
+            path: path,
+            intputEncoding: gaidenConfig.inputEncoding,
         )
     }
-
 }

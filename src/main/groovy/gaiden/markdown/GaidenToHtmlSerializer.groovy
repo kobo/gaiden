@@ -16,9 +16,19 @@
 
 package gaiden.markdown
 
+import gaiden.GaidenConfig
+import gaiden.Page
+import groovy.transform.CompileStatic
 import org.pegdown.LinkRenderer
-import org.pegdown.Printer
 import org.pegdown.ToHtmlSerializer
+import org.pegdown.VerbatimSerializer
+import org.pegdown.ast.GaidenHeaderNode
+import org.pegdown.ast.GaidenReferenceNode
+import org.pegdown.ast.HeaderNode
+import org.pegdown.ast.MarkdownInsideHtmlBlockNode
+import org.pegdown.ast.RefImageNode
+import org.pegdown.ast.RefLinkNode
+import org.pegdown.ast.ReferenceNode
 import org.pegdown.ast.SuperNode
 
 /**
@@ -27,29 +37,151 @@ import org.pegdown.ast.SuperNode
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class GaidenToHtmlSerializer extends ToHtmlSerializer {
 
+    private GaidenConfig gaidenConfig
     private ImageRenderer imageRenderer
+    private Page page
 
-    GaidenToHtmlSerializer(LinkRenderer linkRenderer, ImageRenderer imageRenderer) {
-        super(linkRenderer)
+    GaidenToHtmlSerializer(GaidenConfig gaidenConfig, LinkRenderer linkRenderer, ImageRenderer imageRenderer, Page page) {
+        super(linkRenderer, [(VerbatimSerializer.DEFAULT): new GaidenVerbatimSerializer()] as Map<String, VerbatimSerializer>)
+        this.gaidenConfig = gaidenConfig
         this.imageRenderer = imageRenderer
-    }
-
-    GaidenToHtmlSerializer(LinkRenderer linkRenderer, ImageRenderer imageRenderer, Printer printer) {
-        this(linkRenderer, imageRenderer)
-        this.printer = printer
+        this.page = page
     }
 
     @Override
-    protected void printImageTag(SuperNode imageNode, String url) {
-        def rendering = imageRenderer.render(url, printChildrenToString(imageNode))
-        printer
-            .print('<img src="')
-            .print(rendering.src)
-            .print('" alt="')
-            .printEncoded(rendering.alt)
-            .print('"/>')
+    void visit(HeaderNode headerNode) {
+        if (!(headerNode instanceof GaidenHeaderNode)) {
+            super.visit(headerNode as HeaderNode)
+            return
+        }
+
+        def gaidenHeaderNode = headerNode as GaidenHeaderNode
+        def header = page.headers.find { it.headerNode == gaidenHeaderNode }
+        def isLessThanOrEqualH6 = header.level in 1..6
+        def tag = isLessThanOrEqualH6 ? "h${header.level}".toString() : "div"
+
+        printer.print('<').print(tag)
+        printAttributes([id: header.hash])
+        def classes = []
+        if (gaidenHeaderNode.specialAttributes?.classes) {
+            classes.addAll(gaidenHeaderNode.specialAttributes?.classes)
+        }
+        if (!isLessThanOrEqualH6) {
+            classes << "h${header.level}".toString()
+        }
+        if (classes) {
+            printAttributes([class: classes.join(" ")])
+        }
+        printer.print('>')
+
+        if (header.numbers) {
+            printer.print("<span class=\"number\">${header.number}</span>".toString())
+        }
+        visitChildren(gaidenHeaderNode)
+
+        printer.print('<').print('/').print(tag).print('>');
     }
 
+    @Override
+    void visit(RefImageNode node) {
+        String text = printChildrenToString(node)
+        String key = node.referenceKey != null ? printChildrenToString(node.referenceKey) : text
+        ReferenceNode refNode = references.get(normalize(key))
+        if (refNode == null) { // "fake" reference image link
+            printer.print("![").print(text).print(']')
+            if (node.separatorSpace != null) {
+                printer.print(node.separatorSpace).print('[')
+                if (node.referenceKey != null) printer.print(key)
+                printer.print(']')
+            }
+        } else {
+            printImageTag(linkRenderer.render(node, refNode.getUrl(), refNode.getTitle(), text), refNode)
+        }
+    }
+
+    @Override
+    void visit(RefLinkNode node) {
+        String text = printChildrenToString(node)
+        String key = node.referenceKey != null ? printChildrenToString(node.referenceKey) : text
+        ReferenceNode refNode = references.get(normalize(key))
+        if (refNode == null) { // "fake" reference link
+            printer.print('[').print(text).print(']')
+            if (node.separatorSpace != null) {
+                printer.print(node.separatorSpace).print('[')
+                if (node.referenceKey != null) printer.print(key)
+                printer.print(']')
+            }
+        } else {
+            printLink(linkRenderer.render(node, refNode.getUrl(), refNode.getTitle(), text), refNode)
+        }
+    }
+
+    @Override
+    void visit(SuperNode node) {
+        if (node instanceof MarkdownInsideHtmlBlockNode) {
+            printMarkdownInsideHtmlBlock(node)
+            return
+        }
+        super.visit(node)
+    }
+
+    private void printMarkdownInsideHtmlBlock(MarkdownInsideHtmlBlockNode node) {
+        printer.print(node.beginTag.replaceAll(/ +markdown=(['"]?)(1|span|block)\1/, ""))
+        visitChildren(node)
+        printer.print(node.endTag)
+    }
+
+    @Override
+    protected void printLink(LinkRenderer.Rendering rendering) {
+        printLink(rendering, null)
+    }
+
+    protected void printLink(LinkRenderer.Rendering rendering, ReferenceNode referenceNode) {
+        printer.print('<').print('a')
+        printAttributes("href": rendering.href)
+        printAttributes(rendering.attributes.collectEntries { LinkRenderer.Attribute attribute ->
+            [(attribute.name): attribute.value]
+        })
+        if (referenceNode instanceof GaidenReferenceNode) {
+            if (referenceNode.specialAttributesNode?.id) {
+                printAttributes(id: referenceNode.specialAttributesNode.id)
+            }
+            if (referenceNode.specialAttributesNode?.classes) {
+                printAttributes(class: referenceNode.specialAttributesNode.classes.join(" "))
+            }
+        }
+        printer.print('>').print(rendering.text).print("</a>")
+    }
+
+    @Override
+    protected void printImageTag(LinkRenderer.Rendering rendering) {
+        printImageTag(rendering, null)
+    }
+
+    protected void printImageTag(LinkRenderer.Rendering rendering, ReferenceNode referenceNode) {
+        def image = imageRenderer.render(rendering.href, rendering.text)
+        printer.print("<img")
+        printAttributes(src: image.src, alt: image.alt)
+        printAttributes(rendering.attributes.collectEntries { LinkRenderer.Attribute attribute ->
+            [(attribute.name): attribute.value]
+        })
+        if (referenceNode instanceof GaidenReferenceNode) {
+            if (referenceNode.specialAttributesNode?.id) {
+                printAttributes(id: referenceNode.specialAttributesNode.id)
+            }
+            if (referenceNode.specialAttributesNode?.classes) {
+                printAttributes(class: referenceNode.specialAttributesNode.classes.join(" "))
+            }
+        }
+        printer.print("/>")
+    }
+
+    private void printAttributes(Map<String, String> attributes) {
+        attributes.each {
+            printer.print(' ').print(it.key).print('=').print('"').print(it.value).print('"')
+        }
+    }
 }

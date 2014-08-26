@@ -16,25 +16,54 @@
 
 package gaiden
 
+import groovy.transform.CompileStatic
+import org.pegdown.ast.RootNode
+
+import java.nio.file.Path
+
 /**
  * A holder for a content and the meta information.
  *
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class Page {
 
-    /** A page source */
+    /** the page source */
     PageSource source
 
-    /** A output content */
-    String content
+    /** the headers of content */
+    List<Header> headers
 
-    /**
-     * Returns a relative path from the output directory.
-     */
-    String getPath() {
-        source.outputPath
+    /** the AST of content */
+    RootNode contentNode
+
+    /** The metadata of page */
+    Map<String, Object> metadata
+
+    /** The output path of page */
+    Path outputPath
+
+    String getTitle() {
+        if (metadata.title) {
+            return metadata.title
+        }
+        return headers ? headers.first().title : ""
     }
 
+    List<Integer> getNumbers() {
+        if (!headers) {
+            return Collections.emptyList()
+        }
+        return headers.first().numbers
+    }
+
+    String relativize(Page page) {
+        relativize(page.outputPath)
+    }
+
+    String relativize(Path path) {
+        this.outputPath.parent.relativize(path).toString()
+    }
 }

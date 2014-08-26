@@ -16,13 +16,33 @@
 
 package gaiden
 
+import groovy.transform.CompileStatic
+
 /**
  * A document is aggregate of pages.
  *
  * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
  */
+@CompileStatic
 class Document {
+
+    Page homePage
+
     List<Page> pages
-    Toc toc
+    List<Page> pageOrder
+
+    Page previousPageOf(Page page) {
+        if (!pageOrder.contains(page) || pageOrder.first() == page) {
+            return null
+        }
+        pageOrder[pageOrder.indexOf(page) - 1]
+    }
+
+    Page nextPageOf(Page page) {
+        if (!pageOrder.contains(page) || pageOrder.last() == page) {
+            return null
+        }
+        pageOrder[pageOrder.indexOf(page) + 1]
+    }
 }

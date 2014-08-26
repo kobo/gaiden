@@ -16,30 +16,59 @@
 
 package gaiden
 
-import gaiden.context.PageBuildContext
-import gaiden.util.FileUtils
+import gaiden.exception.GaidenException
+import gaiden.markdown.GaidenMarkdownProcessor
+import gaiden.message.MessageSource
+import groovy.transform.CompileStatic
+
+import java.nio.file.Files
+import java.nio.file.Paths
+
+import static org.apache.commons.lang3.StringEscapeUtils.*
 
 /**
  * Builder for binding to be passed to a template engine.
  *
  * @author Kazuki YAMAMOTO
  */
+@CompileStatic
 class BindingBuilder {
 
-    private static final String EMPTY_STRING = ""
-
-    private String title
-    private String tocOutputFilePath
-
+    private MessageSource messageSource
+    private GaidenMarkdownProcessor markdownProcessor
+    private GaidenConfig gaidenConfig
+    private Page page
+    private Document document
     private String content
-    private String sourcePath
-    private String outputPath
 
-    private PageBuildContext pageBuildContext
+    BindingBuilder setMessageSource(MessageSource messageSource) {
+        this.messageSource = messageSource
+        return this
+    }
 
-    BindingBuilder(String title = Holders.config.title, String tocOutputFilePath = Holders.config.tocOutputFilePath) {
-        this.title = title
-        this.tocOutputFilePath = tocOutputFilePath
+    BindingBuilder setMarkdownProcessor(GaidenMarkdownProcessor markdownProcessor) {
+        this.markdownProcessor = markdownProcessor
+        return this
+    }
+
+    BindingBuilder setGaidenConfig(GaidenConfig gaidenConfig) {
+        this.gaidenConfig = gaidenConfig
+        return this
+    }
+
+    BindingBuilder setPage(Page page) {
+        this.page = page
+        return this
+    }
+
+    BindingBuilder setDocument(Document document) {
+        this.document = document
+        return this
+    }
+
+    BindingBuilder setContent(String content) {
+        this.content = content
+        return this
     }
 
     /**
@@ -49,104 +78,158 @@ class BindingBuilder {
      */
     Map<String, Object> build() {
         [
-            title: title,
-            content: content,
-            tocPath: tocPath,
-            resource: resourceMethod,
-            prevLink: prevLink,
-            nextLink: nextLink,
+            title      : escapeHtml4(gaidenConfig.title),
+            content    : content,
+            metadata   : page.metadata,
+            resource   : this.&getResource,
+            homePage   : homePage,
+            prevPage   : prevPage,
+            nextPage   : nextPage,
+            documentToc: this.&getDocumentToc,
+            pageToc    : this.&getPageToc,
+            render     : this.&render,
+            config     : gaidenConfig,
         ]
     }
 
-    /**
-     * Sets the content.
-     */
-    BindingBuilder setContent(String content) {
-        this.content = content
-        this
-    }
-
-    /**
-     * Sets the output path.
-     */
-    BindingBuilder setOutputPath(String outputPath) {
-        this.outputPath = outputPath
-        this
-    }
-
-    /**
-     * Sets the page path.
-     */
-    BindingBuilder setSourcePath(String sourcePath) {
-        this.sourcePath = sourcePath
-        this
-    }
-
-    /**
-     * Sets the page build context.
-     */
-    BindingBuilder setPageBuildContext(PageBuildContext pageBuildContext) {
-        this.pageBuildContext = pageBuildContext
-        this
-    }
-
-    private String getPrevLink() {
-        if (!sourcePath || !pageBuildContext) {
-            return EMPTY_STRING
+    private Map getHomePage() {
+        if (!document.homePage) {
+            return Collections.emptyMap()
         }
 
-        def previousTocNode = pageBuildContext.toc.findTocNode(new PageReference(sourcePath))?.previous
-        if (!previousTocNode) {
-            return EMPTY_STRING
-        }
-
-        if (!previousTocNode.pageSource) {
-            return "<< $previousTocNode.title".encodeAsHtml()
-        }
-
-        def relativePath = FileUtils.getRelativePathForFileToFile(outputPath, previousTocNode.pageSource.outputPath)
-
-        def sb = new StringBuilder()
-        sb << "<a href='${relativePath + previousTocNode.pageReference.fragment}' class='prev'>"
-        sb << "<< $previousTocNode.title".encodeAsHtml()
-        sb << "</a>"
-        return sb.toString()
+        return toMap(document.homePage)
     }
 
-    private String getNextLink() {
-        if (!sourcePath || !pageBuildContext) {
-            return EMPTY_STRING
+    private Map getPrevPage() {
+        def previousPage = document.previousPageOf(page)
+        if (!previousPage) {
+            return Collections.emptyMap()
         }
 
-        def nextTocNode = pageBuildContext.toc.findTocNode(new PageReference(sourcePath))?.next
-        if (!nextTocNode) {
-            return EMPTY_STRING
-        }
-
-        if (!nextTocNode.pageSource) {
-            return "$nextTocNode.title >>".encodeAsHtml()
-        }
-
-        def relativePath = FileUtils.getRelativePathForFileToFile(outputPath, nextTocNode.pageSource.outputPath)
-
-        def sb = new StringBuilder()
-        sb << "<a href='${relativePath + nextTocNode.pageReference.fragment}' class='next'>"
-        sb << "$nextTocNode.title >>".encodeAsHtml()
-        sb << "</a>"
-        return sb.toString()
+        return toMap(previousPage)
     }
 
-    private Closure getResourceMethod() {
-        return { String resourceFilePath ->
-            if (!resourceFilePath.startsWith("/")) {
-                return resourceFilePath
+    private Map getNextPage() {
+        def nextPage = document.nextPageOf(page)
+        if (!nextPage) {
+            return Collections.emptyMap()
+        }
+
+        return toMap(nextPage)
+    }
+
+    private Map toMap(Page destPage) {
+        return [
+            path   : page.relativize(destPage),
+            title  : destPage.title,
+            numbers: destPage.numbers,
+        ]
+    }
+
+    private String getResource(String path) {
+        def resourceFile = Paths.get(path)
+        def src = page.outputPath
+        def dest = gaidenConfig.outputDirectory.resolve(resourceFile.absolute ? Paths.get(resourceFile.toString().substring(1)) : resourceFile)
+        src.parent.relativize(dest).toString()
+    }
+
+    private String getDocumentToc(args) {
+        def params = args instanceof Map ? args : [:]
+        def maxDepth = params["depth"] as Integer ?: gaidenConfig.documentTocDepth
+
+        List<Integer> levels = []
+        StringBuilder sb = new StringBuilder()
+
+        document.pageOrder.each { Page destPage ->
+            def maxDepthOfPage = destPage.metadata.documentTocDepth as Integer ?: maxDepth
+            destPage.headers.eachWithIndex { Header header, int index ->
+                if (header.level > maxDepthOfPage) {
+                    return
+                }
+
+                if (!levels || levels.last() < header.level) {
+                    sb << "<ul>"
+                    levels << header.level
+                } else if (levels.last() > header.level) {
+                    if (!levels.contains(header.level)) {
+                        throw new GaidenException("illegal.header.level", [gaidenConfig.sourceDirectory.relativize(destPage.source.path), header.title, header.level, levels.join(",")])
+                    }
+
+                    sb << "</li>"
+                    while (levels.last() != header.level) {
+                        sb << "</ul></li>"
+                        levels.pop()
+                    }
+                } else {
+                    sb << "</li>"
+                }
+
+                def isFirstOfPage = index == 0
+                def mainHref = page.relativize(destPage) + (isFirstOfPage ? "" : "#${header.hash}")
+                def altHash = isFirstOfPage && !header.hash.empty ? " data-alt-hash=\"${header.hash}\"" : ""
+                def number = header.numbers ? "<span class=\"number\">${header.number}</span>" : ""
+                def cssClass = header.numbers ? "numbered" : "unnumbered"
+                sb << "<li class=\"${cssClass}\"><a href=\"${mainHref}\"${altHash}>${number}${header.title}</a>"
             }
-            FileUtils.getRelativePathForFileToFile(outputPath, resourceFilePath)
         }
+        levels.size().times {
+            sb << "</li></ul>"
+        }
+        sb.toString()
     }
 
-    private String getTocPath() {
-        FileUtils.getRelativePathForFileToFile(outputPath, tocOutputFilePath)
+    private String getPageToc(args) {
+        if (!page.headers) {
+            return ""
+        }
+
+        def params = args instanceof Map ? args : [:]
+        def maxDepth = page.metadata.pageTocDepth as Integer ?: params["depth"] as Integer ?: gaidenConfig.pageTocDepth
+
+        List<Integer> levels = []
+        StringBuilder sb = new StringBuilder()
+
+        page.headers.eachWithIndex { Header header, int index ->
+            if (header.level > maxDepth) {
+                return
+            }
+
+            if (!levels || levels.last() < header.level) {
+                sb << "<ul>"
+                levels << header.level
+            } else if (levels.last() > header.level) {
+                if (!levels.contains(header.level)) {
+                    throw new GaidenException("illegal.header.level", [gaidenConfig.sourceDirectory.relativize(page.source.path), header.title, header.level, levels.join(",")])
+                }
+
+                sb << "</li>"
+                while (levels.last() != header.level) {
+                    sb << "</ul></li>"
+                    levels.pop()
+                }
+            } else {
+                sb << "</li>"
+            }
+
+            def hash = "#${header.hash}"
+            def number = header.numbers ? "<span class=\"number\">${header.number}</span>" : ""
+            def cssClass = header.numbers ? "numbered" : "unnumbered"
+            sb << "<li class=\"${cssClass}\"><a href=\"${hash}\">${number}${header.title}</a>"
+        }
+        levels.size().times {
+            sb << "</li></ul>"
+        }
+
+        sb.toString()
     }
 
+    private String render(String filePath) {
+        def file = gaidenConfig.sourceDirectory.resolve(filePath)
+        def page = document.pages.find { Files.isSameFile(it.source.path, file) }
+        if (!page) {
+            System.err.println("WARNING: " + messageSource.getMessage("output.page.reference.not.exists.message", [filePath, gaidenConfig.getLayoutFile(page.metadata.layout as String)]))
+            return ""
+        }
+        markdownProcessor.convertToHtml(page, document)
+    }
 }

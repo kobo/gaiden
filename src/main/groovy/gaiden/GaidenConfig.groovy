@@ -16,113 +16,198 @@
 
 package gaiden
 
+import gaiden.util.PathUtils
+import groovy.io.FileType
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
+import org.springframework.stereotype.Component
+
+import javax.annotation.PostConstruct
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+
 /**
  * The Gaiden configuration.
  *
  * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
  */
+@Component
+@CompileStatic
 class GaidenConfig {
 
+    private ConfigObject configObject
+
+    static final String GAIDEN_CONFIG_FILENAME = "config.groovy"
+    static final String PAGES_FILENAME = "pages.groovy"
+    static final String DEFAULT_ENCODING = "UTF-8"
+
+    static final String DEFAULT_BUILD_DIRECTORY = "build"
+    static final String DEFAULT_THEMES_DIRECTORY = "themes"
+    static final String DEFAULT_PROJECT_TEMPLATE_DIRECTORY = "template"
+    static final String DEFAULT_LAYOUTS_DIRECTORY = "layouts"
+    static final String DEFAULT_ASSETS_DIRECTORY = "assets"
+
+    static final String DEFAULT_THEME = "default"
+    static final String DEFAULT_LAYOUT = "default"
+
+    private static Path getDefaultProjectDirectory() {
+        Paths.get(System.properties["user.dir"] as String)
+    }
+
+    private static Path getApplicationDirectory() {
+        Paths.get(System.properties["app.home"] as String)
+    }
+
     /** The base title of page */
-    String title
+    String title = "Gaiden"
 
-    /** The title of TOC */
-    String tocTitle
+    /** The path of project directory */
+    Path projectDirectory = defaultProjectDirectory
 
-    /** The path of template file */
-    String templateFilePath
-
-    /** The path of TOC file */
-    String tocFilePath
-
-    /** The path of TOC output file */
-    String tocOutputFilePath
-
-    /** The path of page source files directory */
-    String pagesDirectoryPath
-
-    /** The path of static files directory */
-    String staticDirectoryPath
+    /** The path of source files directory */
+    Path sourceDirectory = defaultProjectDirectory
 
     /** The path of directory to be outputted a document */
-    String outputDirectoryPath
+    Path outputDirectory = defaultProjectDirectory.resolve(DEFAULT_BUILD_DIRECTORY)
 
     /** The input encoding of files */
-    String inputEncoding
+    String inputEncoding = DEFAULT_ENCODING
 
     /** The output encoding of files */
-    String outputEncoding
+    String outputEncoding = DEFAULT_ENCODING
 
-    /** Returns the {@link #templateFilePath} as {@link File} */
-    File getTemplateFile() {
-        new File(templateFilePath)
+    /** The path of pages file */
+    Path pagesFile = defaultProjectDirectory.resolve(PAGES_FILENAME)
+
+    /** The path of gaiden config file */
+    Path gaidenConfigFile = defaultProjectDirectory.resolve(GAIDEN_CONFIG_FILENAME)
+
+    /** The path of project template directory */
+    Path initialProjectTemplateDirectory = applicationDirectory.resolve(DEFAULT_PROJECT_TEMPLATE_DIRECTORY)
+
+    Path applicationThemesDirectory = applicationDirectory.resolve(DEFAULT_THEMES_DIRECTORY)
+
+    Path projectThemesDirectory = defaultProjectDirectory.resolve(DEFAULT_THEMES_DIRECTORY)
+
+    Path getApplicationLayoutsDirectory() {
+        applicationThemesDirectory.resolve(theme).resolve(DEFAULT_LAYOUTS_DIRECTORY)
     }
 
-    /** Returns the {@link #tocFilePath} as {@link File} */
-    File getTocFile() {
-        new File(tocFilePath)
+    Path getProjectLayoutsDirectory() {
+        projectThemesDirectory.resolve(theme).resolve(DEFAULT_LAYOUTS_DIRECTORY)
     }
 
-    /** Returns the {@link #pagesDirectoryPath} as {@link File} */
-    File getPagesDirectory() {
-        new File(pagesDirectoryPath)
+    Path getApplicationAssetsDirectory() {
+        applicationThemesDirectory.resolve(theme).resolve(DEFAULT_ASSETS_DIRECTORY)
     }
 
-    /** Returns the {@link #staticDirectoryPath} as {@link File} */
-    File getStaticDirectory() {
-        new File(staticDirectoryPath)
+    Path getProjectAssetsDirectory() {
+        projectThemesDirectory.resolve(theme).resolve(DEFAULT_ASSETS_DIRECTORY)
     }
 
-    /** Returns the {@link #outputDirectoryPath} as {@link File} */
-    File getOutputDirectory() {
-        new File(outputDirectoryPath)
+    Path getLayoutFile(String layoutName) {
+        def filename = layoutName ?: DEFAULT_LAYOUT
+        def layoutFile = projectLayoutsDirectory.resolve("${filename}.html")
+        if (Files.exists(layoutFile)) {
+            return layoutFile
+        }
+        return applicationLayoutsDirectory.resolve("${filename}.html")
     }
 
-    /**
-     * Replaces a deprecated parameter with new one.
-     *
-     * @param name a property name
-     * @param value a property value
-     */
-    def propertyMissing(String name, value) {
-        def deprecatedMapping = [
-            templatePath: "templateFilePath",
-            tocPath: "tocFilePath",
-            tocOutputPath: "tocOutputFilePath",
-        ]
+    Path getApplicationThemeDirectory(String theme = this.theme) {
+        applicationThemesDirectory.resolve(theme)
+    }
 
-        if (!deprecatedMapping.containsKey(name)) {
-            throw new MissingPropertyException(name, this.class)
+    Path getProjectThemeDirectory(String theme = this.theme) {
+        projectThemesDirectory.resolve(theme)
+    }
+
+    Path homePage
+
+    void setHomePage(String homePage) {
+        this.homePage = sourceDirectory.resolve(homePage)
+    }
+
+    List<String> getInstalledThemes() {
+        PathUtils.list(applicationThemesDirectory, FileType.DIRECTORIES).collect {
+            it.fileName.toString()
+        }
+    }
+
+    String theme = DEFAULT_THEME
+
+    int documentTocDepth = 3
+
+    int pageTocDepth = 6
+
+    boolean numbering = true
+
+    int numberingOffset = 1
+
+    int numberingDepth = 4
+
+    boolean format = true
+
+    boolean readmeToIndex = true
+
+    List<String> assetTypes = ["jpg", "jpeg", "png", "gif"]
+
+    void setProjectDirectoryPath(String projectDirectoryPath) {
+        projectDirectory = Paths.get(projectDirectoryPath)
+    }
+
+    void setSourceDirectoryPath(String sourceDirectoryPath) {
+        sourceDirectory = projectDirectory.resolve(sourceDirectoryPath)
+    }
+
+    void setOutputDirectoryPath(String outputDirectoryPath) {
+        outputDirectory = projectDirectory.resolve(outputDirectoryPath)
+    }
+
+    void setPagesFilePath(String pagesFilePath) {
+        pagesFile = projectDirectory.resolve(pagesFilePath)
+    }
+
+    void setApplicationThemesDirectoryPath(String applicationThemesDirectoryPath) {
+        applicationThemesDirectory = applicationDirectory.resolve(applicationThemesDirectoryPath)
+    }
+
+    void setProjectThemesDirectoryPath(String projectThemesDirectoryPath) {
+        projectThemesDirectory = projectDirectory.resolve(projectThemesDirectoryPath)
+    }
+
+    List<Filter> filters = Collections.emptyList()
+
+    void setFilters(Closure closure) {
+        def filterBuilder = new FilterBuilder()
+        filters = filterBuilder.build(closure)
+    }
+
+    @PostConstruct
+    void initialize() {
+        initialize(gaidenConfigFile)
+    }
+
+    @CompileStatic(TypeCheckingMode.SKIP)
+    void initialize(Path configFile) {
+        if (Files.notExists(configFile)) {
+            return
         }
 
-        printDeprecatedWarning(name, deprecatedMapping[name])
-        this."${deprecatedMapping[name]}" = value
+        configObject = new ConfigSlurper().parse(configFile.toUri().toURL())
+        configObject.keySet().each { String key ->
+            if (this.hasProperty(key)) {
+                this.setProperty(key, configObject.get(key))
+            }
+        }
     }
 
-    // Conflicts with getPagesDirectory()
-    @Deprecated
-    void setPagesDirectory(String value) {
-        printDeprecatedWarning("pagesDirectory", "pagesDirectoryPath")
-        pagesDirectoryPath = value
+    @CompileStatic(TypeCheckingMode.SKIP)
+    def propertyMissing(String name) {
+        if (configObject) {
+            return configObject.get(name)
+        }
     }
-
-    // Conflicts with getStaticDirectory()
-    @Deprecated
-    void setStaticDirectory(String value) {
-        printDeprecatedWarning("staticDirectory", "staticDirectoryPath")
-        staticDirectoryPath = value
-    }
-
-    // Conflicts with getOutputDirectory()
-    @Deprecated
-    void setOutputDirectory(String value) {
-        printDeprecatedWarning("outputDirectory", "outputDirectoryPath")
-        outputDirectoryPath = value
-    }
-
-    private void printDeprecatedWarning(String deprecatedName, String insteadName) {
-        System.err.println("WARNING: ${Holders.messageSource.getMessage("config.deprecated.parameter.message", [deprecatedName, insteadName])}")
-    }
-
 }

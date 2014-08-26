@@ -16,10 +16,23 @@
 
 package gaiden.markdown
 
+import gaiden.Document
+import gaiden.Filter
+import gaiden.GaidenConfig
+import gaiden.Header
+import gaiden.Page
+import gaiden.PageReference
 import gaiden.PageSource
-import gaiden.context.PageBuildContext
+import gaiden.message.MessageSource
+import groovy.transform.CompileStatic
+import org.parboiled.Parboiled
+import org.pegdown.GaidenParser
+import org.pegdown.Parser
 import org.pegdown.ParsingTimeoutException
 import org.pegdown.PegDownProcessor
+import org.pegdown.ast.RootNode
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
 /**
  * A Processor for Markdown.
@@ -27,23 +40,38 @@ import org.pegdown.PegDownProcessor
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@Component
+@CompileStatic
 class GaidenMarkdownProcessor extends PegDownProcessor {
 
-    GaidenMarkdownProcessor(int options) {
-        super(options)
+    @Autowired
+    GaidenConfig gaidenConfig
+
+    @Autowired
+    MessageSource messageSource
+
+    GaidenMarkdownProcessor() {
+        super(Parboiled.createParser(GaidenParser) as Parser)
     }
 
-    /**
-     * Converts the given markdown source to HTML.
-     *
-     * @param context the context to be built
-     * @param pageSource the page source to convert
-     * @return the HTML
-     * @throws ParsingTimeoutException if the input cannot be parsed within the configured parsing timeout
-     */
-    String markdownToHtml(PageBuildContext context, PageSource pageSource) throws ParsingTimeoutException {
-        def astRoot = parseMarkdown(pageSource.content.toCharArray())
-        new GaidenToHtmlSerializer(new GaidenLinkRenderer(context, pageSource), new ImageRenderer(pageSource)).toHtml(astRoot)
+    RootNode parseMarkdown(PageSource pageSource) {
+        def content = gaidenConfig.filters.inject(pageSource.content) { String text, Filter filter ->
+            filter.doBefore(text)
+        } as String
+        return parseMarkdown(content.toCharArray())
     }
 
+    String convertToHtml(Page page, Document document) throws ParsingTimeoutException {
+        def linkRenderer = new GaidenLinkRenderer(page: page, document: document, messageSource: messageSource)
+        def imageRenderer = new ImageRenderer(page, gaidenConfig.outputDirectory, messageSource)
+        def html = new GaidenToHtmlSerializer(gaidenConfig, linkRenderer, imageRenderer, page).toHtml(page.contentNode)
+
+        return gaidenConfig.filters.inject(html) { String text, Filter filter ->
+            filter.doAfter(text)
+        } as String
+    }
+
+    static List<Header> getHeaders(RootNode rootNode, PageReference pageReference) {
+        new HeaderParser(rootNode, pageReference).headers
+    }
 }

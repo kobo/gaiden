@@ -25,23 +25,30 @@ apply plugin: 'codenarc'
 apply plugin: 'idea'
 
 
-version = '0.4'
+version = '0.4-SNAPSHOT'
 mainClassName = 'gaiden.GaidenMain'
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.2.0'
+    compile 'org.codehaus.groovy:groovy-all:2.3.6'
     compile 'org.apache.ant:ant:1.9.1'
-    compile 'org.pegdown:pegdown:1.2.1'
+    compile 'org.pegdown:pegdown:1.4.2'
     compile 'commons-io:commons-io:2.4'
     compile 'commons-cli:commons-cli:1.2'
-    compile 'org.apache.commons:commons-lang3:3.1'
+    compile 'commons-codec:commons-codec:1.9'
+    compile 'org.apache.commons:commons-lang3:3.2'
+    compile('org.springframework:spring-context:4.0.6.RELEASE') {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+    }
+    compile 'ch.qos.logback:logback-classic:1.1.2'
+    compile 'org.slf4j:jcl-over-slf4j:1.7.7'
+    compile 'net.htmlparser.jericho:jericho-html:3.3'
 
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
 
@@ -55,6 +62,8 @@ test {
         println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
     }
 }
+
+defaultTasks 'clean', 'installApp'
 
 task distribution(dependsOn: 'distZip')
 
@@ -124,3 +133,36 @@ def getRevision() {
     headRef = headRef.replaceAll('ref: ', '').trim()
     file(".git/$headRef").text.trim()
 }
+
+task createSampleProject << {
+    ext.sampleProject = file("$buildDir/sample-project")
+    copy {
+        into sampleProject
+        from file("src/sample/sample-project")
+    }
+
+    if (System.getProperty("gaiden.theme")) {
+        file("$sampleProject/config.groovy").append """theme = "${System.getProperty("gaiden.theme")}"\n"""
+    }
+
+    println "Created a sample project at $sampleProject"
+}
+
+task buildSampleProject(dependsOn: ["installApp", "createSampleProject"]) << {
+    executeCommand(["$buildDir/install/gaiden/bin/gaiden", "build"], createSampleProject.sampleProject)
+}
+
+def executeCommand(List command, File workDir, Map env = [:]) {
+    println ">> Executing command..."
+    println "\$ ${command.join(' ')}"
+    def builder = new ProcessBuilder(command as String[])
+    builder.directory(workDir)
+    def p = builder.start()
+    p.consumeProcessOutput(System.out as OutputStream, System.err as OutputStream) // Gradle's wrapper stream writes nothing to console
+    int statusCode = p.waitFor()
+    if (statusCode != 0) {
+        println "Exit for status code $statusCode"
+        throw new GradleScriptException("Exit for status code $statusCode while executing '${command.join(' ')}'", null)
+    }
+}
+

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors
+ * Copyright 201 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,92 +16,15 @@
 
 package gaiden
 
-import gaiden.util.FileUtils
+import groovy.transform.Canonical
+import groovy.transform.CompileStatic
 
-/**
- * A reference of page.
- *
- * @author Kazuki YAMAMOTO
- */
+import java.nio.file.Path
+
+@CompileStatic
+@Canonical
 class PageReference {
-
-    /**
-     * The relative path from the pages directory.
-     * <p>
-     * The path doesn't contain a fragment(#).
-     */
-    String path
-
-    /** The fragment of path */
-    String fragment
-
-    PageReference(String url) {
-        (path, fragment) = url.split("#") as List
-        fragment = fragment ? "#${fragment}" : ""
-    }
-
-    /**
-     * Returns the abstract relative path from the pages directory.
-     * <p>
-     * The pass doesn't contain a file extension.
-     *
-     * @return the abstract relative path
-     */
-    String getAbstractPath() {
-        FileUtils.removeExtension(path)
-    }
-
-    /**
-     * Returns the extension of filename.
-     *
-     * @return the extension of filename
-     */
-    String getExtension() {
-        FileUtils.getExtension(new File(path).name)
-    }
-
-    /**
-     * Checks the path is URL.
-     *
-     * @return {@code true} if the path is URL
-     */
-    boolean isUrl() {
-        try {
-            new URL(path)
-        } catch (MalformedURLException e) {
-            return false
-        }
-        true
-    }
-
-    /**
-     * Checks the path is an absolute path.
-     *
-     * @return {@code true} if the path is an absolute path
-     */
-    boolean isAbsolutePath() {
-        !path.startsWith("/")
-    }
-
-    /**
-     * Checks the extension of filename is a page source extension.
-     *
-     * @return {@code true} if the extension of filename is a page source extension
-     * @see SourceCollector#PAGE_SOURCE_EXTENSIONS
-     */
-    boolean isPageSourceExtension() {
-        !extension || extension in SourceCollector.PAGE_SOURCE_EXTENSIONS
-    }
-
-    /**
-     * Converts this page reference into a page reference which has a full path.
-     *
-     * @param rootDirectory the root directory of page sources
-     * @param baseDirectory the directory of base
-     * @return the page reference which has a full path
-     */
-    PageReference toFullPathPageReference(File rootDirectory, File baseDirectory) {
-        assert isAbsolutePath()
-        new PageReference(FileUtils.getRelativePathForDirectoryToFile(rootDirectory, new File(baseDirectory, path)) + fragment)
-    }
+    Path path
+    Map<String, String> metadata
+    int baseLevel
 }

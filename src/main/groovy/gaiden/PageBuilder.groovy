@@ -16,9 +16,13 @@
 
 package gaiden
 
-import gaiden.context.PageBuildContext
 import gaiden.markdown.GaidenMarkdownProcessor
-import org.pegdown.Extensions
+import gaiden.util.PathUtils
+import groovy.transform.CompileStatic
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+
+import java.nio.file.Path
 
 /**
  * A markdown page builder builds from a markdown to a HTML.
@@ -26,44 +30,41 @@ import org.pegdown.Extensions
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@Component
+@CompileStatic
 class PageBuilder {
 
-    private TemplateEngine templateEngine
-    private GaidenMarkdownProcessor markdownProcessor
+    @Autowired
+    GaidenConfig gaidenConfig
 
-    PageBuilder(TemplateEngine templateEngine) {
-        this(templateEngine, new GaidenMarkdownProcessor(Extensions.ALL - Extensions.HARDWRAPS))
-    }
-
-    PageBuilder(TemplateEngine templateEngine, GaidenMarkdownProcessor markdownProcessor) {
-        this.templateEngine = templateEngine
-        this.markdownProcessor = markdownProcessor
-    }
+    @Autowired
+    GaidenMarkdownProcessor markdownProcessor
 
     /**
      * Build from a page source to a page.
      *
-     * @param context the context to be built
      * @param pageSource the page source to be built
      * @return {@link Page}'s instance
      */
-    Page build(PageBuildContext context, PageSource pageSource) {
-        new Page(
-            source: pageSource,
-            content: buildPage(context, pageSource),
-        )
+    Page build(PageSource pageSource, PageReference pageReference) {
+        buildPage(pageSource, pageReference)
     }
 
-    private String buildPage(PageBuildContext context, PageSource pageSource) {
-        def content = markdownProcessor.markdownToHtml(context, pageSource)
+    private Page buildPage(PageSource pageSource, PageReference pageReference) {
+        def contentNode = markdownProcessor.parseMarkdown(pageSource)
+        def headers = markdownProcessor.getHeaders(contentNode, pageReference)
+        def metadata = pageReference?.metadata ?: Collections.emptyMap()
+        def outputPath = getOutputPath(pageSource)
 
-        def binding = new BindingBuilder()
-            .setContent(content)
-            .setPageBuildContext(context)
-            .setOutputPath(pageSource.outputPath)
-            .setSourcePath(pageSource.path)
-            .build()
+        new Page(source: pageSource, headers: headers, contentNode: contentNode, metadata: metadata as Map<String, Object>, outputPath: outputPath)
+    }
 
-        templateEngine.make(binding)
+    private Path getOutputPath(PageSource pageSource) {
+        if (pageSource.path.fileName.toString().toLowerCase() == "readme.md" && gaidenConfig.readmeToIndex) {
+            def relativePath = gaidenConfig.sourceDirectory.relativize(pageSource.path.parent)
+            return gaidenConfig.outputDirectory.resolve(relativePath.resolve("index.html"))
+        }
+        def relativePath = gaidenConfig.sourceDirectory.relativize(pageSource.path)
+        return gaidenConfig.outputDirectory.resolve(PathUtils.replaceExtension(relativePath, "html"))
     }
 }

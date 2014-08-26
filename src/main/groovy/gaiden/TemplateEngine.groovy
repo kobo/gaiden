@@ -18,6 +18,9 @@ package gaiden
 
 import groovy.text.SimpleTemplateEngine
 import groovy.text.Template
+import groovy.transform.CompileStatic
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
 /**
  * Substitutes variables in a template source text.
@@ -25,18 +28,14 @@ import groovy.text.Template
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@Component
+@CompileStatic
 class TemplateEngine {
 
-    private Template template
+    private Map<String, Template> templateCache = [:]
 
-    /**
-     * Creates a new {@link TemplateEngine} instance by the given template text and the base binding variables.
-     *
-     * @param templateText a template text
-     */
-    TemplateEngine(String templateText) {
-        template = new SimpleTemplateEngine().createTemplate(templateText)
-    }
+    @Autowired
+    GaidenConfig gaidenConfig
 
     /**
      * Produces a result from a template.
@@ -44,8 +43,17 @@ class TemplateEngine {
      * @param binding variables of placeholder, this variables overwrite a base binding variables
      * @return a result produced
      */
-    String make(Map binding) {
+    String make(String templateName, Map binding) {
+        def template = getTemplate(templateName)
         template.make(binding)
     }
 
+    private Template getTemplate(String layoutName) {
+        if (templateCache.containsKey(layoutName)) {
+            return templateCache[layoutName]
+        }
+        def template = new SimpleTemplateEngine().createTemplate(gaidenConfig.getLayoutFile(layoutName).text)
+        templateCache[layoutName] = template
+        return template
+    }
 }

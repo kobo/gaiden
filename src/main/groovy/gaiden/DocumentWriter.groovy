@@ -16,8 +16,17 @@
 
 package gaiden
 
-import org.apache.commons.io.FileUtils
+import gaiden.markdown.GaidenMarkdownProcessor
+import gaiden.message.MessageSource
+import gaiden.util.PathUtils
+import groovy.transform.CompileStatic
+import net.htmlparser.jericho.Source
+import net.htmlparser.jericho.SourceFormatter
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
+import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  * A document writer writes a {@link Document} to files.
@@ -25,20 +34,21 @@ import org.apache.commons.io.FileUtils
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@Component
+@CompileStatic
 class DocumentWriter {
 
-    private File outputDirectory
-    private File staticDirectory
-    private String outputEncoding
+    @Autowired
+    GaidenConfig gaidenConfig
 
-    DocumentWriter(
-        File staticDirectory = Holders.config.staticDirectory,
-        File outputDirectory = Holders.config.outputDirectory,
-        String outputEncoding = Holders.config.outputEncoding) {
-        this.staticDirectory = staticDirectory
-        this.outputDirectory = outputDirectory
-        this.outputEncoding = outputEncoding
-    }
+    @Autowired
+    TemplateEngine templateEngine
+
+    @Autowired
+    GaidenMarkdownProcessor markdownProcessor
+
+    @Autowired
+    MessageSource messageSource
 
     /**
      * Writes a {@link Document} to file.
@@ -46,42 +56,64 @@ class DocumentWriter {
      * @param document the document to be written
      */
     void write(Document document) {
-        if (!outputDirectory.exists()) {
-            assert outputDirectory.mkdirs()
+        if (Files.notExists(gaidenConfig.outputDirectory)) {
+            Files.createDirectories(gaidenConfig.outputDirectory)
         }
 
-        writePages(document.pages)
-        writeToc(document.toc)
-
-        copyStaticFiles()
-
-        println "Built document at ${outputDirectory.canonicalPath}"
+        writePages(document)
+        copyAssets()
     }
 
-    private void writePages(List<Page> pages) {
-        pages.each { Page page ->
-            writeToFile(page)
+    private void writePages(Document document) {
+        document.pages.each { Page page ->
+            writePage(page, document)
         }
     }
 
-    private void writeToc(Toc toc) {
-        writeToFile(toc)
-    }
-
-    void writeToFile(data) {
-        if (!data) {
-            return
+    private void writePage(Page page, Document document) {
+        if (Files.notExists(page.outputPath.parent)) {
+            Files.createDirectories(page.outputPath.parent)
         }
 
-        def file = new File(outputDirectory, data.path as String)
-        if (!file.parentFile.exists()) {
-            assert file.parentFile.mkdirs()
+        def binding = new BindingBuilder()
+            .setGaidenConfig(gaidenConfig)
+            .setMessageSource(messageSource)
+            .setMarkdownProcessor(markdownProcessor)
+            .setPage(page)
+            .setDocument(document)
+            .setContent(markdownProcessor.convertToHtml(page, document))
+            .build()
+
+        def content = templateEngine.make(page.metadata.layout as String, binding)
+        def formattedContent = format(content)
+        def filteredContent = gaidenConfig.filters.inject(formattedContent) { String text, Filter filter ->
+            filter.doAfterTemplate(text)
+        } as String
+        Files.write(page.outputPath, filteredContent.getBytes(gaidenConfig.outputEncoding))
+    }
+
+    private String format(String content) {
+        if (!gaidenConfig.format) {
+            return content
         }
-        file.write(data.content as String, outputEncoding)
+        def source = new Source(content)
+        def writer = new StringWriter()
+        new SourceFormatter(source).setIndentString("  ").writeTo(writer)
+        return writer.toString()
     }
 
-    private void copyStaticFiles() {
-        FileUtils.copyDirectory(staticDirectory, outputDirectory)
+    private void copyAssets() {
+        PathUtils.copyFiles(gaidenConfig.applicationAssetsDirectory, gaidenConfig.outputDirectory)
+        PathUtils.copyFiles(gaidenConfig.projectAssetsDirectory, gaidenConfig.outputDirectory)
+        PathUtils.eachFileRecurse(gaidenConfig.sourceDirectory, [gaidenConfig.outputDirectory, gaidenConfig.projectThemesDirectory]) { Path src ->
+            if (isAsset(src)) {
+                def dest = gaidenConfig.outputDirectory.resolve(gaidenConfig.sourceDirectory.relativize(src))
+                PathUtils.copyFile(src, dest)
+            }
+        }
     }
 
+    private boolean isAsset(Path path) {
+        PathUtils.getExtension(path)?.toLowerCase() in gaidenConfig.assetTypes
+    }
 }

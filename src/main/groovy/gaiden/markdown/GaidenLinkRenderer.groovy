@@ -16,14 +16,22 @@
 
 package gaiden.markdown
 
-import gaiden.Holders
-import gaiden.PageReference
-import gaiden.PageSource
-import gaiden.context.PageBuildContext
-import gaiden.util.FileUtils
+import gaiden.Document
+import gaiden.Page
+import gaiden.SourceCollector
+import gaiden.message.MessageSource
+import gaiden.util.UrlUtils
+import groovy.transform.CompileStatic
+import org.apache.commons.io.FilenameUtils
 import org.pegdown.LinkRenderer
+import org.pegdown.ast.ExpImageNode
 import org.pegdown.ast.ExpLinkNode
+import org.pegdown.ast.GaidenExpImageNode
+import org.pegdown.ast.GaidenExpLinkNode
 import org.pegdown.ast.RefLinkNode
+import org.pegdown.ast.SpecialAttributesNode
+
+import java.nio.file.Files
 
 import static org.pegdown.FastEncoder.*
 
@@ -33,21 +41,29 @@ import static org.pegdown.FastEncoder.*
  * @author Kazuki YAMAMOTO
  * @author Hideki IGARASHI
  */
+@CompileStatic
 class GaidenLinkRenderer extends LinkRenderer {
 
-    private PageBuildContext context
-    private PageSource pageSource
-    private File pagesDirectory
-
-    GaidenLinkRenderer(PageBuildContext context, PageSource pageSource, File pagesDirectory = Holders.config.pagesDirectory) {
-        this.context = context
-        this.pageSource = pageSource
-        this.pagesDirectory = pagesDirectory
-    }
+    Page page
+    Document document
+    MessageSource messageSource
 
     @Override
     LinkRenderer.Rendering render(ExpLinkNode node, String text) {
-        this.render(node.url, node.title, text)
+        def rendering = this.render(node.url, node.title, text)
+        if (node instanceof GaidenExpLinkNode) {
+            withSpecialAttributes(rendering, node.specialAttributesNode)
+        }
+        rendering
+    }
+
+    @Override
+    LinkRenderer.Rendering render(ExpImageNode node, String text) {
+        def rendering = super.render(node, text)
+        if (node instanceof GaidenExpImageNode) {
+            withSpecialAttributes(rendering, node.specialAttributesNode)
+        }
+        rendering
     }
 
     @Override
@@ -55,36 +71,41 @@ class GaidenLinkRenderer extends LinkRenderer {
         this.render(url, title, text)
     }
 
-    protected LinkRenderer.Rendering render(String url, String title, String text) {
-        def pageRef = new PageReference(url)
-
-        if (pageRef.isUrl() || !pageRef.isPageSourceExtension()) {
-            return createRendering(url, title, text)
+    protected void withSpecialAttributes(LinkRenderer.Rendering rendering, SpecialAttributesNode specialAttributesNode) {
+        if (specialAttributesNode.id) {
+            rendering.withAttribute("id", specialAttributesNode.id)
         }
-
-        def targetPageSource = findPageSource(pageRef)
-        if (!targetPageSource) {
-            System.err.println("WARNING: " + Holders.getMessage("output.page.reference.not.exists.message", [url, pageSource.path]))
-            return createRendering(url, title, text)
+        if (specialAttributesNode.classes) {
+            rendering.withAttribute("class", specialAttributesNode.classes.join(" "))
         }
-
-        def relativeUrl = FileUtils.getRelativePathForFileToFile(pageSource.outputPath, targetPageSource.outputPath)
-        return createRendering(relativeUrl + pageRef.fragment, title, text)
     }
 
-    private PageSource findPageSource(PageReference pageRef) {
-        if (pageRef.isAbsolutePath()) {
-            def pageSourceParentDirectory = new File(pagesDirectory, pageSource.path).parentFile
-            def fullPathPageRef = pageRef.toFullPathPageReference(pagesDirectory, pageSourceParentDirectory)
-            context.documentSource.findPageSource(fullPathPageRef)
-        } else {
-            context.documentSource.findPageSource(pageRef)
+    protected LinkRenderer.Rendering render(String url, String title, String text) {
+        if (UrlUtils.isUrl(url)) {
+            return createRendering(url, title, text)
         }
+
+        def parts = url.split("#")
+        def path = parts[0]
+        if (!(FilenameUtils.getExtension(path) in SourceCollector.PAGE_SOURCE_EXTENSIONS)) {
+            return createRendering(url, title, text)
+        }
+
+        def filePath = page.source.path.parent.resolve(path)
+        if (Files.notExists(filePath)) {
+            System.err.println("WARNING: " + messageSource.getMessage("output.page.reference.not.exists.message", [url, page.source.path]))
+            return createRendering(url, title, text)
+        }
+
+        def destPage = document.pages.find {
+            Files.isSameFile(it.source.path, filePath)
+        }
+
+        return createRendering("${page.relativize(destPage)}${parts.size() > 1 ? "#${parts[1]}" : ""}", title, text)
     }
 
     private LinkRenderer.Rendering createRendering(String url, String title, String text) {
         LinkRenderer.Rendering rendering = new LinkRenderer.Rendering(url, text)
         return title ? rendering.withAttribute("title", encode(title)) : rendering
     }
-
 }

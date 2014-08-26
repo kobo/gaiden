@@ -1,0 +1,173 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Gaiden</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/prettify.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/my.css">
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="header">
+        <i class="fa fa-bars sidebar-toggle"></i>
+        <span class="title"><a href="../home.html">Gaiden</a></span>
+      </div>
+      <div class="sidebar">
+        <ul>
+          <li class="numbered"><a href="../index.html" data-alt-hash="test"><span class="number">1.</span>Test</a></li>
+          <li class="numbered">
+            <a href="../chapter2/index.html" data-alt-hash="chapter-2"><span class="number">2.</span>Chapter 2</a>
+            <ul>
+              <li class="numbered">
+                <a href="../chapter2/section1.html" data-alt-hash="section-21"><span class="number">2.1.</span>section 2.1</a>
+                <ul>
+                  <li class="numbered"><a href="../chapter2/section1.html#section-211"><span class="number">2.1.1.</span>section 2.1.1</a></li>
+                  <li class="numbered"><a href="../chapter2/section1.html#secion-212"><span class="number">2.1.2.</span>section 2.1.2</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li class="numbered">
+            <a href="../chapter3/index.html" data-alt-hash="chapter-3"><span class="number">3.</span>Chapter 3</a>
+            <ul>
+              <li class="numbered">
+                <a href="../chapter3/section1.html" data-alt-hash="section-31"><span class="number">3.1.</span>section 3.1</a>
+                <ul>
+                  <li class="numbered"><a href="../chapter3/section1.html#section-311"><span class="number">3.1.1.</span>section 3.1.1</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li class="unnumbered">
+            <a href="../unnumbered.html" data-alt-hash="unnumbered-page">Unnumbered Page</a>
+            <ul>
+              <li class="unnumbered"><a href="../unnumbered.html#sub-header">Sub Header</a></li>
+            </ul>
+          </li>
+          <li class="numbered"><a href="../specified-document-toc-depth.html" data-alt-hash="specified-document-toc-depth-path"><span class="number">4.</span>Specified Document Toc Depth Path</a></li>
+          <li class="numbered">
+            <a href="../specified-page-toc-depth.html" data-alt-hash="specified-page-toc-depth-path"><span class="number">5.</span>Specified Page Toc Depth Path</a>
+            <ul>
+              <li class="numbered"><a href="../specified-page-toc-depth.html#this-header-is-excluded-from-page-table-of-contents"><span class="number">5.1.</span>This header is excluded from Page Table of Contents</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="content">
+        <div class="content-nav">
+        </div>
+        <div class="page-toc">
+          <ul>
+            <li class="unnumbered">
+              <a href="#markdown-inside-code-blocks">Markdown inside code blocks</a>
+              <ul>
+                <li class="unnumbered"><a href="#more-complicated">More complicated</a></li>
+                <li class="unnumbered"><a href="#with-indent">With indent</a></li>
+                <li class="unnumbered"><a href="#code-block-with-rogue-divs-in-markdown-code-span-and-block">Code block with rogue &lt;/div&gt;s in Markdown code span and block</a></li>
+                <li class="unnumbered"><a href="#no-code-block-in-markdown-span-mode">No code block in markdown span mode</a></li>
+                <li class="unnumbered"><a href="#preserving-attributes-and-tags-on-more-than-one-line">Preserving attributes and tags on more than one line:</a></li>
+                <li class="unnumbered"><a href="#header-confusion-bug">Header confusion bug</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <div class="main-content">
+          <h1 id="markdown-inside-code-blocks">Markdown inside code blocks</h1>
+          <div>
+            <p>foo</p>
+          </div>
+          <div>
+            <p>foo</p>
+          </div>
+          <div>
+            <p>foo</p>
+          </div>
+          <table>
+            <tr>
+              <td>test <em>emphasis</em> (span)</td>
+            </tr>
+          </table>
+          <table>
+            <tr>
+              <td>test <em>emphasis</em> (span)</td>
+            </tr>
+          </table>
+          <table>
+            <tr>
+              <td>
+                <p>test <em>emphasis</em> (block)</p>
+              </td>
+            </tr>
+          </table>
+          <h2 id="more-complicated">More complicated</h2>
+          <table>
+            <tr>
+              <td>* this is <em>not</em> a list item</td>
+            </tr>
+            <tr>
+              <td>* this is <em>not</em> a list item</td>
+            </tr>
+            <tr>
+              <td>
+                <ul>
+                  <li>this <em>is</em> a list item</li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+          <h2 id="with-indent">With indent</h2>
+          <div>
+            <div>
+              <p>This text is no code block: if it was, the closing <code>&lt;div&gt;</code> would be too and the HTML block would be invalid.</p>
+              <p>Markdown content in HTML blocks is assumed to be indented the same as the block opening tag.</p>
+              <p><strong>This should be the third paragraph after the header.</strong></p>
+            </div>
+          </div>
+          <h2 id="code-block-with-rogue-divs-in-markdown-code-span-and-block">Code block with rogue <code>&lt;/div&gt;</code>s in Markdown code span and block</h2>
+          <div>
+            <div>
+              <p>This is a code block however:</p>
+              <pre><code>&lt;/div&gt;
+</code></pre>
+              <p>Funny isn&rsquo;t it? Here is a code span: <code>&lt;/div&gt;</code>.</p>
+            </div>
+          </div>
+          <div>
+            <div>
+              <ul>
+                <li>List item, not a code block</li>
+              </ul>
+              <p>Some text</p>
+              <pre><code>This is a code block.
+</code></pre>
+            </div>
+          </div>
+          <h2 id="no-code-block-in-markdown-span-mode">No code block in markdown span mode</h2>
+          <p>This is not a code block since Markdown parse paragraph content as span. Code spans like <code>&lt;/p&gt;</code> are allowed though.</p>
+          <p><em>Hello</em> <em>world</em></p>
+          <h2 id="preserving-attributes-and-tags-on-more-than-one-line">Preserving attributes and tags on more than one line:</h2>
+          <p class="test"
+            id="12">Some <em>span</em> content.</p>
+          <h2 id="header-confusion-bug">Header confusion bug</h2>
+          <table class="canvas">
+            <tr>
+              <td id="main">Hello World! ============ Hello World!</td>
+            </tr>
+          </table>
+        </div>
+        <div class="footer">
+          <div class="footer-container">
+            <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../js/jquery-2.1.1.min.js"></script>
+    <script src="../js/prettify.js"></script>
+    <script src="../js/application.js"></script>
+    <script src="../js/my.js"></script>
+  </body>
+</html>

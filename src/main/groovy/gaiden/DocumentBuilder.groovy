@@ -16,8 +16,11 @@
 
 package gaiden
 
-import gaiden.context.BuildContext
-import gaiden.context.PageBuildContext
+import groovy.transform.CompileStatic
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+
+import java.nio.file.Files
 
 /**
  * A document builder builds from a document source to a document.
@@ -25,32 +28,15 @@ import gaiden.context.PageBuildContext
  * @author Hideki IGARASHI
  * @author Kazuki YAMAMOTO
  */
+@Component
+@CompileStatic
 class DocumentBuilder {
 
-    private File templateFile
-    private Map baseBinding
+    @Autowired
+    PageBuilder pageBuilder
 
-    private PageBuilder pageBuilder
-    private TocBuilder tocBuilder
-
-    private File outputDirectory
-
-    DocumentBuilder() {
-        this.templateFile = Holders.config.templateFile
-        this.outputDirectory = Holders.config.outputDirectory
-
-        def templateEngine = createTemplateEngine()
-        this.pageBuilder = new PageBuilder(templateEngine)
-        this.tocBuilder = new TocBuilder(templateEngine)
-    }
-
-    DocumentBuilder(File templateFile, PageBuilder pageBuilder, TocBuilder tocBuilder, File outputDirectory, Map baseBinding) {
-        this.templateFile = templateFile
-        this.pageBuilder = pageBuilder
-        this.tocBuilder = tocBuilder
-        this.outputDirectory = outputDirectory
-        this.baseBinding = baseBinding
-    }
+    @Autowired
+    GaidenConfig gaidenConfig
 
     /**
      * Builds a document from a document source.
@@ -58,24 +44,96 @@ class DocumentBuilder {
      * @param context the context to be built
      * @return {@link Document}'s instance
      */
-    Document build(BuildContext context) {
-        def toc = buildToc(context)
-        def pages = buildPages(new PageBuildContext(documentSource: context.documentSource, toc: toc))
-        new Document(toc: toc, pages: pages)
+    Document build(DocumentSource documentSource) {
+        def pageReferences = getPageReferences()
+        def pages = buildPages(documentSource, pageReferences)
+        def pageOrder = getPageOrder(pageReferences, pages)
+        def homePage = getHomePage(pages, pageOrder)
+        setHeaderNumbers(pageOrder)
+
+        new Document(homePage: homePage, pages: pages, pageOrder: pageOrder)
     }
 
-    private Toc buildToc(BuildContext context) {
-        tocBuilder.build(context)
+    private List<PageReference> getPageReferences() {
+        def pagesParser = new PagesParser()
+        pagesParser.sourceDirectory = gaidenConfig.sourceDirectory
+        pagesParser.parse(gaidenConfig.pagesFile.getText(gaidenConfig.inputEncoding))
     }
 
-    private List<Page> buildPages(PageBuildContext context) {
-        context.documentSource.pageSources.collect { pageSource ->
-            pageBuilder.build(context, pageSource)
+    private static List<Page> getPageOrder(List<PageReference> pageReferences, List<Page> pages) {
+        def pageOrder = []
+        pageReferences.each { PageReference pageReference ->
+            def page = pages.find { Files.isSameFile(it.source.path, pageReference.path) }
+            if (!page) {
+                // TODO warning log
+                return
+            }
+            if (pageReference.metadata.hidden) {
+                return
+            }
+            pageOrder << page
+        }
+        pageOrder
+    }
+
+    private void setHeaderNumbers(List<Page> pages) {
+        if (!gaidenConfig.numbering) {
+            return
+        }
+
+        List<Integer> currentNumbers = []
+        pages.each { Page page ->
+            if (page.metadata.numbering == false) {
+                return
+            }
+
+            page.headers.each { Header header ->
+                if (!(header.level in gaidenConfig.numberingOffset..gaidenConfig.numberingDepth)) {
+                    return
+                }
+
+                def relativeLevelFromOffset = header.level - gaidenConfig.numberingOffset + 1
+
+                if (currentNumbers.size() == relativeLevelFromOffset) {
+                    def last = currentNumbers.pop()
+                    currentNumbers.push(++last)
+                } else if (currentNumbers.size() < relativeLevelFromOffset) {
+                    (relativeLevelFromOffset - currentNumbers.size()).times {
+                        currentNumbers.push(1)
+                    }
+                } else {
+                    (currentNumbers.size() - relativeLevelFromOffset).times {
+                        currentNumbers.pop()
+                    }
+                    def last = currentNumbers.pop()
+                    currentNumbers.push(++last)
+                }
+                header.numbers = currentNumbers.collect { it }
+            }
         }
     }
 
-    private TemplateEngine createTemplateEngine() {
-        new TemplateEngine(templateFile.text)
+    private List<Page> buildPages(DocumentSource documentSource, List<PageReference> pageReferences) {
+        documentSource.pageSources.collect { PageSource pageSource ->
+            def pageReference = pageReferences.find { Files.isSameFile(it.path, pageSource.path) }
+            pageBuilder.build(pageSource, pageReference)
+        }
     }
 
+    private Page getHomePage(List<Page> pages, List<Page> pageOrder) {
+        if (gaidenConfig.homePage) {
+            def found = pages.find { Page page ->
+                Files.isSameFile(page.source.path, gaidenConfig.homePage)
+            }
+            if (found) {
+                return found
+            }
+        }
+
+        if (pageOrder) {
+            return pageOrder.first()
+        }
+
+        return null
+    }
 }
