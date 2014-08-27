@@ -48,6 +48,7 @@ class GaidenConfig {
     static final String DEFAULT_PROJECT_TEMPLATE_DIRECTORY = "template"
     static final String DEFAULT_LAYOUTS_DIRECTORY = "layouts"
     static final String DEFAULT_ASSETS_DIRECTORY = "assets"
+    static final String DEFAULT_WRAPPER_DIRECTORY = "wrapper"
 
     static final String DEFAULT_THEME = "default"
     static final String DEFAULT_LAYOUT = "default"
@@ -90,6 +91,8 @@ class GaidenConfig {
     Path applicationThemesDirectory = applicationDirectory.resolve(DEFAULT_THEMES_DIRECTORY)
 
     Path projectThemesDirectory = defaultProjectDirectory.resolve(DEFAULT_THEMES_DIRECTORY)
+
+    Path applicationWrapperDirectory = applicationDirectory.resolve(DEFAULT_WRAPPER_DIRECTORY)
 
     Path getApplicationLayoutsDirectory() {
         applicationThemesDirectory.resolve(theme).resolve(DEFAULT_LAYOUTS_DIRECTORY)
@@ -168,10 +171,6 @@ class GaidenConfig {
 
     void setPagesFilePath(String pagesFilePath) {
         pagesFile = projectDirectory.resolve(pagesFilePath)
-    }
-
-    void setApplicationThemesDirectoryPath(String applicationThemesDirectoryPath) {
-        applicationThemesDirectory = applicationDirectory.resolve(applicationThemesDirectoryPath)
     }
 
     void setProjectThemesDirectoryPath(String projectThemesDirectoryPath) {

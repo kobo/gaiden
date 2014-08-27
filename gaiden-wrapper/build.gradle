@@ -1,0 +1,26 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+applicationName = 'gaidenw'
+mainClassName = 'gaiden.GaidenWrapper'
+jar.archiveName = "gaiden-wrapper.jar"
+
+startScripts {
+    doLast {
+        unixScript.text = unixScript.text
+            .replace('"`dirname \\"$PRG\\"`/.."', '"`dirname \\"$PRG\\"`"')
+            .replace('$APP_HOME/lib', '$APP_HOME/wrapper')
+            .replace('$GAIDENW_OPTS', '$GAIDENW_OPTS -Dapp.home=$APP_HOME')
+        windowsScript.text = windowsScript.text
+            .replace('APP_HOME=%DIRNAME%..', 'APP_HOME=%DIRNAME%')
+            .replace('%APP_HOME%\\lib', '%APP_HOME%\\wrapper')
+            .replace('%GAIDENW_OPTS%', '%GAIDENW_OPTS% -Dapp.home=%APP_HOME%')
+    }
+}
+
+processResources {
+    filter ReplaceTokens, tokens: [
+        revision   : repo.head().id,
+        version    : version,
+        buildDate  : new Date().format("yyyy-MM-dd HH:mm:ss.SSSZ"),
+    ]
+}
