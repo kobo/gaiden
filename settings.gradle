@@ -1,2 +1,2 @@
 include "gaiden-core"
-
+include "gaiden-wrapper"

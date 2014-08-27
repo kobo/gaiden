@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors
+ * Copyright 2014. the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package gaiden.command
 
-import gaiden.exception.GaidenException
 import gaiden.message.MessageSource
 import gaiden.util.PathUtils
 import groovy.io.FileType
@@ -26,42 +25,25 @@ import org.springframework.stereotype.Component
 
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.attribute.PosixFilePermission
 import java.nio.file.attribute.PosixFilePermissions
 
-/**
- * The 'create-project' command.
- *
- * @author Hideki IGARASHI
- * @author Kazuki YAMAMOTO
- */
 @Component
 @CompileStatic
-class CreateProjectCommand extends AbstractCommand {
+class WrapperCommand extends AbstractCommand {
 
-    final String name = "create-project"
+    final String name = "wrapper"
 
-    final boolean onlyGaidenProject = false
+    final boolean onlyGaidenProject = true
 
     @Autowired
     MessageSource messageSource
 
     @Override
     void execute(List<String> arguments, OptionAccessor optionAccessor) {
-        if (arguments.empty) {
-            throw new GaidenException("command.create.project.name.required.error")
-        }
-
-        def projectDirectory = gaidenConfig.projectDirectory.resolve(arguments.first())
-        if (Files.exists(projectDirectory)) {
-            throw new GaidenException("command.create.project.already.exists.error", [projectDirectory])
-        }
-
-        PathUtils.copyFiles(gaidenConfig.initialProjectTemplateDirectory, projectDirectory)
-        PathUtils.copyFiles(gaidenConfig.applicationWrapperDirectory, projectDirectory)
-        projectDirectory.eachFileMatch(FileType.FILES, ~/gaidenw(.bat)?/) { Path gaidenw ->
+        PathUtils.copyFiles(gaidenConfig.applicationWrapperDirectory, gaidenConfig.projectDirectory)
+        gaidenConfig.projectDirectory.eachFileMatch(FileType.FILES, ~/gaidenw(.bat)?/) { Path gaidenw ->
             Files.setPosixFilePermissions(gaidenw, PosixFilePermissions.fromString("rwxr-xr-x"))
         }
-        println messageSource.getMessage("command.create.project.success.message", [projectDirectory])
+        println messageSource.getMessage("command.wrapper.success.message")
     }
 }

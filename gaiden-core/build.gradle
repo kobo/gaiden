@@ -37,9 +37,5 @@ processResources {
         revision: repo.head().id,
         version: version,
         buildDate: new Date().format("yyyy-MM-dd HH:mm:ss.SSSZ"),
-        username: System.properties["user.name"],
-        javaVersion: System.properties["java.version"],
-        osName: System.properties["os.name"],
-        osVersion: System.properties["os.version"]
     ]
 }
