@@ -144,7 +144,7 @@ class GaidenConfig {
 
     boolean numbering = true
 
-    int numberingOffset = 1
+    int numberingOffset = 0
 
     int numberingDepth = 4
 

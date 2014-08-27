@@ -88,11 +88,11 @@ class DocumentBuilder {
             }
 
             page.headers.each { Header header ->
-                if (!(header.level in gaidenConfig.numberingOffset..gaidenConfig.numberingDepth)) {
+                if (!(gaidenConfig.numberingOffset < header.level && header.level <= gaidenConfig.numberingDepth)) {
                     return
                 }
 
-                def relativeLevelFromOffset = header.level - gaidenConfig.numberingOffset + 1
+                def relativeLevelFromOffset = header.level - gaidenConfig.numberingOffset
 
                 if (currentNumbers.size() == relativeLevelFromOffset) {
                     def last = currentNumbers.pop()
