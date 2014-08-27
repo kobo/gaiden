@@ -34,18 +34,40 @@ body {
 }
 
 h1, h2 {
-    margin-top: 1.5em;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 h3, h4, h5, h6 {
-    margin-top: 1.5em;
-    margin-bottom: 15px;
+    margin-bottom: 18px;
 }
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: 300;
-    margin-left: -5px;
+    margin-top: 1.5em;
+}
+
+h1, .h1 {
+  font-size: 36px;
+}
+
+h2, .h2 {
+  font-size: 34px;
+}
+
+h3, .h3 {
+  font-size: 30px;
+}
+
+h4, .h4 {
+  font-size: 26px;
+}
+
+h5, .h5 {
+  font-size: 22px;
+}
+
+h6, .h6 {
+  font-size: 18px;
 }
 
 p {
@@ -104,7 +126,16 @@ dd {
 }
 
 li {
-  margin-top: 3px;
+    margin-top: 3px;
+}
+
+a {
+    border-bottom: 1px solid transparent; /* to avoid a chattering when hovering */
+}
+
+a:hover {
+    text-decoration: none;
+    border-bottom: 1px solid #aaa;
 }
 
 .prettyprint {
@@ -172,26 +203,21 @@ li {
     height: 100%;
     overflow: auto;
     border-right: 1px solid #ccc;
-    padding: 1em .5em 1.5em .5em;
+    padding: 1em .5em 1.5em 1.5em;
     background: #eee;
     z-index: 88;
 }
 
-.sidebar > ul {
-    margin: 0 20px 50px 0;
-}
-
-.sidebar ul, .sidebar li {
-    list-style-type: none;
-}
-
 .sidebar ul {
+    list-style-type: none;
     padding: 0;
-    margin-left: -.5em;
 }
 
 .sidebar li {
-    margin: 3px 0 0 25px;
+    list-style-type: none;
+    margin: 3px 0 0 0px;
+    padding-left: 1.5em;
+    text-indent: -1.5em;
 }
 
 .sidebar a {
@@ -233,7 +259,6 @@ li {
 
 .content-nav .prev-page {
     float: left;
-    width: 50%;
     font-size: 110%;
 }
 
@@ -243,7 +268,6 @@ li {
 
 .content-nav .next-page {
     float: right;
-    width: 50%;
     text-align: right;
     font-size: 110%;
 }
@@ -279,13 +303,21 @@ li {
     left: 0;
 }
 
+.footer .footer-container {
+    border-top: 1px solid #eee;
+    margin: 0 50px;
+}
+
 .footer-sidebar-visible {
     padding: 0 0 0 250px;
 }
 
+.footer .version {
+    float: left;
+    padding: 10px 0;
+}
+
 .footer .credit {
-    border-top: 1px solid #eee;
-    margin: 0 50px;
     padding: 10px 0;
 }
 
