@@ -124,3 +124,12 @@ And
         1. This is a pen.
         1. This is a pen.
 
+
+## Image
+
+This is an image.
+
+![image](groovy-logo.png "This is an image")
+
+Can you look at it?
+

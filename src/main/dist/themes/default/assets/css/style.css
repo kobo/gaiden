@@ -105,6 +105,7 @@ table th {
 img {
     max-width: 100%;
     height: auto;
+    margin: 2em 0;
 }
 
 pre {
@@ -186,6 +187,7 @@ a:hover {
 
 .header .title a:hover {
     text-decoration: none;
+    border-bottom: 1px solid transparent;
 }
 
 .sidebar-toggle + .title {
