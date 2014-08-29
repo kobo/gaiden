@@ -61,7 +61,7 @@ class GaidenToHtmlSerializer extends ToHtmlSerializer {
         def gaidenHeaderNode = headerNode as GaidenHeaderNode
         def header = page.headers.find { it.headerNode == gaidenHeaderNode }
         def isLessThanOrEqualH6 = header.level in 1..6
-        def tag = isLessThanOrEqualH6 ? "h${header.level}".toString() : "div"
+        def tag = isLessThanOrEqualH6 ? "h${header.level}".toString() : "h6"
 
         printer.print('<').print(tag)
         printAttributes([id: header.hash])
