@@ -128,7 +128,9 @@ public class GaidenWrapper {
         try {
             Path wrapperProperties = Paths.get(System.getProperty("app.home"), "wrapper/gaiden-wrapper.properties");
             if (Files.exists(wrapperProperties)) {
-                gaidenWrapperProperties.load(Files.newInputStream(wrapperProperties));
+                try (InputStream in = Files.newInputStream(wrapperProperties)) {
+                    gaidenWrapperProperties.load(in);
+                }
                 return;
             }
 
