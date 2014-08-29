@@ -17,6 +17,8 @@ dependencies {
     compile 'ch.qos.logback:logback-classic:1.1.2'
     compile 'org.slf4j:jcl-over-slf4j:1.7.7'
     compile 'net.htmlparser.jericho:jericho-html:3.3'
+    compile 'io.vertx:vertx-platform:2.1.2'
+    compile 'io.vertx:lang-groovy:2.1.0-final'
 
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
 

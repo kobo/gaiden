@@ -209,4 +209,8 @@ class GaidenConfig {
             return configObject.get(name)
         }
     }
+
+    void add(String key, Object value) {
+        configObject.put(key, value)
+    }
 }

@@ -57,5 +57,18 @@
     <script src="${resource('/js/prettify.js')}"></script>
     <script src="${resource('/js/application.js')}"></script>
     <script src="${resource('/js/my.js')}"></script>
+    <% if (config.watch) { %>
+    <script>
+      var socket;
+      if (window.WebSocket) {
+        socket = new WebSocket("ws://localhost:${config.serverPort}/");
+        socket.onmessage = function (event) {
+          location.reload();
+        };
+      } else {
+        console.log("Your browser does not support Websockets. (Use Chrome)");
+      }
+    </script>
+    <% } %>
   </body>
 </html>
