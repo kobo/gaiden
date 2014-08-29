@@ -30,6 +30,6 @@ class VersionCommandSpec extends FunctionalSpec {
             command.execute()
 
         then:
-            1 * printStream.println({ it =~ /Version:/ })
+            1 * printStream.println({ it =~ /Version/ })
     }
 }

@@ -43,13 +43,13 @@ class VersionCommand extends AbstractCommand {
   __/ |
  |___/
 
-Version:    ${properties.version}
-Revision:   ${properties.revision}
-Build date: ${properties.buildDate}
+Version    : ${properties.version}
+Revision   : ${properties.revision}
+Build date : ${properties.buildDate}
 
-OS:         ${System.properties["os.name"]} ${System.properties["os.version"]}
-JVM:        ${System.properties["java.version"]}
-Groovy:     ${GroovySystem.getVersion()}\
+OS         : ${System.properties["os.name"]} ${System.properties["os.version"]}
+JVM        : ${System.properties["java.version"]}
+Groovy     : ${GroovySystem.getVersion()}\
 """
     }
 }
