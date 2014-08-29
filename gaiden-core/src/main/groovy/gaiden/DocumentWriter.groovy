@@ -66,8 +66,12 @@ class DocumentWriter {
 
     private void writePages(Document document) {
         document.pages.each { Page page ->
+            def message = "\r>> ${gaidenConfig.sourceDirectory.relativize(page.source.path)} => ${gaidenConfig.outputDirectory.relativize(page.outputPath)}: "
+            print message
             writePage(page, document)
+            print "\r${' ' * message.size()}"
         }
+        print "\r"
     }
 
     private void writePage(Page page, Document document) {
