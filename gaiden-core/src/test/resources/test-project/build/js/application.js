@@ -26,7 +26,6 @@ $(function () {
         var hideSidebar = function () {
             $sidebar.hide();
             $content.removeClass('content-sidebar-visible');
-            $footer.removeClass('footer-sidebar-visible');
         }
         var showSidebar = function () {
             if (location.search.indexOf('sidebar=no') >= 0) {
@@ -35,7 +34,6 @@ $(function () {
             }
             $sidebar.show();
             $content.addClass('content-sidebar-visible');
-            $footer.addClass('footer-sidebar-visible');
         }
         var goUrlWithNoSidebarParam = function (anchor) {
             location.href = anchor.href.replace(anchor.hash, '') + "?sidebar=no" + anchor.hash;
@@ -99,22 +97,9 @@ $(function () {
                 }
             });
 
-            // If no active link exists, try to match with ignoring a hash.
-            if (!$(".sidebar a.active").length) {
-                $(".sidebar a").each(function () {
-                    if (this.href === location.href.replace(/#.*$/, '')) {
-                        $(this).addClass("active");
-                    }
-                });
-            }
-
-            // If no active link exists, try to match to index.html
-            if (!$(".sidebar a.active").length) {
-                $(".sidebar a").each(function () {
-                    if (this.href === location.href.replace(/[^/]*(#.*)?$/, 'index.html')) {
-                        $(this).addClass("active");
-                    }
-                });
+            // Fixing offset
+            if ($(".sidebar a.active").length) {
+                $(".sidebar").scrollTop($(".sidebar .active").position().top - $(".sidebar li:first").position().top + 10); // 10 means an offset to adjust a position
             }
         }
 
@@ -126,12 +111,12 @@ $(function () {
             // Since here, for scrolling within a current page
 
             // Find a target link
-            var target = null;
+            var $target = null;
             if (this.hash) {
                 var $targetById = $(this.hash);
                 var $targetByAnchor = $('a[name="' + this.hash.slice(1) + '"]');
-                var target = $targetById.length ? $targetById : ($targetByAnchor.length ? $targetByAnchor : false);
-                if (!target) {
+                $target = $targetById.length ? $targetById : ($targetByAnchor.length ? $targetByAnchor : false);
+                if (!$target) {
                     return false;
                 }
             }
@@ -140,16 +125,15 @@ $(function () {
             location.hash = this.hash;
             activateLinkOfSidebar();
 
-            if (target) {
+            if ($target) {
                 // Fixing offset
                 // The duration of animate() requires more than 1.
                 // If not, it cannot be work in case of a direct access.
                 var headerOffset = $(".header").height() + 5;
-                $('html, body').animate({ scrollTop: target.offset().top - headerOffset }, 1);
+                $('html, body').animate({ scrollTop: $target.offset().top - headerOffset }, 1);
 
                 // Blinking the target element
-                target.fadeTo('fast', 0.5).fadeTo('slow', 1.0)
-                      .fadeTo('fast', 0.5).fadeTo('slow', 1.0);
+                $target.fadeTo('fast', 0.5).fadeTo('slow', 1.0).fadeTo('fast', 0.5).fadeTo('slow', 1.0);
             }
             return false;
         });
