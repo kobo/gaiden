@@ -246,50 +246,68 @@ a:hover {
  * Content
  */
 .content {
-    padding: 70px 60px 20px 60px;
+    position: relative;
+    min-height: 100%;
+    padding: 0 60px;
+}
+
+.content .content-container {
+    position: relative;
+    min-height: 100%;
+    padding: 130px 0 110px 0;
 }
 
 .content-sidebar-visible {
-    margin: 0 0 0 250px;
+    margin-left: 250px;
 }
 
 .content-nav {
     width: 100%;
     overflow: auto;
-    margin-bottom: 3em;
 }
 
 .content-nav .prev-page {
     float: left;
-    font-size: 110%;
 }
 
 .content-nav .prev-page .fa {
-    margin: 0 8px 0 0;
+    margin-right: 8px;
 }
 
 .content-nav .next-page {
     float: right;
-    text-align: right;
-    font-size: 110%;
 }
 
 .content-nav .next-page .fa {
-    margin: 0 0 0 8px;
+    margin-left: 8px;
 }
 
-.main-content {
-    padding: 0 0 50px 0;
+.content-nav-top {
+    position: absolute;
+    top: 65px;
 }
 
-.main-content > h1:first-child {
+.content-nav-bottom {
+    position: absolute;
+    bottom: 55px;
+}
+
+.main-content > h1:first-child,
+.main-content > h2:first-child,
+.main-content > h3:first-child,
+.main-content > h4:first-child,
+.main-content > h5:first-child,
+.main-content > h6:first-child {
     margin-top: 0;
 }
 
 @media screen and (max-width: 768px) {
     .content {
-        margin: 0;
-        padding: 70px 30px 20px 30px;
+        padding: 0 30px;
+    }
+
+    .content-sidebar-visible {
+        margin-left: 0;
     }
 }
 
@@ -297,45 +315,19 @@ a:hover {
  * footer
  */
 .footer {
-    text-align: right;
     width: 100%;
-    height: 50px;
     position: absolute;
     bottom: 0;
-    left: 0;
-}
-
-.footer .footer-container {
     border-top: 1px solid #eee;
-    margin: 0 50px;
-}
-
-.footer-sidebar-visible {
-    padding: 0 0 0 250px;
+    padding-top: 10px;
 }
 
 .footer .version {
     float: left;
-    padding: 10px 0;
 }
 
 .footer .credit {
-    padding: 10px 0;
-}
-
-@media screen and (max-width: 768px) {
-    .footer {
-        padding: 0;
-    }
-
-    .footer .credit {
-        margin: 0 30px;
-        padding: 10px 0;
-    }
-
-    .footer-sidebar-visible {
-        padding: 0;
-    }
+    float: right;
 }
 
 /*
@@ -349,7 +341,7 @@ a:hover {
     border-radius: 3px;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
-    margin: .5em 1.5em;
+    margin: 0 0 .5em 1.5em;
 }
 
 .page-toc ul {

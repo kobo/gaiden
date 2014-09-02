@@ -26,7 +26,6 @@ $(function () {
         var hideSidebar = function () {
             $sidebar.hide();
             $content.removeClass('content-sidebar-visible');
-            $footer.removeClass('footer-sidebar-visible');
         }
         var showSidebar = function () {
             if (location.search.indexOf('sidebar=no') >= 0) {
@@ -35,7 +34,6 @@ $(function () {
             }
             $sidebar.show();
             $content.addClass('content-sidebar-visible');
-            $footer.addClass('footer-sidebar-visible');
         }
         var goUrlWithNoSidebarParam = function (anchor) {
             location.href = anchor.href.replace(anchor.hash, '') + "?sidebar=no" + anchor.hash;
