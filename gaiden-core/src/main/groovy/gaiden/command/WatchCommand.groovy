@@ -5,6 +5,7 @@ import gaiden.message.MessageSource
 import gaiden.server.EmbeddedHttpServer
 import gaiden.server.FileWatcher
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -43,8 +44,10 @@ class WatchCommand extends AbstractCommand {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     private static int getLocalPort() {
-        ServerSocket socket = new ServerSocket(0)
-        socket.getLocalPort()
+        new ServerSocket(0).withCloseable { ServerSocket socket ->
+            socket.localPort
+        } as int
     }
 }
