@@ -143,10 +143,6 @@ class BindingBuilder {
         document.pageOrder.each { Page destPage ->
             def maxDepthOfPage = destPage.metadata.documentTocDepth as Integer ?: maxDepth
             destPage.headers.eachWithIndex { Header header, int index ->
-                if (header.level > maxDepthOfPage) {
-                    return
-                }
-
                 if (!levels || levels.last() < header.level) {
                     sb << "<ul>"
                     levels << header.level
@@ -168,8 +164,12 @@ class BindingBuilder {
                 def mainHref = page.relativize(destPage) + (isFirstOfPage ? "" : "#${header.hash}")
                 def altHash = isFirstOfPage && !header.hash.empty ? " data-alt-hash=\"${header.hash}\"" : ""
                 def number = header.numbers ? "<span class=\"number\">${header.number}</span>" : ""
-                def cssClass = header.numbers ? "numbered" : "unnumbered"
-                sb << "<li class=\"${cssClass}\"><a href=\"${mainHref}\"${altHash}>${number}${header.title}</a>"
+
+                def cssClasses = []
+                cssClasses << (header.numbers ? "numbered" : "unnumbered")
+                cssClasses << (header.level <= maxDepthOfPage ? "visible" : "invisible")
+
+                sb << "<li class=\"${cssClasses.join(" ")}\"><a href=\"${mainHref}\"${altHash}>${number}${header.title}</a>"
             }
         }
         levels.size().times {
@@ -190,10 +190,6 @@ class BindingBuilder {
         StringBuilder sb = new StringBuilder()
 
         page.headers.eachWithIndex { Header header, int index ->
-            if (header.level > maxDepth) {
-                return
-            }
-
             if (!levels || levels.last() < header.level) {
                 sb << "<ul>"
                 levels << header.level
@@ -213,8 +209,12 @@ class BindingBuilder {
 
             def hash = "#${header.hash}"
             def number = header.numbers ? "<span class=\"number\">${header.number}</span>" : ""
-            def cssClass = header.numbers ? "numbered" : "unnumbered"
-            sb << "<li class=\"${cssClass}\"><a href=\"${hash}\">${number}${header.title}</a>"
+
+            def cssClasses = []
+            cssClasses << (header.numbers ? "numbered" : "unnumbered")
+            cssClasses << (header.level <= maxDepth ? "visible" : "invisible")
+
+            sb << "<li class=\"${cssClasses.join(" ")}\"><a href=\"${hash}\">${number}${header.title}</a>"
         }
         levels.size().times {
             sb << "</li></ul>"

@@ -93,7 +93,7 @@ $(function () {
                 if (this.href === location.href          // perfect match
                         || this.href + '#' === location.href // the actual href has a just empty hash '#'
                         || (altHash && this.href.replace(/#.*$/, '') + "#" + altHash === location.href)) { // an alternative hash for a first head of a page
-                    $(this).addClass("active");
+                    $(this).closest(".visible").children("a").addClass("active");
                 }
             });
 

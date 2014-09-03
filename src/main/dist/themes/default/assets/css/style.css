@@ -210,6 +210,10 @@ a:hover {
     z-index: 88;
 }
 
+.sidebar .invisible {
+    display: none;
+}
+
 .sidebar ul {
     list-style-type: none;
     padding: 0;
@@ -342,6 +346,10 @@ a:hover {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     margin: 0 0 .5em 1.5em;
+}
+
+.page-toc .invisible {
+    display: none;
 }
 
 .page-toc ul {
