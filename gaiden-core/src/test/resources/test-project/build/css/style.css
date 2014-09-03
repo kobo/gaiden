@@ -139,9 +139,9 @@ a:hover {
     border-bottom: 1px solid #aaa;
 }
 
-.prettyprint {
-    background-color: #eee;
-    border: 0;
+.hljs {
+    background: none;
+    padding: 0;
 }
 
 .table-responsive {

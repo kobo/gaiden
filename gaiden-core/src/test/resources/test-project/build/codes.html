@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/prettify.css">
+    <link rel="stylesheet" href="css/highlight.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="extensions/test-extention/css/extension.css">
     <link rel="stylesheet" href="css/my.css">
@@ -89,15 +89,34 @@
           </div>
           <div class="main-content">
             <h1 id="codes">Codes</h1>
-            <pre><code>code block
+            <pre><code class="nohighlight">code block
 </code></pre>
             <pre><code class="type">code block
 </code></pre>
             <pre><code class="type">code block
 </code></pre>
-            <pre><code id="code1">code block
+            <pre><code id="code1" class="nohighlight">code block
 </code></pre>
             <pre><code id="code2" class="type">code block
+</code></pre>
+            <pre><code class="groovy">public class MarkdownInsideHtmlBlockNode extends SuperNode {
+    private String beginTag;
+    private String endTag;
+
+    public MarkdownInsideHtmlBlockNode(String beginTag, List&lt;Node&gt; children, String endTag) {
+        super(children);
+        this.beginTag = beginTag;
+        this.endTag = endTag;
+    }
+
+    public String getBeginTag() {
+        return beginTag;
+    }
+
+    public String getEndTag() {
+        return endTag;
+    }
+}
 </code></pre>
           </div>
           <div class="content-nav content-nav-bottom">
@@ -109,7 +128,7 @@
       </div>
     </div>
     <script src="js/jquery-2.1.1.min.js"></script>
-    <script src="js/prettify.js"></script>
+    <script src="js/highlight.js"></script>
     <script src="js/application.js"></script>
     <script src="extensions/test-extention/js/extension.js"></script>
     <script src="js/my.js"></script>

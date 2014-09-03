@@ -1,7 +1,6 @@
 package gaiden.markdown
 
 import groovy.transform.CompileStatic
-import org.parboiled.common.StringUtils
 import org.pegdown.DefaultVerbatimSerializer
 import org.pegdown.Printer
 import org.pegdown.ast.GaidenVerbatimNode
@@ -18,11 +17,9 @@ class GaidenVerbatimSerializer extends DefaultVerbatimSerializer {
             if (node.specialAttributesNode?.id) {
                 printAttributes(printer, [id: node.specialAttributesNode.id])
             }
-            if (node.specialAttributesNode?.classes) {
-                printAttributes(printer, [class: node.specialAttributesNode.classes.join(" ")])
-            }
-        } else if (!StringUtils.isEmpty(node.getType())) {
-            printAttributes(printer, [class: node.getType()])
+            printAttributes(printer, [class: node.specialAttributesNode?.classes?.join(" ") ?: "nohighlight"])
+        } else {
+            printAttributes(printer, [class: node.getType() ?: "nohighlight"])
         }
 
         printer.print(">")

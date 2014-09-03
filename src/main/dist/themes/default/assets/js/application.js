@@ -73,8 +73,7 @@ $(function () {
 
     // Pretty print of code
     (function () {
-        $('pre').addClass('prettyprint');
-        prettyPrint();
+        hljs.initHighlightingOnLoad();
     })();
 
     // Responsive support for <table>
