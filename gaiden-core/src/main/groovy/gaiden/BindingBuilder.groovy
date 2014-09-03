@@ -19,9 +19,12 @@ package gaiden
 import gaiden.exception.GaidenException
 import gaiden.markdown.GaidenMarkdownProcessor
 import gaiden.message.MessageSource
+import gaiden.util.PathUtils
+import groovy.io.FileType
 import groovy.transform.CompileStatic
 
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 
 import static org.apache.commons.lang3.StringEscapeUtils.*
@@ -78,17 +81,19 @@ class BindingBuilder {
      */
     Map<String, Object> build() {
         [
-            title      : escapeHtml4(gaidenConfig.title),
-            content    : content,
-            metadata   : page.metadata,
-            resource   : this.&getResource,
-            homePage   : homePage,
-            prevPage   : prevPage,
-            nextPage   : nextPage,
-            documentToc: this.&getDocumentToc,
-            pageToc    : this.&getPageToc,
-            render     : this.&render,
-            config     : gaidenConfig,
+            title           : escapeHtml4(gaidenConfig.title),
+            content         : content,
+            metadata        : page.metadata,
+            resource        : this.&getResource,
+            homePage        : homePage,
+            prevPage        : prevPage,
+            nextPage        : nextPage,
+            documentToc     : this.&getDocumentToc,
+            pageToc         : this.&getPageToc,
+            render          : this.&render,
+            config          : gaidenConfig,
+            extensionScripts: extensionScripts,
+            extensionStyles : extensionStyles,
         ]
     }
 
@@ -231,5 +236,33 @@ class BindingBuilder {
             return ""
         }
         markdownProcessor.convertToHtml(page, document)
+    }
+
+    private String getExtensionScripts() {
+        List<Path> scripts = []
+        gaidenConfig.extensions.each { Extension extension ->
+            extension.assetsDirectory.eachFileRecurse(FileType.FILES) { Path file ->
+                if (PathUtils.getExtension(file) == "js") {
+                    scripts << gaidenConfig.getExtensionAssetsOutputDirectoryOf(extension).resolve(extension.assetsDirectory.relativize(file))
+                }
+            }
+        }
+        scripts.collect { Path script ->
+            "<script src=\"${page.relativize(script)}\"></script>"
+        }.join("")
+    }
+
+    private String getExtensionStyles() {
+        List<Path> styles = []
+        gaidenConfig.extensions.each { Extension extension ->
+            extension.assetsDirectory.eachFileRecurse(FileType.FILES) { Path file ->
+                if (PathUtils.getExtension(file) == "css") {
+                    styles << gaidenConfig.getExtensionAssetsOutputDirectoryOf(extension).resolve(extension.assetsDirectory.relativize(file))
+                }
+            }
+        }
+        styles.collect { Path style ->
+            "<link rel=\"stylesheet\" href=\"${page.relativize(style)}\">"
+        }.join("")
     }
 }

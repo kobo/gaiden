@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="${resource('/css/font-awesome.min.css')}">
     <link rel="stylesheet" href="${resource('/css/prettify.css')}">
     <link rel="stylesheet" href="${resource('/css/style.css')}">
+    ${extensionStyles}
     <link rel="stylesheet" href="${resource('/css/my.css')}">
   </head>
   <body>
@@ -72,6 +73,7 @@
     <script src="${resource('/js/jquery-2.1.1.min.js')}"></script>
     <script src="${resource('/js/prettify.js')}"></script>
     <script src="${resource('/js/application.js')}"></script>
+    ${extensionScripts}
     <script src="${resource('/js/my.js')}"></script>
     <% if (config.watch) { %>
     <script>

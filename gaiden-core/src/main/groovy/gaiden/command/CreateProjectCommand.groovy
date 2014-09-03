@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component
 
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.attribute.PosixFilePermission
 import java.nio.file.attribute.PosixFilePermissions
 
 /**
@@ -57,7 +56,7 @@ class CreateProjectCommand extends AbstractCommand {
             throw new GaidenException("command.create.project.already.exists.error", [projectDirectory])
         }
 
-        PathUtils.copyFiles(gaidenConfig.initialProjectTemplateDirectory, projectDirectory)
+        PathUtils.copyFiles(gaidenConfig.applicationInitialProjectTemplateDirectory, projectDirectory)
         PathUtils.copyFiles(gaidenConfig.applicationWrapperDirectory, projectDirectory)
         projectDirectory.eachFileMatch(FileType.FILES, ~/gaidenw(.bat)?/) { Path gaidenw ->
             Files.setPosixFilePermissions(gaidenw, PosixFilePermissions.fromString("rwxr-xr-x"))
