@@ -20,13 +20,12 @@ $(function () {
         var $content = $('.content');
         var $sidebar = $('.sidebar');
         var $sidebarToggle = $('.sidebar-toggle');
-        var $footer = $('.footer');
         var $navLink = $('.content-nav a');
 
         var hideSidebar = function () {
             $sidebar.hide();
             $content.removeClass('content-sidebar-visible');
-        }
+        };
         var showSidebar = function () {
             if (location.search.indexOf('sidebar=no') >= 0) {
                 location.href = location.href.replace(/\?sidebar=no/, '');
@@ -34,10 +33,10 @@ $(function () {
             }
             $sidebar.show();
             $content.addClass('content-sidebar-visible');
-        }
+        };
         var goUrlWithNoSidebarParam = function (anchor) {
             location.href = anchor.href.replace(anchor.hash, '') + "?sidebar=no" + anchor.hash;
-        }
+        };
 
         // Toggle a sidebar
         $sidebarToggle.on('click', function (e) {
@@ -93,7 +92,7 @@ $(function () {
                 if (this.href === location.href          // perfect match
                         || this.href + '#' === location.href // the actual href has a just empty hash '#'
                         || (altHash && this.href.replace(/#.*$/, '') + "#" + altHash === location.href)) { // an alternative hash for a first head of a page
-                    $(this).addClass("active");
+                    $(this).closest(".visible").children("a").addClass("active");
                 }
             });
 
@@ -101,7 +100,7 @@ $(function () {
             if ($(".sidebar a.active").length) {
                 $(".sidebar").scrollTop($(".sidebar .active").position().top - $(".sidebar li:first").position().top + 10); // 10 means an offset to adjust a position
             }
-        }
+        };
 
         $(document).on("click", "a", function (e) {
             // In the case of going to another page
