@@ -31,7 +31,6 @@ class GaidenConfigSpec extends GaidenSpec {
             | title = "Test Title"
             | sourceDirectoryPath = "test/source"
             | outputDirectoryPath = "test/build/html"
-            | projectThemesDirectoryPath = "test/project/themes"
             | inputEncoding = "UTF-8"
             | outputEncoding = "UTF-8"
             | dynamicProperty = "dynamic"
@@ -42,7 +41,7 @@ class GaidenConfigSpec extends GaidenSpec {
             gaidenConfig.sourceDirectory
 
         when:
-            gaidenConfig.initialize(gaidenConfigFile)
+            gaidenConfig.loadConfig(gaidenConfigFile)
 
         then:
             gaidenConfig.title == "Test Title"
@@ -50,7 +49,6 @@ class GaidenConfigSpec extends GaidenSpec {
             gaidenConfig.outputDirectory == gaidenConfig.projectDirectory.resolve("test/build/html")
             gaidenConfig.inputEncoding == "UTF-8"
             gaidenConfig.outputEncoding == "UTF-8"
-            gaidenConfig.projectThemesDirectory == gaidenConfig.projectDirectory.resolve("test/project/themes")
             gaidenConfig.homePage == gaidenConfig.sourceDirectory.resolve("README.md")
             gaidenConfig.dynamicProperty == "dynamic"
             gaidenConfig.dynamic.nested == "nested"

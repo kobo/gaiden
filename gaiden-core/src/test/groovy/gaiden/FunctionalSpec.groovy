@@ -26,7 +26,6 @@ import spock.lang.AutoCleanup
 import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.Path
-import java.nio.file.Paths
 
 import static org.hamcrest.CoreMatchers.*
 import static org.junit.Assert.*
@@ -60,10 +59,7 @@ abstract class FunctionalSpec extends GaidenSpec {
 
     void setupProjectDirectory(Path projectDirectory) {
         gaidenConfig.projectDirectory = projectDirectory
-        gaidenConfig.gaidenConfigFile = projectDirectory.resolve(GaidenConfig.GAIDEN_CONFIG_FILENAME)
         gaidenConfig.sourceDirectory = projectDirectory
-        gaidenConfig.projectThemesDirectory = projectDirectory.resolve(GaidenConfig.DEFAULT_THEMES_DIRECTORY)
-        gaidenConfig.pagesFile = projectDirectory.resolve(GaidenConfig.PAGES_FILENAME)
 
         if (Files.exists(gaidenConfig.gaidenConfigFile)) {
             gaidenConfig.initialize()
