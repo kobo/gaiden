@@ -26,6 +26,7 @@ class Header {
     String hash
     List<Integer> numbers = Collections.emptyList()
     HeaderNode headerNode
+    boolean firstOnPage
 
     String getNumber() {
         if (!numbers) {

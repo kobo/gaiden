@@ -53,7 +53,8 @@ class HeaderParser extends ToHtmlSerializer {
             title: title,
             level: baseLevel + headerNode.level,
             hash: hash,
-            headerNode: headerNode
+            headerNode: headerNode,
+            firstOnPage: headers.size() == 0
         )
     }
 

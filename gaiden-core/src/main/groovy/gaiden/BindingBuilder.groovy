@@ -20,6 +20,7 @@ import gaiden.exception.GaidenException
 import gaiden.markdown.GaidenMarkdownProcessor
 import gaiden.message.MessageSource
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -133,49 +134,66 @@ class BindingBuilder {
         src.parent.relativize(dest).toString()
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     private String getDocumentToc(args) {
         def params = args instanceof Map ? args : [:]
-        def maxDepth = params["depth"] as Integer ?: gaidenConfig.documentTocDepth
+        def headers = flattenHeaders(params["depth"] as Integer ?: gaidenConfig.documentTocDepth)
 
         List<Integer> levels = []
         StringBuilder sb = new StringBuilder()
-
-        document.pageOrder.each { Page destPage ->
-            def maxDepthOfPage = destPage.metadata.documentTocDepth as Integer ?: maxDepth
-            destPage.headers.eachWithIndex { Header header, int index ->
-                if (header.level > maxDepthOfPage) {
-                    return
-                }
-
-                if (!levels || levels.last() < header.level) {
-                    sb << "<ul>"
-                    levels << header.level
-                } else if (levels.last() > header.level) {
-                    if (!levels.contains(header.level)) {
-                        throw new GaidenException("illegal.header.level", [gaidenConfig.sourceDirectory.relativize(destPage.source.path), header.title, header.level, levels.join(",")])
-                    }
-
-                    sb << "</li>"
-                    while (levels.last() != header.level) {
-                        sb << "</ul></li>"
-                        levels.pop()
-                    }
-                } else {
-                    sb << "</li>"
-                }
-
-                def isFirstOfPage = index == 0
-                def mainHref = page.relativize(destPage) + (isFirstOfPage ? "" : "#${header.hash}")
-                def altHash = isFirstOfPage && !header.hash.empty ? " data-alt-hash=\"${header.hash}\"" : ""
-                def number = header.numbers ? "<span class=\"number\">${header.number}</span>" : ""
-                def cssClass = header.numbers ? "numbered" : "unnumbered"
-                sb << "<li class=\"${cssClass}\"><a href=\"${mainHref}\"${altHash}>${number}${header.title}</a>"
+        headers.each { Map headerInfo ->
+            if (!headerInfo.visible) {
+                return
             }
+
+            def destPage = headerInfo.destPage as Page
+            def header = headerInfo.header as Header
+
+            if (!levels || levels.last() < header.level) {
+                sb << "<ul>"
+                levels << header.level
+            } else if (levels.last() > header.level) {
+                if (!levels.contains(header.level)) {
+                    throw new GaidenException("illegal.header.level", [gaidenConfig.sourceDirectory.relativize(destPage.source.path), header.title, header.level, levels.join(",")])
+                }
+
+                sb << "</li>"
+                while (levels.last() != header.level) {
+                    sb << "</ul></li>"
+                    levels.pop()
+                }
+            } else {
+                sb << "</li>"
+            }
+
+            def invisibleChildHeaders = headers.drop(headers.indexOf(headerInfo)).tail().takeWhile {
+                !it.visible && header.level < it.header.level
+            }
+
+            def mainHref = page.relativize(destPage) + (header.firstOnPage ? "" : "#${header.hash}")
+            def altHash = header.firstOnPage && !header.hash.empty ? " data-alt-hash=\"${header.hash}\"" : ""
+            def altChildHashes = invisibleChildHeaders ? " data-alt-child-hashes=\"${invisibleChildHeaders.collect { it.header.hash }.join(" ")}\"" : ""
+            def number = header.numbers ? "<span class=\"number\">${header.number}</span>" : ""
+            def cssClass = header.numbers ? "numbered" : "unnumbered"
+            sb << "<li class=\"${cssClass}\"><a href=\"${mainHref}\"${altHash}${altChildHashes}>${number}${header.title}</a>"
         }
         levels.size().times {
             sb << "</li></ul>"
         }
         sb.toString()
+    }
+
+    private List<Map> flattenHeaders(int defaultMaxDepth) {
+        document.pageOrder.collect { Page destPage ->
+            def maxDepthOfPage = destPage.metadata.documentTocDepth as Integer ?: defaultMaxDepth
+            destPage.headers.collect { Header header ->
+                [
+                    destPage: destPage,
+                    header  : header,
+                    visible : header.level <= maxDepthOfPage
+                ]
+            }
+        }.flatten() as List<Map>
     }
 
     private String getPageToc(args) {
