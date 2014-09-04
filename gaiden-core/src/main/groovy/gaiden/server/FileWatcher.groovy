@@ -6,12 +6,18 @@ import org.apache.commons.io.monitor.FileAlterationListenerAdaptor
 import org.apache.commons.io.monitor.FileAlterationObserver
 
 import java.nio.file.Path
+import java.util.concurrent.LinkedBlockingQueue
 
 @CompileStatic
 class FileWatcher {
 
-    void watch(Path path, List<Path> excludes, Closure closure) {
-        def observer = new FileAlterationObserver(path.toFile(), new FileFileFilter() {
+    private LinkedBlockingQueue changedFiles = []
+    private LinkedBlockingQueue createdFiles = []
+    private LinkedBlockingQueue deletedFiles = []
+    private FileAlterationObserver observer
+
+    FileWatcher(Path path, List<Path> excludes = []) {
+        observer = new FileAlterationObserver(path.toFile(), new FileFileFilter() {
             @Override
             boolean accept(File file) {
                 excludes.every { Path exclude ->
@@ -19,32 +25,36 @@ class FileWatcher {
                 }
             }
         })
-
-        def notified = false
-        def notify = {
-            if (notified) {
-                return
-            }
-            notified = true
-            closure.call()
-        }
-
         observer.addListener(new FileAlterationListenerAdaptor() {
             @Override
-            void onFileChange(File file) { notify() }
+            void onFileChange(File file) { changedFiles << file }
 
             @Override
-            void onFileCreate(File file) { notify() }
+            void onFileCreate(File file) { createdFiles << file }
 
             @Override
-            void onFileDelete(File file) { notify() }
+            void onFileDelete(File file) { deletedFiles << file }
         })
         observer.initialize()
+    }
 
-        while (true) {
-            observer.checkAndNotify()
-            notified = false
-            sleep(1000)
+    /**
+     * Start watching target a file or a directory.
+     * Use a thread to return without blocking.
+     * So JVM process cannot shutdown because this thread which loops infinitely is not daemon.
+     */
+    void watch(Closure callback) {
+        Thread.start {
+            while (true) {
+                observer.checkAndNotify()
+                sleep(1000)
+                if (changedFiles || createdFiles || deletedFiles) {
+                    callback.call(changedFiles.toList(), createdFiles.toList(), deletedFiles.toList())
+                    changedFiles.clear()
+                    createdFiles.clear()
+                    deletedFiles.clear()
+                }
+            }
         }
     }
 }
