@@ -120,7 +120,7 @@ $(function () {
             }
 
             // Set a hash for an address bar (this operation causes scrolling)
-            location.hash = this.hash;
+            history.pushState(null, null, this.hash || "#");
             activateLinkOfSidebar();
 
             if ($target) {
