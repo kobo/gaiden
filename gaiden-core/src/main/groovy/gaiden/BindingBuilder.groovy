@@ -86,6 +86,7 @@ class BindingBuilder {
             metadata        : page.metadata,
             resource        : this.&getResource,
             homePage        : homePage,
+            currentPage     : this.page,
             prevPage        : prevPage,
             nextPage        : nextPage,
             documentToc     : this.&getDocumentToc,
