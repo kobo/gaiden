@@ -20,22 +20,18 @@ $(function () {
         var $content = $('.content');
         var $sidebar = $('.sidebar');
         var $sidebarToggle = $('.sidebar-toggle');
-        var $navLink = $('.content-nav a');
 
         var hideSidebar = function () {
+            window.sessionStorage.setItem('sidebar', 'off');
+
             $sidebar.hide();
             $content.removeClass('content-sidebar-visible');
         };
         var showSidebar = function () {
-            if (location.search.indexOf('sidebar=no') >= 0) {
-                location.href = location.href.replace(/\?sidebar=no/, '');
-                return false;
-            }
+            window.sessionStorage.removeItem('sidebar');
+
             $sidebar.show();
             $content.addClass('content-sidebar-visible');
-        };
-        var goUrlWithNoSidebarParam = function (anchor) {
-            location.href = anchor.href.replace(anchor.hash, '') + "?sidebar=no" + anchor.hash;
         };
 
         // Toggle a sidebar
@@ -47,24 +43,8 @@ $(function () {
             }
         });
 
-        // Keep a status of a sidebar after clicking a navLink
-        $navLink.on('click', function (e) {
-            if (!$sidebar.is(':visible')) {
-                e.preventDefault();
-                goUrlWithNoSidebarParam(this);
-            }
-        });
-
-        // Hide a sidemenu if a small screen mode.
-        $sidebar.find("a").on("click", function (e) {
-            if (window.matchMedia('(max-width: 768px)').matches) {
-                e.preventDefault();
-                goUrlWithNoSidebarParam(this);
-            }
-        });
-
         // Initialize
-        if (location.search.indexOf('sidebar=no') >= 0) {
+        if (window.sessionStorage.getItem('sidebar') === 'off') {
             hideSidebar();
         } else {
             showSidebar();
