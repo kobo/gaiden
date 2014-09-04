@@ -133,7 +133,7 @@ class GaidenConfig {
 
     /** The path of pages file */
     Path getPagesFile() {
-        projectDirectory.resolve(PAGES_FILENAME)
+        sourceDirectory.resolve(PAGES_FILENAME)
     }
 
     /** The path of gaiden config file */
