@@ -1,0 +1,12 @@
+import org.ajoberstar.grgit.*
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.ajoberstar:gradle-git:0.9.0'
+    }
+}
+
+ext.repo = Grgit.open(project.file('.'))

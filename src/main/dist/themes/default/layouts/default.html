@@ -1,0 +1,92 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>${currentPage.numbers ? currentPage.numbers.join(".") + ". " : ""}${currentPage.title} - $title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="${resource('/css/bootstrap.min.css')}">
+    <link rel="stylesheet" href="${resource('/css/font-awesome.min.css')}">
+    <link rel="stylesheet" href="${resource('/css/highlight.css')}">
+    <link rel="stylesheet" href="${resource('/css/style.css')}">
+    ${extensionStyles}
+    <link rel="stylesheet" href="${resource('/css/my.css')}">
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="header">
+        <i class="fa fa-bars sidebar-toggle"></i>
+        <span class="title"><a href="${homePage?.path ?: '#'}">$title</a></span>
+      </div>
+      <div class="sidebar">
+        ${documentToc()}
+      </div>
+      <div class="content">
+        <div class="content-container">
+          <div class="content-nav content-nav-top">
+            <% if (prevPage) { %>
+            <a class="prev-page" href="${prevPage.path}">
+              <i class="fa fa-angle-left"></i>
+              <% if (prevPage.numbers) { %><span class="number">${prevPage.numbers.join(".")}.</span><% } %>
+              ${prevPage.title ?: "Previous"}
+            </a>
+            <% } %>
+            <% if (nextPage) { %>
+            <a class="next-page" href="${nextPage.path}">
+              <% if (nextPage.numbers) { %><span class="number">${nextPage.numbers.join(".")}.</span><% } %>
+              ${nextPage.title ?: "Next"}
+              <i class="fa fa-angle-right"></i>
+            </a>
+            <% } %>
+          </div>
+          <% if (metadata.showPageToc != null ? metadata.showPageToc : true) { %>
+          <div class="page-toc">
+            ${pageToc()}
+          </div>
+          <% } %>
+          <div class="main-content">
+            $content
+          </div>
+          <div class="content-nav content-nav-bottom">
+            <% if (prevPage) { %>
+            <a class="prev-page" href="${prevPage.path}">
+              <i class="fa fa-angle-left"></i>
+              <% if (prevPage.numbers) { %><span class="number">${prevPage.numbers.join(".")}.</span><% } %>
+              ${prevPage.title ?: "Previous"}
+            </a>
+            <% } %>
+            <% if (nextPage) { %>
+            <a class="next-page" href="${nextPage.path}">
+              <% if (nextPage.numbers) { %><span class="number">${nextPage.numbers.join(".")}.</span><% } %>
+              ${nextPage.title ?: "Next"}
+              <i class="fa fa-angle-right"></i>
+            </a>
+            <% } %>
+          </div>
+          <div class="footer">
+            <% if (config.version) { %>
+            <p class="version text-muted">Version ${config.version}</p>
+            <% } %>
+            <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="${resource('/js/jquery-2.1.1.min.js')}"></script>
+    <script src="${resource('/js/highlight.js')}"></script>
+    <script src="${resource('/js/application.js')}"></script>
+    ${extensionScripts}
+    <script src="${resource('/js/my.js')}"></script>
+    <% if (config.watch) { %>
+    <script>
+      var socket;
+      if (window.WebSocket) {
+        socket = new WebSocket("ws://localhost:${config.serverPort}/");
+        socket.onmessage = function (event) {
+          location.reload();
+        };
+      } else {
+        console.log("Your browser does not support Websockets. (Use Chrome)");
+      }
+    </script>
+    <% } %>
+  </body>
+</html>

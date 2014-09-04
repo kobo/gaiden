@@ -1,0 +1,32 @@
+task createSampleProject << {
+    ext.sampleProject = file("$buildDir/sample-project")
+    copy {
+        into sampleProject
+        from file("src/sample/sample-project")
+    }
+
+    if (System.getProperty("gaiden.theme")) {
+        file("$sampleProject/config.groovy").append """theme = "${System.getProperty("gaiden.theme")}"\n"""
+    }
+
+    println "Created a sample project at $sampleProject"
+}
+
+task buildSampleProject(dependsOn: ["install", "createSampleProject"]) << {
+    executeCommand(["$buildDir/install/gaiden/bin/gaiden", "build"], createSampleProject.sampleProject)
+}
+
+def executeCommand(List command, File workDir, Map env = [:]) {
+    println ">> Executing command..."
+    println "\$ ${command.join(' ')}"
+    def builder = new ProcessBuilder(command as String[])
+    builder.directory(workDir)
+    def p = builder.start()
+    p.consumeProcessOutput(System.out as OutputStream, System.err as OutputStream)
+    // Gradle's wrapper stream writes nothing to console
+    int statusCode = p.waitFor()
+    if (statusCode != 0) {
+        println "Exit for status code $statusCode"
+        throw new GradleScriptException("Exit for status code $statusCode while executing '${command.join(' ')}'", null)
+    }
+}

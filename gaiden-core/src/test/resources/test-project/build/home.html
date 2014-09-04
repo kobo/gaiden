@@ -1,0 +1,107 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Home Page - Gaiden</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/highlight.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="extensions/test-extention/css/extension.css">
+    <link rel="stylesheet" href="css/my.css">
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="header">
+        <i class="fa fa-bars sidebar-toggle"></i>
+        <span class="title"><a href="home.html">Gaiden</a></span>
+      </div>
+      <div class="sidebar">
+        <ul>
+          <li class="numbered visible"><a href="index.html" data-alt-hash="test"><span class="number">1.</span>Test</a></li>
+          <li class="numbered visible">
+            <a href="chapter2/index.html" data-alt-hash="chapter-2"><span class="number">2.</span>Chapter 2</a>
+            <ul>
+              <li class="numbered visible">
+                <a href="chapter2/section1.html" data-alt-hash="section-21"><span class="number">2.1.</span>section 2.1</a>
+                <ul>
+                  <li class="numbered visible">
+                    <a href="chapter2/section1.html#section-211"><span class="number">2.1.1.</span>section 2.1.1</a>
+                    <ul>
+                      <li class="numbered invisible"><a href="chapter2/section1.html#section-2111"><span class="number">2.1.1.1.</span>section 2.1.1.1</a></li>
+                      <li class="numbered invisible"><a href="chapter2/section1.html#section-2112"><span class="number">2.1.1.2.</span>section 2.1.1.2</a></li>
+                    </ul>
+                  </li>
+                  <li class="numbered visible">
+                    <a href="chapter2/section1.html#secion-212"><span class="number">2.1.2.</span>section 2.1.2</a>
+                    <ul>
+                      <li class="unnumbered invisible"><a href="chapter2/section1.html#h7-header">H7 Header</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li class="numbered visible">
+            <a href="chapter3/index.html" data-alt-hash="chapter-3"><span class="number">3.</span>Chapter 3</a>
+            <ul>
+              <li class="numbered visible">
+                <a href="chapter3/section1.html" data-alt-hash="section-31"><span class="number">3.1.</span>section 3.1</a>
+                <ul>
+                  <li class="numbered visible">
+                    <a href="chapter3/section1.html#section-311"><span class="number">3.1.1.</span>section 3.1.1</a>
+                    <ul>
+                      <li class="numbered invisible"><a href="chapter3/section1.html#section-3111"><span class="number">3.1.1.1.</span>section 3.1.1.1</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li class="unnumbered visible">
+            <a href="unnumbered.html" data-alt-hash="unnumbered-page">Unnumbered Page</a>
+            <ul>
+              <li class="unnumbered visible"><a href="unnumbered.html#sub-header">Sub Header</a></li>
+            </ul>
+          </li>
+          <li class="numbered visible">
+            <a href="specified-document-toc-depth.html" data-alt-hash="specified-document-toc-depth-path"><span class="number">4.</span>Specified Document Toc Depth Path</a>
+            <ul>
+              <li class="numbered invisible"><a href="specified-document-toc-depth.html#this-header-is-excluded-from-document-table-of-contents"><span class="number">4.1.</span>This header is excluded from Document Table of Contents</a></li>
+            </ul>
+          </li>
+          <li class="numbered visible">
+            <a href="specified-page-toc-depth.html" data-alt-hash="specified-page-toc-depth-path"><span class="number">5.</span>Specified Page Toc Depth Path</a>
+            <ul>
+              <li class="numbered visible"><a href="specified-page-toc-depth.html#this-header-is-excluded-from-page-table-of-contents"><span class="number">5.1.</span>This header is excluded from Page Table of Contents</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="content">
+        <div class="content-container">
+          <div class="content-nav content-nav-top">
+          </div>
+          <div class="page-toc">
+            <ul>
+              <li class="unnumbered visible"><a href="#home-page">Home Page</a></li>
+            </ul>
+          </div>
+          <div class="main-content">
+            <h1 id="home-page">Home Page</h1>
+          </div>
+          <div class="content-nav content-nav-bottom">
+          </div>
+          <div class="footer">
+            <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/highlight.js"></script>
+    <script src="js/application.js"></script>
+    <script src="extensions/test-extention/js/extension.js"></script>
+    <script src="js/my.js"></script>
+  </body>
+</html>
