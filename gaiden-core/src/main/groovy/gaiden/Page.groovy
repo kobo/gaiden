@@ -59,11 +59,11 @@ class Page {
         return headers.first().numbers
     }
 
-    String relativize(Page page) {
+    Path relativize(Page page) {
         relativize(page.outputPath)
     }
 
-    String relativize(Path path) {
-        this.outputPath.parent.relativize(path).toString()
+    Path relativize(Path path) {
+        this.outputPath.parent.relativize(path)
     }
 }

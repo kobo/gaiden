@@ -52,7 +52,7 @@ class GaidenConfig {
     static final String EXTENSIONS_DIRECTORY = "extensions"
 
     static final String DEFAULT_THEME = "default"
-    static final String DEFAULT_LAYOUT = "default"
+    static final String DEFAULT_LAYOUT = "main"
 
     private static Path getDefaultProjectDirectory() {
         Paths.get(System.properties["user.dir"] as String)

@@ -1,0 +1,14 @@
+<% if (prevPage) { %>
+<a class="prev-page" href="${currentPage.relativize(prevPage)}">
+  <i class="fa fa-angle-left"></i>
+  <% if (prevPage.numbers) { %><span class="number">${prevPage.numbers.join(".")}.</span><% } %>
+  ${prevPage.title ?: 'Previous'}
+</a>
+<% } %>
+<% if (nextPage) { %>
+<a class="next-page" href="${currentPage.relativize(nextPage)}">
+  <% if (nextPage.numbers) { %><span class="number">${nextPage.numbers.join(".")}.</span><% } %>
+  ${nextPage.title ?: 'Next'}
+  <i class="fa fa-angle-right"></i>
+</a>
+<% } %>

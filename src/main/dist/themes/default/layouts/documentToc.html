@@ -1,0 +1,45 @@
+<%
+def levels = []
+document.pageOrder.each { destPage ->
+    def maxDepth = destPage.metadata.documentTocDepth ?: config.documentTocDepth
+    destPage.headers.eachWithIndex { header, index ->
+        if (!levels || levels.last() < header.level) {
+            print '<ul>'
+            levels << header.level
+        } else if (levels.last() > header.level) {
+            assert levels.contains(header.level), "Could not create Table of Contents: ${header.level} is an illegal header level: file=${config.sourceDirectory.relativize(destPage.source.path)}, header=${header.title}}"
+            print '</li>'
+            while (levels.last() != header.level) {
+                print '</ul></li>'
+                levels.pop()
+            }
+        } else {
+            print '</li>'
+        }
+
+        def cssClasses = []
+        cssClasses << (header.numbers ? 'numbered' : 'unnumbered')
+        cssClasses << (header.level <= maxDepth ? 'visible' : 'invisible')
+        print "<li class=\"${cssClasses.join(' ')}\">"
+
+        def isFirstOfPage = index == 0
+        print "<a href=\"${currentPage.relativize(destPage)}"
+        if (!isFirstOfPage) {
+            print "#${header.hash}"
+        }
+        print '"'
+        if (isFirstOfPage && !header.hash.empty) {
+            print " data-alt-hash=\"${header.hash}\""
+        }
+        print '>'
+        if (header.numbers) {
+            print "<span class=\"number\">${header.number}</span>"
+        }
+        print header.title
+        print '</a>'
+    }
+}
+levels.size().times {
+    print '</li></ul>'
+}
+%>

@@ -79,14 +79,15 @@ class DocumentWriter {
             Files.createDirectories(page.outputPath.parent)
         }
 
-        def binding = new BindingBuilder()
-            .setGaidenConfig(gaidenConfig)
-            .setMessageSource(messageSource)
-            .setMarkdownProcessor(markdownProcessor)
-            .setPage(page)
-            .setDocument(document)
-            .setContent(markdownProcessor.convertToHtml(page, document))
-            .build()
+        def binding = new BindingBuilder([
+            gaidenConfig     : gaidenConfig,
+            messageSource    : messageSource,
+            markdownProcessor: markdownProcessor,
+            page             : page,
+            document         : document,
+            content          : markdownProcessor.convertToHtml(page, document),
+            templateEngine   : templateEngine,
+        ]).build()
 
         def content = templateEngine.make(page.metadata.layout as String, binding)
         def formattedContent = format(content)

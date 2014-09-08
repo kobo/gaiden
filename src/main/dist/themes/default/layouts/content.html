@@ -1,0 +1,18 @@
+<div class="content">
+  <div class="content-handle"></div>
+  <div class="content-container">
+    <div class="content-nav content-nav-top">
+      ${include('navigation')}
+    </div>
+    <% if (metadata.showPageToc != null ? metadata.showPageToc : true) { %>
+    ${include('pageToc')}
+    <% } %>
+    <div class="main-content">
+      $content
+    </div>
+    <div class="content-nav content-nav-bottom">
+      ${include('navigation')}
+    </div>
+    ${include('footer')}
+  </div>
+</div>
