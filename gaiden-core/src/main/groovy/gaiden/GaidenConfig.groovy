@@ -89,7 +89,7 @@ class GaidenConfig {
 
     int documentTocDepth = 3
 
-    int pageTocDepth = 6
+    int pageTocDepth = 99
 
     boolean numbering = true
 
