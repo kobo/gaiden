@@ -29,7 +29,12 @@ $(function () {
         });
 
         var setSidebarWidth = function (width) {
-            width = Math.max(width, 0);
+            if (width < 0) {
+                width = 0;
+            } else if (width > $(window).width()) {
+                width = $(window).width();
+            }
+
             window.sessionStorage.setItem('sidebarWidth', width);
             $sidebar.css('width', width);
             $content.css('margin-left', width);
@@ -38,31 +43,25 @@ $(function () {
             return window.sessionStorage.getItem('sidebarWidth') || $sidebar.css('width');
         };
 
-        var hideSidebar = function (animate) {
+        var hideSidebar = function () {
             window.sessionStorage.setItem('sidebar', 'off');
-            if (animate) {
-                $content.animate({ 'margin-left': 0 }, 300, 'swing', function () {
-                    $sidebar.hide();
-                });
-            } else {
-                $sidebar.hide();
-                $content.css('margin-left', 0);
-            }
+            $sidebar.hide();
+            $content.css('margin-left', 0);
         };
-        var showSidebar = function (animate) {
+        var showSidebar = function () {
             window.sessionStorage.removeItem('sidebar');
             $sidebar.show();
-            if (animate) {
-                $content.animate({ 'margin-left': getSidebarWidth() }, 300);
+            if (!isMobileScreen) {
+                $content.css('margin-left', getSidebarWidth());
             }
         };
 
         // Toggle a sidebar
         $sidebarToggle.on('click', function (e) {
             if ($sidebar.is(':visible')) {
-                hideSidebar(!isMobileScreen);
+                hideSidebar();
             } else {
-                showSidebar(!isMobileScreen);
+                showSidebar();
             }
         });
 
@@ -80,7 +79,7 @@ $(function () {
         // Hide a sidebar if a link in the sidebar is clicked on a mobile screen
         $sidebar.find('a').on('click', function () {
             if (isMobileScreen) {
-                hideSidebar(false);
+                hideSidebar();
             }
         });
 
@@ -90,7 +89,7 @@ $(function () {
             setSidebarWidth(savedSidebarWidth);
         }
         if (window.sessionStorage.getItem('sidebar') === 'off') {
-            hideSidebar(false);
+            hideSidebar();
         }
     })();
 
