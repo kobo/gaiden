@@ -26,52 +26,65 @@ $(function () {
         var isMobileScreen = matchMedia.matches;
         matchMedia.addListener(function (e) {
             isMobileScreen = e.matches;
+            if (isMobileScreen) {
+                hideSidebar();
+            } else {
+                if (isSidebarHiddenByUser()) {
+                    hideSidebar();
+                } else {
+                    showSidebar();
+                }
+            }
         });
 
         var setSidebarWidth = function (width) {
+            // Adjust an abnormal width
             if (width < 0) {
                 width = 0;
             } else if (width > $(window).width()) {
                 width = $(window).width();
             }
 
-            window.sessionStorage.setItem('sidebarWidth', width);
+            window.sessionStorage.setItem('sidebar-width', width);
             $sidebar.css('width', width);
             $content.css('margin-left', width);
         };
         var getSidebarWidth = function () {
-            return window.sessionStorage.getItem('sidebarWidth') || $sidebar.css('width');
+            return window.sessionStorage.getItem('sidebar-width') || $sidebar.css('width');
         };
 
         var hideSidebar = function () {
-            window.sessionStorage.setItem('sidebar', 'off');
             $sidebar.hide();
             $content.css('margin-left', 0);
         };
         var showSidebar = function () {
-            window.sessionStorage.removeItem('sidebar');
             $sidebar.show();
             if (!isMobileScreen) {
                 $content.css('margin-left', getSidebarWidth());
             }
         };
+        var isSidebarHiddenByUser = function () {
+            return window.sessionStorage.getItem('sidebar') === 'off';
+        }
 
         // Toggle a sidebar
         $sidebarToggle.on('click', function (e) {
             if ($sidebar.is(':visible')) {
                 hideSidebar();
+                window.sessionStorage.setItem('sidebar', 'off');
             } else {
                 showSidebar();
+                window.sessionStorage.removeItem('sidebar');
             }
         });
 
         // Resize a width of a sidebar
         $contentHandle.on('mousedown', function (e) {
             e.preventDefault();
-            $(document).on('mouseup.sidebar-handle', function (e) {
-                $(document).off('.sidebar-handle');
+            $(document).on('mouseup.content-handle', function (e) {
+                $(document).off('.content-handle');
             });
-            $(document).on('mousemove.sidebar-handle', function (e) {
+            $(document).on('mousemove.content-handle', function (e) {
                 setSidebarWidth(e.clientX);
             });
         });
@@ -84,16 +97,16 @@ $(function () {
         });
 
         // Initialize
-        var savedSidebarWidth = window.sessionStorage.getItem('sidebarWidth');
+        var savedSidebarWidth = window.sessionStorage.getItem('sidebar-width');
         if (savedSidebarWidth) {
             setSidebarWidth(savedSidebarWidth);
         }
-        if (window.sessionStorage.getItem('sidebar') === 'off') {
+        if (isSidebarHiddenByUser()) {
             hideSidebar();
         }
     })();
 
-    // Pretty print of code
+    // Highlight code
     (function () {
         hljs.initHighlightingOnLoad();
     })();
