@@ -103,9 +103,9 @@ class GaidenConfig {
 
     List<String> assetTypes = ["jpg", "jpeg", "png", "gif"]
 
-    List<Filter> filters = []
+    LinkedHashMap<String, Filter> filters = [:]
 
-    List<Extension> extensions = []
+    SortedMap<String, Extension> extensions = new TreeMap<>()
 
     Path getApplicationInitialProjectTemplateDirectory() {
         applicationDirectory.resolve(PROJECT_TEMPLATE_DIRECTORY)
@@ -197,8 +197,9 @@ class GaidenConfig {
     }
 
     void setFilters(Closure closure) {
-        def filterBuilder = new FilterBuilder()
-        filters = filterBuilder.build(closure)
+        filters.putAll(new FilterBuilder().build(closure).collectEntries { Filter filter ->
+            [(filter.name), filter]
+        })
     }
 
     @PostConstruct
@@ -212,7 +213,7 @@ class GaidenConfig {
             return
         }
 
-        def configObject = new ConfigSlurper().parse(configFile.toUri().toURL())
+        def configObject = parse(configFile)
         (configObject.keySet() as Set<String>).each { String key ->
             if (this.hasProperty(key)) {
                 this.setProperty(key, configObject.get(key))
@@ -228,24 +229,32 @@ class GaidenConfig {
         }
 
         extensionsDirectory.eachDir { Path directory ->
-            extensions << new Extension(
-                name: directory.fileName.toString(),
-                configFile: directory.resolve(GAIDEN_CONFIG_FILENAME),
+            def name = directory.fileName.toString()
+            def configFile = directory.resolve(GAIDEN_CONFIG_FILENAME)
+            extensions[name] = new Extension([
+                name           : name,
+                configObject   : Files.exists(configFile) ? parse(configFile) : new ConfigObject(),
                 assetsDirectory: directory.resolve(ASSETS_DIRECTORY),
-            )
+            ])
         }
 
-        extensions.each { loadConfig(it.configFile) }
+        extensions.each { String name, Extension extension ->
+            filters.putAll(extension.filters.collectEntries { Filter filter ->
+                [(extension.name + '.' + filter.name): filter]
+            })
+        }
     }
 
     @CompileStatic(TypeCheckingMode.SKIP)
     def propertyMissing(String name) {
-        if (configObject) {
-            return configObject.get(name)
-        }
+        configObject.get(name)
     }
 
     void add(String key, Object value) {
         configObject.put(key, value)
+    }
+
+    private static ConfigObject parse(Path configFile) {
+        new ConfigSlurper().parse(configFile.toUri().toURL())
     }
 }

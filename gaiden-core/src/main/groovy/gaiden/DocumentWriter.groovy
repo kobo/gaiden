@@ -91,8 +91,8 @@ class DocumentWriter {
 
         def content = templateEngine.make(page.metadata.layout as String, binding)
         def formattedContent = format(content)
-        def filteredContent = gaidenConfig.filters.inject(formattedContent) { String text, Filter filter ->
-            filter.doAfterTemplate(text)
+        def filteredContent = gaidenConfig.filters.inject(formattedContent) { String text, Map.Entry<String, Filter> entry ->
+            entry.value.doAfterTemplate(text)
         } as String
         Files.write(page.outputPath, filteredContent.getBytes(gaidenConfig.outputEncoding))
     }
@@ -109,8 +109,8 @@ class DocumentWriter {
 
     private void copyAssets() {
         PathUtils.copyFiles(gaidenConfig.applicationAssetsDirectory, gaidenConfig.outputDirectory)
-        gaidenConfig.extensions.each {
-            PathUtils.copyFiles(it.assetsDirectory, gaidenConfig.getExtensionAssetsOutputDirectoryOf(it))
+        gaidenConfig.extensions.each { String name, Extension extension ->
+            PathUtils.copyFiles(extension.assetsDirectory, gaidenConfig.getExtensionAssetsOutputDirectoryOf(extension))
         }
         PathUtils.copyFiles(gaidenConfig.projectAssetsDirectory, gaidenConfig.outputDirectory)
         PathUtils.eachFileRecurse(gaidenConfig.sourceDirectory, [gaidenConfig.outputDirectory, gaidenConfig.extensionsDirectory, gaidenConfig.projectThemesDirectory]) { Path src ->

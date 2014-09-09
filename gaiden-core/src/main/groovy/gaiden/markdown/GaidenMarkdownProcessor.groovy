@@ -34,6 +34,8 @@ import org.pegdown.ast.RootNode
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import java.util.Map.Entry
+
 /**
  * A Processor for Markdown.
  *
@@ -55,9 +57,10 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
     }
 
     RootNode parseMarkdown(PageSource pageSource) {
-        def content = gaidenConfig.filters.inject(pageSource.content) { String text, Filter filter ->
-            filter.doBefore(text)
+        def content = gaidenConfig.filters.inject(pageSource.content) { String text, Entry<String, Filter> entry ->
+            entry.value.doBefore(text)
         } as String
+
         return parseMarkdown(content.toCharArray())
     }
 
@@ -66,8 +69,8 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
         def imageRenderer = new ImageRenderer(page, gaidenConfig.outputDirectory, messageSource)
         def html = new GaidenToHtmlSerializer(gaidenConfig, linkRenderer, imageRenderer, page).toHtml(page.contentNode)
 
-        return gaidenConfig.filters.inject(html) { String text, Filter filter ->
-            filter.doAfter(text)
+        return gaidenConfig.filters.inject(html) { String text, Entry<String, Filter> entry ->
+            entry.value.doAfter(text)
         } as String
     }
 

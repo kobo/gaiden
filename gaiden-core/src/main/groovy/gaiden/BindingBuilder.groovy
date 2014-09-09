@@ -86,7 +86,7 @@ class BindingBuilder {
 
     private List<Path> getExtensionScripts() {
         List<Path> scripts = []
-        gaidenConfig.extensions.each { Extension extension ->
+        gaidenConfig.extensions.each { String name, Extension extension ->
             extension.assetsDirectory.eachFileRecurse(FileType.FILES) { Path file ->
                 if (PathUtils.getExtension(file) == "js") {
                     scripts << gaidenConfig.getExtensionAssetsOutputDirectoryOf(extension).resolve(extension.assetsDirectory.relativize(file))
@@ -98,7 +98,7 @@ class BindingBuilder {
 
     private List<Path> getExtensionStyles() {
         List<Path> styles = []
-        gaidenConfig.extensions.each { Extension extension ->
+        gaidenConfig.extensions.each { String name, Extension extension ->
             extension.assetsDirectory.eachFileRecurse(FileType.FILES) { Path file ->
                 if (PathUtils.getExtension(file) == "css") {
                     styles << gaidenConfig.getExtensionAssetsOutputDirectoryOf(extension).resolve(extension.assetsDirectory.relativize(file))

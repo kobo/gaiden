@@ -16,13 +16,29 @@
 
 package gaiden
 
+import groovy.transform.CompileStatic
+
 import java.nio.file.Path
 
+@CompileStatic
 class Extension {
 
     String name
 
-    Path configFile
-
     Path assetsDirectory
+
+    ConfigObject configObject
+
+    List<Filter> filters = Collections.emptyList()
+
+    void setConfigObject(ConfigObject configObject) {
+        this.configObject = configObject
+        if (configObject.containsKey('filters') && configObject.get('filters') instanceof Closure) {
+            filters = new FilterBuilder().build(configObject.get('filters') as Closure)
+        }
+    }
+
+    def propertyMissing(String name) {
+        configObject.get(name)
+    }
 }
