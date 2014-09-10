@@ -21,14 +21,12 @@ import org.springframework.stereotype.Component
 
 @Component
 @CompileStatic
-class VersionCommand extends AbstractCommand {
+class VersionCommand implements GaidenCommand {
 
     final String name = "version"
 
-    final boolean onlyGaidenProject = false
-
     @Override
-    void execute(List<String> arguments, OptionAccessor optionAccessor) {
+    void execute(List<String> arguments) {
         def properties = new Properties()
         getClass().getResourceAsStream("/build-receipt.properties").withStream { InputStream stream ->
             properties.load(stream)

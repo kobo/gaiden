@@ -17,6 +17,7 @@
 package gaiden.command
 
 import groovy.transform.CompileStatic
+import org.apache.commons.cli.CommandLine
 import org.springframework.stereotype.Component
 
 /**
@@ -37,8 +38,8 @@ class CleanCommand extends AbstractCommand {
      * Executes cleaning.
      */
     @Override
-    void execute(List<String> arguments, OptionAccessor optionAccessor) {
+    void execute(CommandLine commandLine) {
         gaidenConfig.outputDirectory.deleteDir()
-        println messageSource.getMessage("command.clean.success.message")
+        println getMessage("command.clean.success.message")
     }
 }

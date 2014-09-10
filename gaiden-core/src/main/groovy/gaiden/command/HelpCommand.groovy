@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors
+ * Copyright 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,51 +16,38 @@
 
 package gaiden.command
 
-import gaiden.Document
-import gaiden.DocumentBuilder
-import gaiden.DocumentWriter
-import gaiden.GaidenConfig
-import gaiden.SourceCollector
+import gaiden.exception.GaidenException
 import groovy.transform.CompileStatic
 import org.apache.commons.cli.CommandLine
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-/**
- * The 'build' command.
- *
- * @author Hideki IGARASHI
- * @author Kazuki YAMAMOTO
- */
 @Component
 @CompileStatic
-class BuildCommand extends AbstractCommand {
+class HelpCommand extends AbstractCommand {
 
-    final String name = "build"
+    final String name = "help"
 
-    final boolean onlyGaidenProject = true
-
-    @Autowired
-    SourceCollector sourceCollector
+    final boolean onlyGaidenProject = false
 
     @Autowired
-    DocumentBuilder documentBuilder
+    List<UsageAwareCommand> commands
 
     @Autowired
-    DocumentWriter documentWriter
+    UnknownCommand unknownCommand
 
-    @Autowired
-    GaidenConfig gaidenConfig
-
-    /**
-     * Executes building.
-     */
     @Override
     void execute(CommandLine commandLine) {
-        def documentSource = sourceCollector.collect()
-        Document document = documentBuilder.build(documentSource)
-        documentWriter.write(document)
+        if (!commandLine.args) {
+            println unknownCommand.allUsage
+            return
+        }
 
-        println "Built document at ${document.homePage?.outputPath?.toUri() ?: gaidenConfig.outputDirectory.toUri()}"
+        def target = commands.find { it.name == commandLine.args.first() }
+        if (!target) {
+            throw new GaidenException(unknownCommand.allUsage)
+        }
+
+        println target.fullUsage
     }
 }

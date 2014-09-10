@@ -16,18 +16,40 @@
 
 package gaiden.command
 
-import gaiden.exception.IllegalOperationException
+import gaiden.exception.GaidenException
+import gaiden.message.MessageSource
 import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
+@Component
 @CompileStatic
-class UnknownCommand extends AbstractCommand {
+class UnknownCommand implements GaidenCommand {
 
     final String name = "unknown"
 
-    final boolean onlyGaidenProject = false
+    @Autowired
+    MessageSource messageSource
+
+    @Autowired
+    List<UsageAwareCommand> commands
 
     @Override
-    void execute(List<String> arguments, OptionAccessor optionAccessor) {
-        throw new IllegalOperationException()
+    void execute(List<String> options) {
+        throw new GaidenException(allUsage)
+    }
+
+    @PackageScope
+    String getAllUsage() {
+        def max = commands.max { UsageAwareCommand command -> command.usage.size() }.usage.size()
+
+        def usages = commands.collect { UsageAwareCommand command ->
+            String.format "    %-${max}s  %s\n", [command.usage, command.description] as Object[]
+        }.join('')
+
+        messageSource.getMessage('usage', [
+            messageSource.getMessage('usage.main', [usages])
+        ])
     }
 }

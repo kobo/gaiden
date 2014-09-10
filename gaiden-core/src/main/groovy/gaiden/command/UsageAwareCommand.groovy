@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors
+ * Copyright 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,35 @@
  * limitations under the License.
  */
 
-package gaiden.exception
+package gaiden.command
 
-import groovy.transform.CompileStatic
+interface UsageAwareCommand {
 
-/**
- * Thrown when an operation is illegal.
- *
- * @author Hideki IGARASHI
- * @author Kazuki YAMAMOTO
- */
-@CompileStatic
-class IllegalOperationException extends GaidenException {
+    /**
+     * Returns the command name.
+     *
+     * @return the command name
+     */
+    String getName()
 
-    IllegalOperationException() {
-        super("usage")
-    }
+    /**
+     * Returns the description.
+     *
+     * @return the description
+     */
+    String getDescription()
+
+    /**
+     * Returns the usage.
+     *
+     * @return the usage
+     */
+    String getUsage()
+
+    /**
+     * Returns the full usage.
+     *
+     * @return the full usage
+     */
+    String getFullUsage()
 }

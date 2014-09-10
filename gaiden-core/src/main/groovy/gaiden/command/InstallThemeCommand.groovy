@@ -19,6 +19,7 @@ package gaiden.command
 import gaiden.exception.GaidenException
 import gaiden.util.PathUtils
 import groovy.transform.CompileStatic
+import org.apache.commons.cli.CommandLine
 import org.springframework.stereotype.Component
 
 import java.nio.file.Files
@@ -32,18 +33,23 @@ class InstallThemeCommand extends AbstractCommand {
     final boolean onlyGaidenProject = true
 
     @Override
-    void execute(List<String> arguments, OptionAccessor optionAccessor) {
-        if (arguments.empty) {
-            throw new GaidenException("command.install.theme.name.required.error", [gaidenConfig.installedThemes.join(",")])
+    void execute(CommandLine commandLine) {
+        if (!commandLine.args) {
+            throw new GaidenException(getMessage('command.install.theme.name.required.error', [fullUsage]))
         }
 
-        def theme = arguments.first()
+        def theme = commandLine.args.first()
         def themeDirectory = gaidenConfig.getApplicationThemeDirectory(theme)
         if (Files.notExists(themeDirectory)) {
-            throw new GaidenException("command.install.theme.not.found.error", [theme, gaidenConfig.installedThemes.join(",")])
+            throw new GaidenException(getMessage('command.install.theme.not.found.error', [theme, fullUsage]))
         }
 
         PathUtils.copyFiles(themeDirectory, gaidenConfig.getProjectThemeDirectory(theme), true)
-        println messageSource.getMessage("command.install.theme.success.message", [gaidenConfig.getProjectThemeDirectory(theme)])
+        println getMessage("command.install.theme.success.message", [gaidenConfig.getProjectThemeDirectory(theme)])
+    }
+
+    @Override
+    String getFullUsage() {
+        "${super.getFullUsage()}\n${getMessage('command.install.theme.themes.message', [gaidenConfig.installedThemes.join(",")])}"
     }
 }

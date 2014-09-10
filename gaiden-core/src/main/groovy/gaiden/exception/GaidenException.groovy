@@ -17,6 +17,7 @@
 package gaiden.exception
 
 import groovy.transform.CompileStatic
+import groovy.transform.InheritConstructors
 
 /**
  * An exception for Gaiden.
@@ -25,14 +26,6 @@ import groovy.transform.CompileStatic
  * @author Hideki IGARASHI
  */
 @CompileStatic
+@InheritConstructors
 class GaidenException extends RuntimeException {
-
-    final String code
-    final List<?> arguments
-
-    GaidenException(String code, List<?> arguments = []) {
-        super(code)
-        this.code = code
-        this.arguments = arguments
-    }
 }

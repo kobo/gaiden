@@ -41,9 +41,7 @@ class InstallThemeCommandSpec extends FunctionalSpec {
             command.execute([])
 
         then:
-            def e = thrown(GaidenException)
-            e.code == "command.install.theme.name.required.error"
-            e.arguments == [gaidenConfig.installedThemes.join(",")]
+            thrown(GaidenException)
     }
 
     def "install with an invalid theme name"() {
@@ -55,8 +53,6 @@ class InstallThemeCommandSpec extends FunctionalSpec {
             command.execute([theme])
 
         then:
-            def e = thrown(GaidenException)
-            e.code == "command.install.theme.not.found.error"
-            e.arguments == [theme, gaidenConfig.installedThemes.join(",")]
+            thrown(GaidenException)
     }
 }

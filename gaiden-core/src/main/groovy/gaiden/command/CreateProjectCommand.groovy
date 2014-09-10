@@ -20,6 +20,7 @@ import gaiden.exception.GaidenException
 import gaiden.util.PathUtils
 import groovy.io.FileType
 import groovy.transform.CompileStatic
+import org.apache.commons.cli.CommandLine
 import org.springframework.stereotype.Component
 
 import java.nio.file.Files
@@ -41,14 +42,14 @@ class CreateProjectCommand extends AbstractCommand {
     final boolean onlyGaidenProject = false
 
     @Override
-    void execute(List<String> arguments, OptionAccessor optionAccessor) {
-        if (arguments.empty) {
-            throw new GaidenException("command.create.project.name.required.error")
+    void execute(CommandLine commandLine) {
+        if (!commandLine.args) {
+            throw new GaidenException(getMessage('command.create.project.name.required.error', [fullUsage]))
         }
 
-        def projectDirectory = gaidenConfig.projectDirectory.resolve(arguments.first())
+        def projectDirectory = gaidenConfig.projectDirectory.resolve(commandLine.args.first())
         if (Files.exists(projectDirectory)) {
-            throw new GaidenException("command.create.project.already.exists.error", [projectDirectory])
+            throw new GaidenException(getMessage('command.create.project.already.exists.error', [projectDirectory, fullUsage]))
         }
 
         PathUtils.copyFiles(gaidenConfig.applicationInitialProjectTemplateDirectory, projectDirectory)
@@ -56,6 +57,6 @@ class CreateProjectCommand extends AbstractCommand {
         projectDirectory.eachFileMatch(FileType.FILES, ~/gaidenw(.bat)?/) { Path gaidenw ->
             Files.setPosixFilePermissions(gaidenw, PosixFilePermissions.fromString("rwxr-xr-x"))
         }
-        println messageSource.getMessage("command.create.project.success.message", [projectDirectory])
+        println getMessage("command.create.project.success.message", [projectDirectory])
     }
 }

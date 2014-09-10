@@ -17,9 +17,7 @@
 package gaiden
 
 import gaiden.exception.GaidenException
-import gaiden.message.MessageSource
 import groovy.transform.CompileStatic
-import groovy.transform.TypeCheckingMode
 
 /**
  * A command line to execute Gaiden.
@@ -30,6 +28,9 @@ import groovy.transform.TypeCheckingMode
 @CompileStatic
 class GaidenMain {
 
+    private boolean stacktrace = false
+    private static final String STACKTRACE_OPTION = '--stacktrace'
+
     /**
      * A main command line interface.
      *
@@ -39,47 +40,35 @@ class GaidenMain {
         new GaidenMain().run(args)
     }
 
-    protected void run(String... args) {
+    private void run(String... args) {
         try {
-            executeCommand(args)
+            executeCommand(args.toList())
         } catch (GaidenException e) {
-            System.err.println(GaidenApplication.getMessage(e.code, e.arguments))
+            System.err.println e.message
+            if (stacktrace) {
+                e.printStackTrace()
+            }
             System.exit(1)
         }
     }
 
-    protected void executeCommand(String... args) {
+    private void executeCommand(List<String> args) {
+        stacktrace = args.remove(STACKTRACE_OPTION)
+
+        def commandName = getCommandName(args)
+        args.remove(commandName)
+
         GaidenApplication.initialize()
-
-        def options = getOptions(args)
-        if (options.getProperty('non-interactive')) {
-            GaidenApplication.config.interactive = false
-        }
-
-        def commandName = getCommandName(args, options)
         def commandResolver = GaidenApplication.getBean(CommandResolver)
         def command = commandResolver.resolve(commandName)
 
-        command.execute(options.arguments() ? options.arguments().tail() : options.arguments())
+        command.execute(args)
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
-    private static String getCommandName(String[] args, OptionAccessor options) {
-        if (options.v) {
-            return "version"
-        } else if (args) {
-            return args.first()
+    private String getCommandName(List<String> args) {
+        if (args.any { it in ['-v', '--version'] }) {
+            return 'version'
         }
-        null
-    }
-
-    @CompileStatic(TypeCheckingMode.SKIP)
-    private OptionAccessor getOptions(String[] args) {
-        def cliBuilder = new CliBuilder(stopAtNonOption: false)
-        cliBuilder.with {
-            v longOpt: 'version', 'show version'
-            _ longOpt: 'non-interactive', 'non-interactive mode'
-        }
-        cliBuilder.parse(args)
+        args.find { !it.startsWith('-') }
     }
 }

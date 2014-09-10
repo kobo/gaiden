@@ -21,6 +21,7 @@ import gaiden.GaidenConfig
 import gaiden.server.EmbeddedHttpServer
 import gaiden.server.FileWatcher
 import groovy.transform.CompileStatic
+import org.apache.commons.cli.CommandLine
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -43,7 +44,7 @@ class WatchCommand extends AbstractCommand {
     EmbeddedHttpServer server
 
     @Override
-    void execute(List<String> arguments, OptionAccessor optionAccessor) {
+    void execute(CommandLine commandLine) {
         server = new EmbeddedHttpServer(gaidenConfig.outputDirectory)
         server.start()
 
@@ -52,26 +53,26 @@ class WatchCommand extends AbstractCommand {
 
         def doBuild = { List<File> changedFiles, List<File> createdFiles, List<File> deletedFiles ->
             changedFiles.each { File file ->
-                println messageSource.getMessage("command.watch.found.message", [file, "changed"])
+                println getMessage("command.watch.found.message", [file, "changed"])
             }
             createdFiles.each { File file ->
-                println messageSource.getMessage("command.watch.found.message", [file, "created"])
+                println getMessage("command.watch.found.message", [file, "created"])
             }
             deletedFiles.each { File file ->
-                println messageSource.getMessage("command.watch.found.message", [file, "deleted"])
+                println getMessage("command.watch.found.message", [file, "deleted"])
             }
-            println messageSource.getMessage("command.watch.rebuild.message")
+            println getMessage("command.watch.rebuild.message")
             build()
             server.reload()
         }
 
         new FileWatcher(gaidenConfig.projectDirectory, [gaidenConfig.outputDirectory]).watch(doBuild)
-        println messageSource.getMessage("command.watch.start.message", [gaidenConfig.projectDirectory])
+        println getMessage("command.watch.start.message", [gaidenConfig.projectDirectory])
 
         // For specified extra watch targets
-        for (String targetFilePath : arguments) {
+        commandLine.args.each { String targetFilePath ->
             new FileWatcher(Paths.get(targetFilePath)).watch(doBuild)
-            println messageSource.getMessage("command.watch.start.message", [targetFilePath])
+            println getMessage("command.watch.start.message", [targetFilePath])
         }
     }
 

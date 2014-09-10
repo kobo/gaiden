@@ -27,10 +27,12 @@ import org.springframework.stereotype.Component
 class CommandResolver {
 
     @Autowired
-    List<GaidenCommand> commnads
+    List<GaidenCommand> commands
+
+    @Autowired
+    UnknownCommand unknownCommand
 
     GaidenCommand resolve(String commandName) {
-        def command = commnads.find { it.name == commandName }
-        command ?: new UnknownCommand()
+        commands.find { it.name == commandName } ?: unknownCommand
     }
 }

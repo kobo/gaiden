@@ -25,13 +25,6 @@ package gaiden.command
 interface GaidenCommand {
 
     /**
-     * Should a command be executed in the Gaiden project directory?
-     *
-     * @return True if a command should be executed in the Gaiden project directory
-     */
-    boolean isOnlyGaidenProject()
-
-    /**
      * Executes command.
      *
      * @param args command arguments
