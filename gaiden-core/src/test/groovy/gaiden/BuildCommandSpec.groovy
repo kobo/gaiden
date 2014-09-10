@@ -31,4 +31,16 @@ class BuildCommandSpec extends FunctionalSpec {
         then:
             assertOutputDirectory "src/test/resources/test-project/build"
     }
+
+    def "build a document without 'pages.groovy'"() {
+        given:
+            setupProjectDirectory("src/test/resources/without-pages")
+            def command = applicationContext.getBean(BuildCommand)
+
+        when:
+            command.execute()
+
+        then:
+            assertOutputDirectory "src/test/resources/without-pages/build"
+    }
 }

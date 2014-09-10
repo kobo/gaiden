@@ -83,6 +83,8 @@ class GaidenConfig {
     /** The output encoding of files */
     String outputEncoding = DEFAULT_ENCODING
 
+    boolean interactive = true
+
     Path homePage
 
     String theme = DEFAULT_THEME

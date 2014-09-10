@@ -1,7 +1,8 @@
 # Gradle
 
-build/
-!gaiden-core/src/test/resources/test-project/build/
+/build/
+/gaiden-core/build/
+/gaiden-wrapper/build/
 .gradle/
 
 # IntelliJ

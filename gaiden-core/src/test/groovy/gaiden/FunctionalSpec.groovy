@@ -43,10 +43,11 @@ abstract class FunctionalSpec extends GaidenSpec {
     Path outputDirectory = Files.createTempDirectory("outputDirectory")
 
     def setup() {
-        def gaidenApplication = new GaidenApplication()
-        applicationContext = gaidenApplication.applicationContext
+        GaidenApplication.initialize()
+        applicationContext = GaidenApplication.applicationContext
         gaidenConfig = applicationContext.getBean(GaidenConfig)
 
+        gaidenConfig.interactive = false
         gaidenConfig.outputDirectory = outputDirectory
 
         setupProjectDirectory(projectDirectory)

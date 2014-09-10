@@ -2,7 +2,6 @@ package gaiden.command
 
 import gaiden.GaidenApplication
 import gaiden.GaidenConfig
-import gaiden.message.MessageSource
 import gaiden.server.EmbeddedHttpServer
 import gaiden.server.FileWatcher
 import groovy.transform.CompileStatic
@@ -20,9 +19,6 @@ class WatchCommand extends AbstractCommand {
 
     @Autowired
     BuildCommand buildCommand
-
-    @Autowired
-    MessageSource messageSource
 
     final String name = "watch"
 
@@ -64,9 +60,10 @@ class WatchCommand extends AbstractCommand {
     }
 
     private void build() {
-        def command = new GaidenApplication().applicationContext.getBean(BuildCommand)
-        command.gaidenConfig.add("watch", true)
-        command.gaidenConfig.add("serverPort", server.port)
+        GaidenApplication.initialize()
+        def command = GaidenApplication.getBean(BuildCommand)
+        GaidenApplication.config.add("watch", true)
+        GaidenApplication.config.add("serverPort", server.port)
         command.execute()
     }
 }

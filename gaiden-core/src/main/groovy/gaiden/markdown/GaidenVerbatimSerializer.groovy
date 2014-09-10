@@ -1,3 +1,4 @@
+
 package gaiden.markdown
 
 import groovy.transform.CompileStatic

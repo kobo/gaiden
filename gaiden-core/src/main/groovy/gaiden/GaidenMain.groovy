@@ -30,8 +30,6 @@ import groovy.transform.TypeCheckingMode
 @CompileStatic
 class GaidenMain {
 
-    private GaidenApplication gaidenApplication = new GaidenApplication()
-
     /**
      * A main command line interface.
      *
@@ -45,16 +43,21 @@ class GaidenMain {
         try {
             executeCommand(args)
         } catch (GaidenException e) {
-            def messageSource = gaidenApplication.applicationContext.getBean(MessageSource)
-            System.err.println(messageSource.getMessage(e.code, e.arguments as Object[], Locale.default))
+            System.err.println(GaidenApplication.getMessage(e.code, e.arguments))
             System.exit(1)
         }
     }
 
     protected void executeCommand(String... args) {
+        GaidenApplication.initialize()
+
         def options = getOptions(args)
+        if (options.getProperty('non-interactive')) {
+            GaidenApplication.config.interactive = false
+        }
+
         def commandName = getCommandName(args, options)
-        def commandResolver = gaidenApplication.applicationContext.getBean(CommandResolver)
+        def commandResolver = GaidenApplication.getBean(CommandResolver)
         def command = commandResolver.resolve(commandName)
 
         command.execute(options.arguments() ? options.arguments().tail() : options.arguments())
@@ -72,9 +75,10 @@ class GaidenMain {
 
     @CompileStatic(TypeCheckingMode.SKIP)
     private OptionAccessor getOptions(String[] args) {
-        def cliBuilder = new CliBuilder()
+        def cliBuilder = new CliBuilder(stopAtNonOption: false)
         cliBuilder.with {
             v longOpt: 'version', 'show version'
+            _ longOpt: 'non-interactive', 'non-interactive mode'
         }
         cliBuilder.parse(args)
     }

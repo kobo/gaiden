@@ -113,11 +113,8 @@ class DocumentWriter {
             PathUtils.copyFiles(extension.assetsDirectory, gaidenConfig.getExtensionAssetsOutputDirectoryOf(extension))
         }
         PathUtils.copyFiles(gaidenConfig.projectAssetsDirectory, gaidenConfig.outputDirectory)
-        PathUtils.eachFileRecurse(gaidenConfig.sourceDirectory, [gaidenConfig.outputDirectory, gaidenConfig.extensionsDirectory, gaidenConfig.projectThemesDirectory]) { Path src ->
-            if (isAsset(src)) {
-                def dest = gaidenConfig.outputDirectory.resolve(gaidenConfig.sourceDirectory.relativize(src))
-                PathUtils.copyFile(src, dest)
-            }
+        PathUtils.copyFiles(gaidenConfig.sourceDirectory, gaidenConfig.outputDirectory, false, [gaidenConfig.outputDirectory, gaidenConfig.extensionsDirectory, gaidenConfig.projectThemesDirectory]) { Path file ->
+            isAsset(file)
         }
     }
 

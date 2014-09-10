@@ -17,8 +17,9 @@
 package gaiden.command
 
 import gaiden.GaidenConfig
-import gaiden.exception.GaidenException
+import gaiden.message.MessageSource
 import groovy.transform.CompileStatic
+import org.apache.commons.lang3.BooleanUtils
 import org.springframework.beans.factory.annotation.Autowired
 
 import java.nio.file.Files
@@ -29,15 +30,31 @@ abstract class AbstractCommand implements GaidenCommand {
     @Autowired
     GaidenConfig gaidenConfig
 
+    @Autowired
+    MessageSource messageSource
+
     void execute(List<String> arguments = []) {
-        if (onlyGaidenProject && !Files.exists(gaidenConfig.gaidenConfigFile)) {
-            throw new GaidenException("not.gaiden.project.error", [gaidenConfig.gaidenConfigFile])
+        if (onlyGaidenProject
+            && Files.notExists(gaidenConfig.gaidenConfigFile)
+            && gaidenConfig.interactive
+            && !continues()
+        ) {
+            return
         }
 
-        def cliBuilder = new CliBuilder()
+        def cliBuilder = new CliBuilder(stopAtNonOption: false)
+        buildOption(cliBuilder)
         def optionAccessor = cliBuilder.parse(arguments)
         execute(optionAccessor.arguments(), optionAccessor)
     }
 
+    protected buildOption(CliBuilder cliBuilder) {
+    }
+
     abstract void execute(List<String> arguments, OptionAccessor optionAccessor)
+
+    private boolean continues() {
+        print messageSource.getMessage("not.gaiden.project.confirmation.message", [gaidenConfig.gaidenConfigFile])
+        return BooleanUtils.toBoolean(new Scanner(System.in).nextLine())
+    }
 }

@@ -16,11 +16,9 @@
 
 package gaiden.command
 
-import gaiden.message.MessageSource
 import gaiden.util.PathUtils
 import groovy.io.FileType
 import groovy.transform.CompileStatic
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import java.nio.file.Files
@@ -35,12 +33,9 @@ class WrapperCommand extends AbstractCommand {
 
     final boolean onlyGaidenProject = true
 
-    @Autowired
-    MessageSource messageSource
-
     @Override
     void execute(List<String> arguments, OptionAccessor optionAccessor) {
-        PathUtils.copyFiles(gaidenConfig.applicationWrapperDirectory, gaidenConfig.projectDirectory)
+        PathUtils.copyFiles(gaidenConfig.applicationWrapperDirectory, gaidenConfig.projectDirectory, true)
         gaidenConfig.projectDirectory.eachFileMatch(FileType.FILES, ~/gaidenw(.bat)?/) { Path gaidenw ->
             Files.setPosixFilePermissions(gaidenw, PosixFilePermissions.fromString("rwxr-xr-x"))
         }

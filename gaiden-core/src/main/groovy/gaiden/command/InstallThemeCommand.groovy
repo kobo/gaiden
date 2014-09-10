@@ -17,15 +17,11 @@
 package gaiden.command
 
 import gaiden.exception.GaidenException
-import gaiden.message.MessageSource
 import gaiden.util.PathUtils
-import groovy.io.FileType
 import groovy.transform.CompileStatic
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import java.nio.file.Files
-import java.nio.file.Path
 
 @Component
 @CompileStatic
@@ -34,9 +30,6 @@ class InstallThemeCommand extends AbstractCommand {
     final String name = "install-theme"
 
     final boolean onlyGaidenProject = true
-
-    @Autowired
-    MessageSource messageSource
 
     @Override
     void execute(List<String> arguments, OptionAccessor optionAccessor) {
@@ -50,39 +43,7 @@ class InstallThemeCommand extends AbstractCommand {
             throw new GaidenException("command.install.theme.not.found.error", [theme, gaidenConfig.installedThemes.join(",")])
         }
 
-        def overwriteAll = false
-        themeDirectory.eachFileRecurse(FileType.FILES) { Path src ->
-            def relativePath = gaidenConfig.applicationThemesDirectory.relativize(src)
-            def dest = gaidenConfig.projectThemesDirectory.resolve(relativePath)
-            if (!overwriteAll && Files.exists(dest)) {
-                def answer = getUserAnswer(relativePath)
-                if (answer == "no") {
-                    return
-                } else if (answer == "all") {
-                    overwriteAll = true
-                }
-            }
-            PathUtils.copyFile(src, dest)
-        }
-
+        PathUtils.copyFiles(themeDirectory, gaidenConfig.getProjectThemeDirectory(theme), true)
         println messageSource.getMessage("command.install.theme.success.message", [gaidenConfig.getProjectThemeDirectory(theme)])
-    }
-
-    private String getUserAnswer(Path path) {
-        print messageSource.getMessage("command.install.theme.overwrite.confirmation.message", [path])
-        def scanner = new Scanner(System.in)
-        while (true) {
-            def answer = scanner.nextLine().toLowerCase()
-            switch (answer) {
-                case ["yes", "y"]:
-                    return "yes"
-                case ["no", "n"]:
-                    return "no"
-                case ["all", "a"]:
-                    return "all"
-                default:
-                    print messageSource.getMessage("command.install.theme.overwrite.invalid.answer.error")
-            }
-        }
     }
 }

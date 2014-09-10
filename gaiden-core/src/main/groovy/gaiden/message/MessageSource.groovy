@@ -31,8 +31,8 @@ import org.springframework.stereotype.Component
 @CompileStatic
 class MessageSource extends ResourceBundleMessageSource {
 
-    MessageSource(String basename = "messages") {
-        this.basename = basename
+    MessageSource() {
+        this.basename = "messages"
     }
 
     String getMessage(String code, List<?> args = []) {

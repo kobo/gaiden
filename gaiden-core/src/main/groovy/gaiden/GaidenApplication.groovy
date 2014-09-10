@@ -16,6 +16,7 @@
 
 package gaiden
 
+import gaiden.message.MessageSource
 import groovy.transform.CompileStatic
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -23,12 +24,24 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 @CompileStatic
 class GaidenApplication {
 
-    ApplicationContext applicationContext
+    static ApplicationContext applicationContext
 
-    GaidenApplication() {
+    static void initialize() {
         def applicationContext = new AnnotationConfigApplicationContext()
-        applicationContext.scan(getClass().package.name)
+        applicationContext.scan(GaidenApplication.package.name)
         applicationContext.refresh()
         this.applicationContext = applicationContext
+    }
+
+    static <T> T getBean(Class<T> requiredType) {
+        applicationContext.getBean(requiredType)
+    }
+
+    static String getMessage(String code, List args = []) {
+        getBean(MessageSource).getMessage(code, args)
+    }
+
+    static GaidenConfig getConfig() {
+        getBean(GaidenConfig)
     }
 }

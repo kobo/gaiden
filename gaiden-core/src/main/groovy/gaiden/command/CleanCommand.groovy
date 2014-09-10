@@ -16,9 +16,7 @@
 
 package gaiden.command
 
-import gaiden.message.MessageSource
 import groovy.transform.CompileStatic
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 /**
@@ -30,9 +28,6 @@ import org.springframework.stereotype.Component
 @Component
 @CompileStatic
 class CleanCommand extends AbstractCommand {
-
-    @Autowired
-    MessageSource messageSource
 
     final String name = "clean"
 

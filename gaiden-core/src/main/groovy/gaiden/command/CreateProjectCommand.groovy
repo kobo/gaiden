@@ -17,11 +17,9 @@
 package gaiden.command
 
 import gaiden.exception.GaidenException
-import gaiden.message.MessageSource
 import gaiden.util.PathUtils
 import groovy.io.FileType
 import groovy.transform.CompileStatic
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import java.nio.file.Files
@@ -41,9 +39,6 @@ class CreateProjectCommand extends AbstractCommand {
     final String name = "create-project"
 
     final boolean onlyGaidenProject = false
-
-    @Autowired
-    MessageSource messageSource
 
     @Override
     void execute(List<String> arguments, OptionAccessor optionAccessor) {
