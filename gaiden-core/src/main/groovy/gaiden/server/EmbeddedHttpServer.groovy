@@ -13,10 +13,11 @@ class EmbeddedHttpServer {
 
     private List<ServerWebSocket> webSockets = [].asSynchronized()
     private HttpServer httpServer
-    private int port
 
-    EmbeddedHttpServer(Path outputDirectory, int port) {
-        this.port = port
+    int port
+
+    EmbeddedHttpServer(Path outputDirectory) {
+        this.port = localPort
         this.httpServer = Vertx.newVertx().createHttpServer().websocketHandler { ServerWebSocket webSocket ->
             webSocket.closeHandler {
                 webSockets.remove(webSocket)
@@ -35,5 +36,11 @@ class EmbeddedHttpServer {
         webSockets.each { ServerWebSocket webSocket ->
             webSocket.writeTextFrame("reload")
         }
+    }
+
+    private static int getLocalPort() {
+        new ServerSocket(0).withCloseable { socket ->
+            (socket as ServerSocket).localPort
+        } as int
     }
 }

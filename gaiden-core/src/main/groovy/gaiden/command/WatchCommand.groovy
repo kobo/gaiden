@@ -1,11 +1,11 @@
 package gaiden.command
 
+import gaiden.GaidenApplication
 import gaiden.GaidenConfig
 import gaiden.message.MessageSource
 import gaiden.server.EmbeddedHttpServer
 import gaiden.server.FileWatcher
 import groovy.transform.CompileStatic
-import groovy.transform.TypeCheckingMode
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -28,18 +28,15 @@ class WatchCommand extends AbstractCommand {
 
     final boolean onlyGaidenProject = true
 
+    EmbeddedHttpServer server
+
     @Override
     void execute(List<String> arguments, OptionAccessor optionAccessor) {
-        def port = localPort
-
-        gaidenConfig.add("watch", true)
-        gaidenConfig.add("serverPort", port)
-
-        def server = new EmbeddedHttpServer(gaidenConfig.outputDirectory, port)
+        server = new EmbeddedHttpServer(gaidenConfig.outputDirectory)
         server.start()
 
         // At first, normally build a documentation.
-        buildCommand.execute()
+        build()
 
         def doBuild = { List<File> changedFiles, List<File> createdFiles, List<File> deletedFiles ->
             changedFiles.each { File file ->
@@ -52,7 +49,7 @@ class WatchCommand extends AbstractCommand {
                 println messageSource.getMessage("command.watch.found.message", [file, "deleted"])
             }
             println messageSource.getMessage("command.watch.rebuild.message")
-            buildCommand.execute()
+            build()
             server.reload()
         }
 
@@ -66,10 +63,10 @@ class WatchCommand extends AbstractCommand {
         }
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
-    private static int getLocalPort() {
-        new ServerSocket(0).withCloseable { ServerSocket socket ->
-            socket.localPort
-        } as int
+    private void build() {
+        def command = new GaidenApplication().applicationContext.getBean(BuildCommand)
+        command.gaidenConfig.add("watch", true)
+        command.gaidenConfig.add("serverPort", server.port)
+        command.execute()
     }
 }
