@@ -116,7 +116,7 @@ class PathUtils {
     }
 
     private static Answer overrites(Path path) {
-        print GaidenApplication.getMessage("command.install.theme.overwrite.confirmation.message", [path])
+        print "${GaidenApplication.getMessage("command.install.theme.overwrite.confirmation.message", [path])} "
         def scanner = new Scanner(System.in)
         while (true) {
             def answer = scanner.nextLine().toLowerCase()
@@ -128,7 +128,7 @@ class PathUtils {
                 case ["all", "a"]:
                     return Answer.ALL
                 default:
-                    print GaidenApplication.getMessage("command.install.theme.overwrite.invalid.answer.error")
+                    print "${GaidenApplication.getMessage("command.install.theme.overwrite.invalid.answer.error")} "
             }
         }
     }

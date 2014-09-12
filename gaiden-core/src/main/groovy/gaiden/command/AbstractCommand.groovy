@@ -98,7 +98,7 @@ abstract class AbstractCommand implements GaidenCommand, UsageAwareCommand {
             return true
         }
 
-        print messageSource.getMessage("not.gaiden.project.confirmation.message", [gaidenConfig.gaidenConfigFile])
+        print "${messageSource.getMessage("not.gaiden.project.confirmation.message", [gaidenConfig.gaidenConfigFile])} "
         return BooleanUtils.toBoolean(new Scanner(System.in).nextLine())
     }
 }
