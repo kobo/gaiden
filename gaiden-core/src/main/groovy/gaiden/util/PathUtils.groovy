@@ -97,7 +97,7 @@ class PathUtils {
 
                 def destFile = dest.resolve(src.relativize(srcFile))
                 if (Files.exists(destFile) && interactive && GaidenApplication.config.interactive) {
-                    def answer = overrites(destFile)
+                    def answer = overwrites(destFile)
                     if (answer == Answer.NO) {
                         return FileVisitResult.CONTINUE
                     } else if (answer == Answer.ALL) {
@@ -115,7 +115,7 @@ class PathUtils {
         YES, NO, ALL
     }
 
-    private static Answer overrites(Path path) {
+    private static Answer overwrites(Path path) {
         print GaidenApplication.getMessage("command.install.theme.overwrite.confirmation.message", [path])
         def scanner = new Scanner(System.in)
         while (true) {
