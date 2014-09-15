@@ -45,7 +45,7 @@ class DocumentBuilder {
      * @return {@link Document}'s instance
      */
     Document build(DocumentSource documentSource) {
-        def pageReferences = getPageReferences(documentSource)
+        def pageReferences = getPageReferences()
         def pages = buildPages(documentSource, pageReferences)
         def pageOrder = getPageOrder(pageReferences, pages)
         def homePage = getHomePage(pages, pageOrder)
@@ -54,32 +54,14 @@ class DocumentBuilder {
         new Document(homePage: homePage, pages: pages, pageOrder: pageOrder)
     }
 
-    private List<PageReference> getPageReferences(DocumentSource documentSource) {
+    private List<PageReference> getPageReferences() {
         if (Files.notExists(gaidenConfig.pagesFile)) {
-            return generatePageReferencesFrom(documentSource)
+            gaidenConfig.numbering = false
+            return Collections.emptyList()
         }
 
         def pagesParser = new PagesParser(sourceDirectory: gaidenConfig.sourceDirectory)
-        def pageReferences = pagesParser.parse(gaidenConfig.pagesFile.getText(gaidenConfig.inputEncoding))
-
-        if (pageReferences.every { it.metadata.hidden }) {
-            def unincludedPageReferences = generatePageReferencesFrom(documentSource).findAll { PageReference pageReference ->
-                pageReferences.every { !Files.isSameFile(pageReference.path, it.path) }
-            }
-            pageReferences.addAll(unincludedPageReferences)
-        }
-
-        pageReferences
-    }
-
-    private static List<PageReference> generatePageReferencesFrom(DocumentSource documentSource) {
-        return documentSource.pageSources.collect { PageSource pageSource ->
-            new PageReference([
-                path     : pageSource.path,
-                metadata : Collections.emptyMap(),
-                baseLevel: 0,
-            ])
-        }.sort { it.path.toString() }
+        return pagesParser.parse(gaidenConfig.pagesFile.getText(gaidenConfig.inputEncoding))
     }
 
     private static List<Page> getPageOrder(List<PageReference> pageReferences, List<Page> pages) {

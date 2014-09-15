@@ -18,6 +18,8 @@ package gaiden
 
 import gaiden.command.BuildCommand
 
+import java.nio.file.Paths
+
 class BuildCommandSpec extends FunctionalSpec {
 
     def "build a document"() {

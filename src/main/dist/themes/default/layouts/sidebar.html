@@ -1,3 +1,7 @@
 <div class="sidebar">
-    ${include('documentToc')}
+  <% if (document.pageOrder) { %>
+  ${include('documentToc')}
+  <% } else { %>
+  ${include('explorer')}
+  <% } %>
 </div>

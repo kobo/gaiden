@@ -51,14 +51,14 @@ class HeaderParser extends ToHtmlSerializer {
         def hash = getHash(title, headerNode)
         headers << new Header(
             title: title,
-            level: baseLevel + headerNode.level,
+            level: baseLevel + headerNode.level - 1,
             hash: hash,
             headerNode: headerNode
         )
     }
 
     private int getBaseLevel() {
-        pageReference?.baseLevel ?: 0
+        pageReference?.baseLevel ?: 1
     }
 
     private String getHash(String title, HeaderNode headerNode) {
@@ -93,7 +93,7 @@ class HeaderParser extends ToHtmlSerializer {
     }
 
     private List<Header> getParentHeaders(int level) {
-        def currentLevel = level + baseLevel
+        def currentLevel = level + baseLevel - 1
         def parentHeaders = []
         headers.reverse().each { Header header ->
             if (header.level < currentLevel) {

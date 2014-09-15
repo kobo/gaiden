@@ -239,6 +239,11 @@ a:hover {
     font-weight: 700;
 }
 
+.sidebar .directory {
+    color: #999;
+    font-weight: 500;
+}
+
 @media screen and (max-width: 768px) {
     .sidebar {
         display: none;

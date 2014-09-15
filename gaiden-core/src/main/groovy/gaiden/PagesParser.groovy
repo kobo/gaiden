@@ -27,7 +27,7 @@ import java.nio.file.Paths
 class PagesParser {
 
     private List<PageReference> pageReferences = []
-    private int baseLevel = 0
+    private int baseLevel = 1
 
     Path sourceDirectory
 
@@ -45,7 +45,7 @@ class PagesParser {
     def methodMissing(String name, args) {
         def path = sourceDirectory.resolve(Paths.get(name))
         def metadata = args.find { it instanceof Map } ?: Collections.emptyMap()
-        pageReferences << new PageReference(path: path, metadata: metadata as Map<String, String>, baseLevel: baseLevel)
+        pageReferences << new PageReference(path: path, metadata: metadata as Map<String, Object>, baseLevel: baseLevel)
 
         def closure = args.find { it instanceof Closure } as Closure
         if (closure) {

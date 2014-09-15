@@ -1,0 +1,40 @@
+<%
+import static java.nio.file.Files.*
+import static gaiden.util.PathUtils.*
+
+def current = config.sourceDirectory
+
+println '<ul>'
+document.pages.each { page ->
+    if (!isSameFile(page.source.path.parent, current)) {
+        if (current.startsWith(page.source.path.parent)) {
+            def relativePath = current.relativize(page.source.path.parent)
+            relativePath.each { parent ->
+                println '</ul></li>'
+            }
+        } else if (page.source.path.parent.startsWith(current)) {
+            def relativePath = current.relativize(page.source.path.parent)
+            relativePath.each { parent ->
+                println "<li class=\"directory\">${parent}<ul>"
+            }
+        } else {
+            def commonPathIndex = (0..(Math.min(current.nameCount, page.source.path.parent.nameCount))).find {
+                current.getName(it) != page.source.path.parent.getName(it)
+            }
+            (current.nameCount - commonPathIndex).times {
+                println '</ul></li>'
+            }
+            (commonPathIndex..(page.source.path.parent.nameCount - 1)).each {
+                println "<li class=\"directory\">${page.source.path.parent.getName(it)}<ul>"
+            }
+        }
+    }
+    println "<li class=\"visible\"><a href=\"${currentPage.relativize(page.outputPath)}\">${removeExtension(page.source.path.fileName)}</a></li>"
+    current = page.source.path.parent
+}
+
+(current.nameCount - config.sourceDirectory.nameCount).times {
+    println '</ul></li>'
+}
+println '</ul>'
+%>
