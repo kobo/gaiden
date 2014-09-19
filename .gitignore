@@ -3,6 +3,7 @@
 /build/
 /gaiden-core/build/
 /gaiden-wrapper/build/
+/doc/build/
 .gradle/
 
 # IntelliJ
