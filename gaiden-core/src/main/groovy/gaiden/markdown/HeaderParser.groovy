@@ -18,6 +18,7 @@ package gaiden.markdown
 
 import gaiden.Header
 import gaiden.PageReference
+import gaiden.util.MarkdownUtils
 import groovy.transform.CompileStatic
 import org.apache.commons.codec.digest.DigestUtils
 import org.pegdown.LinkRenderer
@@ -73,15 +74,7 @@ class HeaderParser extends ToHtmlSerializer {
     }
 
     private String createHash(String title, HeaderNode headerNode) {
-        def hash = title.replaceAll("&.+?;", "").collect { String c ->
-            if (c ==~ /[a-zA-Z0-9\-_]/) {
-                return c
-            }
-            if (c == " ") {
-                return "-"
-            }
-            return ""
-        }.join("").toLowerCase()
+        def hash = MarkdownUtils.hashOf(title)
 
         if (hash && !headers.find { Header header -> header.hash == hash }) {
             return hash
