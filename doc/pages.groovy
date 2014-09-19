@@ -1,0 +1,6 @@
+"getting-started.md"
+"project-structure.md"
+"configuration.md"
+"commands.md"
+"theme.md"
+"extensions.md"
