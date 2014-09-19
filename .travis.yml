@@ -3,5 +3,5 @@ jdk:
   - oraclejdk8
   - oraclejdk7
   - openjdk7
-script: ./gradlew test
+script: ./gradlew test -i
 
