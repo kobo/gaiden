@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Getting Started - Gaiden</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/highlight.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/my.css">
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="header">
+        <span class="title"><a href="getting-started.html">Gaiden</a></span>
+        <ul class="header-nav">
+          <li><a href="https://github.com/kobo/gaiden/releases">Download</a></li>
+          <li><a href="">Documentation</a></li>
+          <li><a href="https://github.com/kobo/gaiden">Development</a></li>
+        </ul>
+      </div>
+      <div class="sidebar">
+        <ul>
+          <li class="unnumbered visible">
+            <a href="getting-started.html" data-alt-hash="getting-started">Getting Started</a>
+            <ul>
+              <li class="unnumbered visible"><a href="getting-started.html#installation">Installation</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="content">
+        <div class="content-handle"></div>
+        <div class="content-container">
+          <div class="content-nav content-nav-top">
+          </div>
+          <div class="page-toc">
+            <ul>
+              <li class="unnumbered visible">
+                <a href="#getting-started">Getting Started</a>
+                <ul>
+                  <li class="unnumbered visible"><a href="#installation">Installation</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="main-content">
+            <h1 id="getting-started">Getting Started</h1>
+            <h2 id="installation">Installation</h2>
+            <p>You need a <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html" title="Java SE Downloads">Java SE</a> installed, but it is not necessary to install Groovy because it&rsquo;s bundled with the Gaiden distribution.</p>
+            <p>Installing Gainden on Unix based systems is easiest with <a href="http://gvmtool.net/">GVM</a>:</p>
+            <pre><code class="sh">$ gvm install gaiden
+</code></pre>
+            <p>Or download <a href="https://github.com/kobo/gaiden/releases">a binary distribution of Gaiden</a> and unpack it into some file on your local file system. Add the <code>bin</code> directory path in unpacked the distribution to your <code>PATH</code> environment variable.</p>
+            <p>Then in a shell, type the following:</p>
+            <pre><code class="sh">$ gaiden create-project sample-project
+$ cd sample-project
+$ gaiden build
+</code></pre>
+            <p>You can see the documentation built when you open <code>build/index.html</code> file in your web browser.</p>
+          </div>
+          <div class="content-nav content-nav-bottom">
+          </div>
+          <div class="footer">
+            <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/highlight.js"></script>
+    <script src="js/application.js"></script>
+    <script src="js/my.js"></script>
+    <script>
+      if (window.WebSocket) {
+        var socket = new WebSocket("ws://localhost:53294/");
+        socket.onmessage = function () {
+          location.reload();
+        };
+      }
+    </script>
+  </body>
+</html>
