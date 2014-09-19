@@ -371,7 +371,7 @@ a:hover {
     margin-left: -1.5em;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1280px) {
     .page-toc {
         float: none;
         width: 100%;

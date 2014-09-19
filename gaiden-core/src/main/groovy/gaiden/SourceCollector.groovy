@@ -49,12 +49,13 @@ class SourceCollector {
     }
 
     private List<PageSource> collectPageSources() {
-        def pageSources = []
+        List<PageSource> pageSources = []
         PathUtils.eachFileRecurse(gaidenConfig.sourceDirectory, [gaidenConfig.outputDirectory, gaidenConfig.projectThemesDirectory]) { Path path ->
             if (isPageSourceFile(path)) {
                 pageSources << createPageSource(path)
             }
         }
+        pageSources.sort { it.path }
         pageSources
     }
 
