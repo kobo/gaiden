@@ -16,6 +16,7 @@
 
 package gaiden
 
+import gaiden.message.MessageSource
 import groovy.transform.CompileStatic
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -37,6 +38,9 @@ class DocumentBuilder {
 
     @Autowired
     GaidenConfig gaidenConfig
+
+    @Autowired
+    MessageSource messageSource
 
     /**
      * Builds a document from a document source.
@@ -60,18 +64,18 @@ class DocumentBuilder {
             return Collections.emptyList()
         }
 
-        def pagesParser = new PagesParser(sourceDirectory: gaidenConfig.sourceDirectory)
-        return pagesParser.parse(gaidenConfig.pagesFile.getText(gaidenConfig.inputEncoding))
+        return new PagesParser(
+            pagesFile: gaidenConfig.pagesFile,
+            encoding: gaidenConfig.inputEncoding,
+            sourceDirectory: gaidenConfig.sourceDirectory,
+            messageSource: messageSource,
+        ).parse()
     }
 
     private static List<Page> getPageOrder(List<PageReference> pageReferences, List<Page> pages) {
         def pageOrder = []
         pageReferences.each { PageReference pageReference ->
             def page = pages.find { Files.isSameFile(it.source.path, pageReference.path) }
-            if (!page) {
-                // TODO warning log
-                return
-            }
             if (pageReference.metadata.hidden) {
                 return
             }

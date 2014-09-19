@@ -93,7 +93,7 @@ class GaidenLinkRenderer extends LinkRenderer {
 
         def filePath = page.source.path.parent.resolve(path)
         if (Files.notExists(filePath)) {
-            System.err.println("WARNING: " + messageSource.getMessage("output.page.reference.not.exists.message", [url, page.source.path]))
+            System.err.println("WARNING: " + messageSource.getMessage("page.reference.not.exists.message", [url, page.source.path]))
             return createRendering(url, title, text)
         }
 

@@ -78,7 +78,7 @@ class BindingBuilder {
         def file = gaidenConfig.sourceDirectory.resolve(filePath)
         def page = document.pages.find { Files.isSameFile(it.source.path, file) }
         if (!page) {
-            System.err.println("WARNING: " + messageSource.getMessage("output.page.reference.not.exists.message", [filePath, gaidenConfig.getLayoutFile(page.metadata.layout as String)]))
+            System.err.println("WARNING: " + messageSource.getMessage("page.reference.not.exists.message", [filePath, gaidenConfig.getLayoutFile(page.metadata.layout as String)]))
             return ""
         }
         return markdownProcessor.convertToHtml(page, document)

@@ -16,3 +16,5 @@
 "filter.md"(hidden: true, layout: "filter")
 "nav-holder.md"(hidden: true, layout: "render")
 "extension.md"(hidden: true, layout: "extension")
+
+"non-existent.md"

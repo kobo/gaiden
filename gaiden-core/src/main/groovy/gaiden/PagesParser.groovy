@@ -16,10 +16,12 @@
 
 package gaiden
 
+import gaiden.message.MessageSource
 import groovy.transform.CompileStatic
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer
 
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -29,14 +31,17 @@ class PagesParser {
     private List<PageReference> pageReferences = []
     private int baseLevel = 1
 
+    Path pagesFile
+    String encoding
     Path sourceDirectory
+    MessageSource messageSource
 
-    List<PageReference> parse(String text) {
+    List<PageReference> parse() {
         CompilerConfiguration configuration = new CompilerConfiguration()
         configuration.scriptBaseClass = DelegatingScript.name
         configuration.addCompilationCustomizers(new ASTTransformationCustomizer(new PagesAstTransformation()))
         GroovyShell shell = new GroovyShell(new Binding(), configuration)
-        DelegatingScript script = shell.parse(text) as DelegatingScript
+        DelegatingScript script = shell.parse(pagesFile.getText(encoding)) as DelegatingScript
         script.setDelegate(this)
         script.run()
         pageReferences
@@ -44,6 +49,11 @@ class PagesParser {
 
     def methodMissing(String name, args) {
         def path = sourceDirectory.resolve(Paths.get(name))
+        if (Files.notExists(path)) {
+            System.err.println("WARNING: " + messageSource.getMessage("page.reference.not.exists.message", [path, pagesFile]))
+            return
+        }
+
         def metadata = args.find { it instanceof Map } ?: Collections.emptyMap()
         pageReferences << new PageReference(path: path, metadata: metadata as Map<String, Object>, baseLevel: baseLevel)
 
