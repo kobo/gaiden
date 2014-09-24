@@ -89,6 +89,8 @@ class GaidenConfig {
 
     String theme = DEFAULT_THEME
 
+    String layout = DEFAULT_LAYOUT
+
     int documentTocDepth = 3
 
     int pageTocDepth = 99
@@ -129,8 +131,8 @@ class GaidenConfig {
         applicationThemesDirectory.resolve(theme).resolve(ASSETS_DIRECTORY)
     }
 
-    Path getApplicationThemeDirectory(String theme = this.theme) {
-        applicationThemesDirectory.resolve(theme)
+    Path getApplicationThemeDirectory(String theme) {
+        applicationThemesDirectory.resolve(theme ?: this.theme)
     }
 
     /** The path of pages file */
@@ -167,13 +169,12 @@ class GaidenConfig {
         outputDirectory.resolve(EXTENSIONS_DIRECTORY).resolve(extension.name)
     }
 
-    Path getLayoutFile(String layoutName) {
-        def filename = layoutName ?: DEFAULT_LAYOUT
-        def layoutFile = projectLayoutsDirectory.resolve("${filename}.html")
+    Path getLayoutFile(String layout) {
+        def layoutFile = projectLayoutsDirectory.resolve("${layout ?: this.layout}.html")
         if (Files.exists(layoutFile)) {
             return layoutFile
         }
-        return applicationLayoutsDirectory.resolve("${filename}.html")
+        return applicationLayoutsDirectory.resolve("${layout ?: this.layout}.html")
     }
 
     void setProjectDirectoryPath(String projectDirectoryPath) {
