@@ -122,75 +122,89 @@ Here is a simple example of a layout:
 The Layout supports JSP-like scriptlets, script, and EL expressions.
 Internally, the [SimpleTemplateEngine](http://groovy.codehaus.org/api/groovy/text/SimpleTemplateEngine.html) which is provided by Groovy is used for rendering a document.
 
+
 ### Properties and Methods
 
 You can use the following properties and methods in your layout.
 
-title
-:   The title which is configured in `config.groovy`.
+#### title
 
-content
-:   The content which is a generated html from a Markdown file.
+The title which is configured in `config.groovy`.
 
-page
-:   The `gaiden.Page` instance of the target page.
+#### content
 
-metadata
-:   The metadata which is configured in `config.groovy` for the target page.
+The content which is a generated html from a Markdown file.
 
-prevPage
-:   The previous page of the target page.
+#### page
 
-nextPage
-:   The next page of the target page.
+The `gaiden.Page` instance of the target page.
 
-homePage
-:   The home page which is configured in `config.groovy`. If it is not configured, the first page in `pages.groovy` is used.
+#### metadata
 
-document
-:   The document is a instance of `gaiden.Document`.
+The metadata which is configured in `config.groovy` for the target page.
 
-config
-:   The config is a instance of `gaiden.GaidenConfig`.
+#### prevPage
 
-resource
-:   The resource method is used to create a link to the static resources, e.g. image, css and javascript.
+The previous page of the target page.
 
-    ```
-    <script src="${resource('js/application.js')}"></script>
-    <link rel="stylesheet" href="${resource('js/application.js')}">
-    ```
+#### nextPage
 
-    The path of the argument is processed as a relative path from the assets directory.
+The next page of the target page.
 
-include
-:   The include method is used to include another layout as follows:
+#### homePage
 
-    ```
-    ${include('footer')}
-    ```
+The home page which is configured in `config.groovy`. If it is not configured, the first page in `pages.groovy` is used.
 
-    The layout name of the argument is resolved from the layouts directory.
-    Note that the layout name does not contain an extension such as 'html'.
+#### document
 
-extensionScripts
-:   The extensionScripts is a list of JavaScript file of all that is included in installed extensions.
-    Entries which are included in the list are an instance of `java.nio.file.Path`.
-    This can be used as follows:
+The document is a instance of `gaiden.Document`.
 
-    ```
-    <% extensionScripts.each { script -> %>
-    <script src="${script}"></script>
-    <% } %>
-    ```
+#### config
 
-extensionStyles
-:   The extensionScripts is a list of CSS file of all that is included in installed extensions.
-    Entries which are included in the list are an instance of `java.nio.file.Path`.
-    This can be used as follows:
+The config is a instance of `gaiden.GaidenConfig`.
 
-    ```
-    <% extensionStyles.each { style -> %>
-    <link rel="stylesheet" href="${style}">
-    <% } %>
-    ```
+#### resource
+
+The resource method is used to create a link to the static resources, e.g. image, css and javascript.
+
+```
+<script src="${resource('js/application.js')}"></script>
+<link rel="stylesheet" href="${resource('js/application.js')}">
+```
+
+The path of the argument is processed as a relative path from the assets directory.
+
+#### include
+
+The include method is used to include another layout as follows:
+
+```
+${include('footer')}
+```
+
+The layout name of the argument is resolved from the layouts directory.
+Note that the layout name does not contain an extension such as 'html'.
+
+#### extensionScripts
+
+The extensionScripts is a list of JavaScript file of all that is included in installed extensions.
+Entries which are included in the list are an instance of `java.nio.file.Path`.
+This can be used as follows:
+
+```
+<% extensionScripts.each { script -> %>
+<script src="${script}"></script>
+<% } %>
+```
+
+#### extensionStyles
+
+The extensionScripts is a list of CSS file of all that is included in installed extensions.
+Entries which are included in the list are an instance of `java.nio.file.Path`.
+This can be used as follows:
+
+```
+<% extensionStyles.each { style -> %>
+<link rel="stylesheet" href="${style}">
+<% } %>
+```
