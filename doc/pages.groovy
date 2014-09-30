@@ -1,6 +1,5 @@
 "getting-started.md"
-"project-structure.md"
-"configuration.md"
 "commands.md"
+"configuration.md"
 "theme.md"
 "extensions.md"
