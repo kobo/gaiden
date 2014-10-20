@@ -23,6 +23,7 @@ import groovy.transform.CompileStatic
 import org.apache.commons.cli.CommandLine
 import org.springframework.stereotype.Component
 
+import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.PosixFilePermissions
@@ -54,8 +55,11 @@ class CreateProjectCommand extends AbstractCommand {
 
         PathUtils.copyFiles(gaidenConfig.applicationInitialProjectTemplateDirectory, projectDirectory)
         PathUtils.copyFiles(gaidenConfig.applicationWrapperDirectory, projectDirectory)
-        projectDirectory.eachFileMatch(FileType.FILES, ~/gaidenw(.bat)?/) { Path gaidenw ->
-            Files.setPosixFilePermissions(gaidenw, PosixFilePermissions.fromString("rwxr-xr-x"))
+
+        if ("posix" in FileSystems.default.supportedFileAttributeViews()) {
+            projectDirectory.eachFileMatch(FileType.FILES, ~/gaidenw(.bat)?/) { Path gaidenw ->
+                Files.setPosixFilePermissions(gaidenw, PosixFilePermissions.fromString("rwxr-xr-x"))
+            }
         }
         println getMessage("command.create.project.success.message", [projectDirectory])
     }
