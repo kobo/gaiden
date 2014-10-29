@@ -12,103 +12,117 @@ You can customize behavior by changing these settings.
 Settings
 --------
 
-title
-:   Base title of pages.
+### title
 
-    **Note:** [check encoding](#encoding) for the title using multi-bytes.
+Base title of pages.
 
-theme
-:   This setting specifies a theme.
+**Note:** [check encoding](#encoding) for the title using multi-bytes.
 
-    **default:** `default` (means ./themes/default/ )
+### theme
 
-layout
-:   This setting specifies a layout file which is used by default.
+This setting specifies a theme.
 
-    **default:** `main` (means main.html in theme directory)
+**default:** `default` (means ./themes/default/ )
 
-inputEncoding
-:   The encoding of input Markdown resource.
+### layout
 
-    **default:** `UTF-8`
+This setting specifies a layout file which is used by default.
 
-outputEncoding
-:   The encoding of output document.
+**default:** `main` (means main.html in theme directory)
 
-    **default:** `UTF-8`
+### inputEncoding
 
-documentTocDepth
-:   The maximum depth that is used in generating a table of contents of the entire document.
-    A Header Level can be used in this setting.
+The encoding of input Markdown resource.
 
-    **default:** `4`
+**default:** `UTF-8`
 
-pageTocDepth
-:   The maximum depth that is used in generating a table of contents of a page.
-    A Header Level can be used in this setting.
+### outputEncoding
 
-    **default:** `99`
+The encoding of output document.
 
-numbering
-:   This parameter enables the numbering of the documentation.
+**default:** `UTF-8`
 
-    **default:** `true`
+### documentTocDepth
 
-numberingOffset
-:   This parameter represents the offset to start the numbering.
-    A Header Level can be used in this setting.
-    This parameter is based on 0.
+The maximum depth that is used in generating a table of contents of the entire document.
+A Header Level can be used in this setting.
 
-    **default:** `0`
+**default:** `4`
 
-numberingDepth
-:   This parameter represents the depth to end the numbering.
-    A Header Level can be used in this setting.
-    This parameter is based on 0.
+### pageTocDepth
 
-    **default:** `4`
+The maximum depth that is used in generating a table of contents of a page.
+A Header Level can be used in this setting.
 
-format
-:   This parameter enables the formatting of the generated document.
+**default:** `99`
 
-    **default:** `true`
+### numbering
 
-readmeToIndex
-:   If a file name is `README.md`, Gaiden will change the file name to `index.html` when generating the document.
+This parameter enables the numbering of the documentation.
 
-    **default:** `true`
+**default:** `true`
 
-assetTypes
-:   Types of asset that is copied when generating the document.
+### numberingOffset
 
-    **default** `['jpg', 'jpeg', 'png', 'gif']`
+This parameter represents the offset to start the numbering.
+A Header Level can be used in this setting.
+This parameter is based on 0.
 
-filters
-:   Gaiden provides the ability to hook into building events.
-    To create a filter, you can use Grails-like Filter DSL:
+**default:** `0`
 
-    ```
-    filters = {
-        all {
-            before = { text ->
-                text.replaceAll(/MY_REPLACE_TEXT_1/, '**HELLO**')
-            }
-            after = { text ->
-                text.replaceAll(/<h2.*?>MY_REPLACE_TEXT_2<\/h2>/, '<i>BYE</i>')
-            }
-            afterTemplate = { text ->
-                text.replaceAll(/TITLE/, 'GOOD')
-            }
+### numberingDepth
+
+This parameter represents the depth to end the numbering.
+A Header Level can be used in this setting.
+This parameter is based on 0.
+
+**default:** `4`
+
+### format
+
+This parameter enables the formatting of the generated document.
+
+**default:** `true`
+
+### readmeToIndex
+
+If a file name is `README.md`, Gaiden will change the file name to `index.html` when generating the document.
+
+**default:** `true`
+
+### assetTypes
+
+Types of asset that is copied when generating the document.
+
+**default** `['jpg', 'jpeg', 'png', 'gif']`
+
+### filters
+
+Gaiden provides the ability to hook into building events.
+To create a filter, you can use Grails-like Filter DSL:
+
+```
+filters = {
+    all {
+        before = { text ->
+            text.replaceAll(/MY_REPLACE_TEXT_1/, '**HELLO**')
+        }
+        after = { text ->
+            text.replaceAll(/<h2.*?>MY_REPLACE_TEXT_2<\/h2>/, '<i>BYE</i>')
+        }
+        afterTemplate = { text ->
+            text.replaceAll(/TITLE/, 'GOOD')
         }
     }
-    ```
+}
+```
 
-    Each filter is defined with the filter name within the filters block.
-    Within the body of the filter, you can define one or several of the following interceptor types for the filter:
+Each filter is defined with the filter name within the filters block.
+Within the body of the filter, you can define one or several of the following interceptor types for the filter:
 
-      * before - Executed before Markdown is processed. Takes a Markdown text as an argument.
-      * after - Executed after Markdown is processed. Takes a Converted HTML text as an argument.
-      * afterTemplate - Executed after the layout is applied. Takes a full HTML text as an argument.
+* before - Executed before Markdown is processed. Takes a Markdown text as an argument. The closure must return the whole text of result of filtering.
+* after - Executed after Markdown is processed. Takes a Converted HTML text as an argument. The closure must return the whole text of result of filtering.
+* afterTemplate - Executed after the layout is applied. Takes a full HTML text as an argument. The closure must return the whole text of result of filtering.
 
 
 Encoding
@@ -120,7 +134,7 @@ If you want to use another encoding, you can use `JAVA_OPTS` or `GAIDEN_OPTS` to
 For Unix:
 
 ```sh
-$ export GAIDEN_OPTS="-Dfile.encoding=Shift_JIS"
+$ export GAIDEN_OPTS="-Dfile.encoding=UTF-8"
 ```
 
 For Windows:
