@@ -1,7 +1,11 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <% if (currentPage.title) { %>
     <title>${currentPage.numbers ? currentPage.numbers.join(".") + ". " : ""}${currentPage.title} - $title</title>
+    <% } else { %>
+    <title>$title</title>
+    <% } %>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="${resource('/css/bootstrap.min.css')}">
     <link rel="stylesheet" href="${resource('/css/font-awesome.min.css')}">
