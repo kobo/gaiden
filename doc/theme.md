@@ -135,7 +135,7 @@ The title which is configured in `config.groovy`.
 
 The content which is a generated html from a Markdown file.
 
-#### page
+#### currentPage
 
 The `gaiden.Page` instance of the target page.
 
