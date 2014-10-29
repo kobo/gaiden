@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/my.css">
   </head>
   <body>
+    <a href="https://github.com/kobo/gaiden"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 100; margin: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
     <div class="wrapper">
       <div class="header">
         <i class="fa fa-bars sidebar-toggle"></i>
@@ -42,7 +43,25 @@
           <li class="unnumbered visible">
             <a href="configuration.html" data-alt-hash="configuration">Configuration</a>
             <ul>
-              <li class="unnumbered visible"><a href="configuration.html#settings">Settings</a></li>
+              <li class="unnumbered visible">
+                <a href="configuration.html#settings">Settings</a>
+                <ul>
+                  <li class="unnumbered invisible"><a href="configuration.html#title">title</a></li>
+                  <li class="unnumbered invisible"><a href="configuration.html#theme">theme</a></li>
+                  <li class="unnumbered invisible"><a href="configuration.html#layout">layout</a></li>
+                  <li class="unnumbered invisible"><a href="configuration.html#inputencoding">inputEncoding</a></li>
+                  <li class="unnumbered invisible"><a href="configuration.html#outputencoding">outputEncoding</a></li>
+                  <li class="unnumbered invisible"><a href="configuration.html#documenttocdepth">documentTocDepth</a></li>
+                  <li class="unnumbered invisible"><a href="configuration.html#pagetocdepth">pageTocDepth</a></li>
+                  <li class="unnumbered invisible"><a href="configuration.html#numbering">numbering</a></li>
+                  <li class="unnumbered invisible"><a href="configuration.html#numberingoffset">numberingOffset</a></li>
+                  <li class="unnumbered invisible"><a href="configuration.html#numberingdepth">numberingDepth</a></li>
+                  <li class="unnumbered invisible"><a href="configuration.html#format">format</a></li>
+                  <li class="unnumbered invisible"><a href="configuration.html#readmetoindex">readmeToIndex</a></li>
+                  <li class="unnumbered invisible"><a href="configuration.html#assettypes">assetTypes</a></li>
+                  <li class="unnumbered invisible"><a href="configuration.html#filters">filters</a></li>
+                </ul>
+              </li>
               <li class="unnumbered visible"><a href="configuration.html#encoding">Encoding</a></li>
             </ul>
           </li>
@@ -55,14 +74,14 @@
               <li class="unnumbered visible">
                 <a href="theme.html#using-layouts">Using layouts</a>
                 <ul>
-                  <li class="unnumbered visible"><a href="theme.html#configgroovy">config.groovy</a></li>
-                  <li class="unnumbered visible"><a href="theme.html#pagesgroovy">pages.groovy</a></li>
+                  <li class="unnumbered invisible"><a href="theme.html#configgroovy">config.groovy</a></li>
+                  <li class="unnumbered invisible"><a href="theme.html#pagesgroovy">pages.groovy</a></li>
                 </ul>
               </li>
               <li class="unnumbered visible">
                 <a href="theme.html#customizing-layouts">Customizing layouts</a>
                 <ul>
-                  <li class="unnumbered visible">
+                  <li class="unnumbered invisible">
                     <a href="theme.html#properties-and-methods">Properties and Methods</a>
                     <ul>
                       <li class="unnumbered invisible"><a href="theme.html#title">title</a></li>
@@ -90,9 +109,9 @@
               <li class="unnumbered visible">
                 <a href="extensions.html#using-extensions">Using Extensions</a>
                 <ul>
-                  <li class="unnumbered visible"><a href="extensions.html#static-resources-of-extensions">Static resources of extensions</a></li>
-                  <li class="unnumbered visible"><a href="extensions.html#configuration-of-extensions">Configuration of extensions</a></li>
-                  <li class="unnumbered visible"><a href="extensions.html#filters-of-extensions">Filters of extensions</a></li>
+                  <li class="unnumbered invisible"><a href="extensions.html#static-resources-of-extensions">Static resources of extensions</a></li>
+                  <li class="unnumbered invisible"><a href="extensions.html#configuration-of-extensions">Configuration of extensions</a></li>
+                  <li class="unnumbered invisible"><a href="extensions.html#filters-of-extensions">Filters of extensions</a></li>
                 </ul>
               </li>
             </ul>
@@ -117,7 +136,25 @@
               <li class="unnumbered visible">
                 <a href="#configuration">Configuration</a>
                 <ul>
-                  <li class="unnumbered visible"><a href="#settings">Settings</a></li>
+                  <li class="unnumbered visible">
+                    <a href="#settings">Settings</a>
+                    <ul>
+                      <li class="unnumbered visible"><a href="#title">title</a></li>
+                      <li class="unnumbered visible"><a href="#theme">theme</a></li>
+                      <li class="unnumbered visible"><a href="#layout">layout</a></li>
+                      <li class="unnumbered visible"><a href="#inputencoding">inputEncoding</a></li>
+                      <li class="unnumbered visible"><a href="#outputencoding">outputEncoding</a></li>
+                      <li class="unnumbered visible"><a href="#documenttocdepth">documentTocDepth</a></li>
+                      <li class="unnumbered visible"><a href="#pagetocdepth">pageTocDepth</a></li>
+                      <li class="unnumbered visible"><a href="#numbering">numbering</a></li>
+                      <li class="unnumbered visible"><a href="#numberingoffset">numberingOffset</a></li>
+                      <li class="unnumbered visible"><a href="#numberingdepth">numberingDepth</a></li>
+                      <li class="unnumbered visible"><a href="#format">format</a></li>
+                      <li class="unnumbered visible"><a href="#readmetoindex">readmeToIndex</a></li>
+                      <li class="unnumbered visible"><a href="#assettypes">assetTypes</a></li>
+                      <li class="unnumbered visible"><a href="#filters">filters</a></li>
+                    </ul>
+                  </li>
                   <li class="unnumbered visible"><a href="#encoding">Encoding</a></li>
                 </ul>
               </li>
@@ -130,76 +167,48 @@
             <p><code>pages.groovy</code> provides files list and settings for table of contents. See <a href="theme.html#using-layouts">Using layouts</a>.</p>
             <p>You can customize behavior by changing these settings.</p>
             <h2 id="settings">Settings</h2>
-            <dl>
-              <dt>title</dt>
-              <dd>
-                <p>Base title of pages.</p>
-                <p><strong>Note:</strong> <a href="#encoding">check encoding</a> for the title using multi-bytes.</p>
-              </dd>
-              <dt>theme</dt>
-              <dd>
-                <p>This setting specifies a theme.</p>
-                <p><strong>default:</strong> <code>default</code> (means ./themes/default/ )</p>
-              </dd>
-              <dt>layout</dt>
-              <dd>
-                <p>This setting specifies a layout file which is used by default.</p>
-                <p><strong>default:</strong> <code>main</code> (means main.html in theme directory)</p>
-              </dd>
-              <dt>inputEncoding</dt>
-              <dd>
-                <p>The encoding of input Markdown resource.</p>
-                <p><strong>default:</strong> <code>UTF-8</code></p>
-              </dd>
-              <dt>outputEncoding</dt>
-              <dd>
-                <p>The encoding of output document.</p>
-                <p><strong>default:</strong> <code>UTF-8</code></p>
-              </dd>
-              <dt>documentTocDepth</dt>
-              <dd>
-                <p>The maximum depth that is used in generating a table of contents of the entire document. A Header Level can be used in this setting.</p>
-                <p><strong>default:</strong> <code>4</code></p>
-              </dd>
-              <dt>pageTocDepth</dt>
-              <dd>
-                <p>The maximum depth that is used in generating a table of contents of a page. A Header Level can be used in this setting.</p>
-                <p><strong>default:</strong> <code>99</code></p>
-              </dd>
-              <dt>numbering</dt>
-              <dd>
-                <p>This parameter enables the numbering of the documentation.</p>
-                <p><strong>default:</strong> <code>true</code></p>
-              </dd>
-              <dt>numberingOffset</dt>
-              <dd>
-                <p>This parameter represents the offset to start the numbering. A Header Level can be used in this setting. This parameter is based on 0.</p>
-                <p><strong>default:</strong> <code>0</code></p>
-              </dd>
-              <dt>numberingDepth</dt>
-              <dd>
-                <p>This parameter represents the depth to end the numbering. A Header Level can be used in this setting. This parameter is based on 0.</p>
-                <p><strong>default:</strong> <code>4</code></p>
-              </dd>
-              <dt>format</dt>
-              <dd>
-                <p>This parameter enables the formatting of the generated document.</p>
-                <p><strong>default:</strong> <code>true</code></p>
-              </dd>
-              <dt>readmeToIndex</dt>
-              <dd>
-                <p>If a file name is <code>README.md</code>, Gaiden will change the file name to <code>index.html</code> when generating the document.</p>
-                <p><strong>default:</strong> <code>true</code></p>
-              </dd>
-              <dt>assetTypes</dt>
-              <dd>
-                <p>Types of asset that is copied when generating the document.</p>
-                <p><strong>default</strong> <code>[&#39;jpg&#39;, &#39;jpeg&#39;, &#39;png&#39;, &#39;gif&#39;]</code></p>
-              </dd>
-              <dt>filters</dt>
-              <dd>
-                <p>Gaiden provides the ability to hook into building events. To create a filter, you can use Grails-like Filter DSL:</p>
-                <pre><code class="nohighlight">filters = {
+            <h3 id="title">title</h3>
+            <p>Base title of pages.</p>
+            <p><strong>Note:</strong> <a href="#encoding">check encoding</a> for the title using multi-bytes.</p>
+            <h3 id="theme">theme</h3>
+            <p>This setting specifies a theme.</p>
+            <p><strong>default:</strong> <code>default</code> (means ./themes/default/ )</p>
+            <h3 id="layout">layout</h3>
+            <p>This setting specifies a layout file which is used by default.</p>
+            <p><strong>default:</strong> <code>main</code> (means main.html in theme directory)</p>
+            <h3 id="inputencoding">inputEncoding</h3>
+            <p>The encoding of input Markdown resource.</p>
+            <p><strong>default:</strong> <code>UTF-8</code></p>
+            <h3 id="outputencoding">outputEncoding</h3>
+            <p>The encoding of output document.</p>
+            <p><strong>default:</strong> <code>UTF-8</code></p>
+            <h3 id="documenttocdepth">documentTocDepth</h3>
+            <p>The maximum depth that is used in generating a table of contents of the entire document. A Header Level can be used in this setting.</p>
+            <p><strong>default:</strong> <code>4</code></p>
+            <h3 id="pagetocdepth">pageTocDepth</h3>
+            <p>The maximum depth that is used in generating a table of contents of a page. A Header Level can be used in this setting.</p>
+            <p><strong>default:</strong> <code>99</code></p>
+            <h3 id="numbering">numbering</h3>
+            <p>This parameter enables the numbering of the documentation.</p>
+            <p><strong>default:</strong> <code>true</code></p>
+            <h3 id="numberingoffset">numberingOffset</h3>
+            <p>This parameter represents the offset to start the numbering. A Header Level can be used in this setting. This parameter is based on 0.</p>
+            <p><strong>default:</strong> <code>0</code></p>
+            <h3 id="numberingdepth">numberingDepth</h3>
+            <p>This parameter represents the depth to end the numbering. A Header Level can be used in this setting. This parameter is based on 0.</p>
+            <p><strong>default:</strong> <code>4</code></p>
+            <h3 id="format">format</h3>
+            <p>This parameter enables the formatting of the generated document.</p>
+            <p><strong>default:</strong> <code>true</code></p>
+            <h3 id="readmetoindex">readmeToIndex</h3>
+            <p>If a file name is <code>README.md</code>, Gaiden will change the file name to <code>index.html</code> when generating the document.</p>
+            <p><strong>default:</strong> <code>true</code></p>
+            <h3 id="assettypes">assetTypes</h3>
+            <p>Types of asset that is copied when generating the document.</p>
+            <p><strong>default</strong> <code>[&#39;jpg&#39;, &#39;jpeg&#39;, &#39;png&#39;, &#39;gif&#39;]</code></p>
+            <h3 id="filters">filters</h3>
+            <p>Gaiden provides the ability to hook into building events. To create a filter, you can use Grails-like Filter DSL:</p>
+            <pre><code class="nohighlight">filters = {
     all {
         before = { text -&gt;
             text.replaceAll(/MY_REPLACE_TEXT_1/, &#39;**HELLO**&#39;)
@@ -213,18 +222,16 @@
     }
 }
 </code></pre>
-                <p>Each filter is defined with the filter name within the filters block. Within the body of the filter, you can define one or several of the following interceptor types for the filter:</p>
-                <ul>
-                  <li>before - Executed before Markdown is processed. Takes a Markdown text as an argument.</li>
-                  <li>after - Executed after Markdown is processed. Takes a Converted HTML text as an argument.</li>
-                  <li>afterTemplate - Executed after the layout is applied. Takes a full HTML text as an argument.</li>
-                </ul>
-              </dd>
-            </dl>
+            <p>Each filter is defined with the filter name within the filters block. Within the body of the filter, you can define one or several of the following interceptor types for the filter:</p>
+            <ul>
+              <li>before - Executed before Markdown is processed. Takes a Markdown text as an argument. The closure must return the whole text of result of filtering.</li>
+              <li>after - Executed after Markdown is processed. Takes a Converted HTML text as an argument. The closure must return the whole text of result of filtering.</li>
+              <li>afterTemplate - Executed after the layout is applied. Takes a full HTML text as an argument. The closure must return the whole text of result of filtering.</li>
+            </ul>
             <h2 id="encoding">Encoding</h2>
             <p>The encoding of <code>config.groovy</code> must be same as the <code>file.encoding</code> system property. If you want to use another encoding, you can use <code>JAVA_OPTS</code> or <code>GAIDEN_OPTS</code> to pass JVM options to Gaiden as follows.</p>
             <p>For Unix:</p>
-            <pre><code class="sh">$ export GAIDEN_OPTS=&quot;-Dfile.encoding=Shift_JIS&quot;
+            <pre><code class="sh">$ export GAIDEN_OPTS=&quot;-Dfile.encoding=UTF-8&quot;
 </code></pre>
             <p>For Windows:</p>
             <pre><code class="ps">&gt; set GAIDEN_OPTS=&quot;-Dfile.encoding=UTF-8&quot;
