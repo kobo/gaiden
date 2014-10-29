@@ -209,16 +209,13 @@ license terms. Your use of the source code for the these subcomponents is
 subject to the terms and conditions of the following licenses.
 
 For the Twitter Bootstrap components:
-  - src/dist/template/static/css/bootstrap.css (modified file)
-  - src/dist/template/static/css/bootstrap.min.css (modified file)
-  - src/dist/template/static/fonts/glyphiconshalflings-regular.eot
-  - src/dist/template/static/fonts/glyphiconshalflings-regular.otf
-  - src/dist/template/static/fonts/glyphiconshalflings-regular.svg
-  - src/dist/template/static/fonts/glyphiconshalflings-regular.ttf
-  - src/dist/template/static/fonts/glyphiconshalflings-regular.woff
-  - src/dist/template/static/js/bootstrap.js
-  - src/dist/template/static/js/bootstrap.min.js
-  - src/dist/template/static/js/jquery-1.10.2.min.js
+  - src/main/dist/themes/default/assets/css/bootstrap.min.css
+  - src/main/dist/themes/default/assets/fonts/glyphicons-halflings-regular.eot
+  - src/main/dist/themes/default/assets/fonts/glyphicons-halflings-regular.otf
+  - src/main/dist/themes/default/assets/fonts/glyphicons-halflings-regular.svg
+  - src/main/dist/themes/default/assets/fonts/glyphicons-halflings-regular.ttf
+  - src/main/dist/themes/default/assets/fonts/glyphicons-halflings-regular.woff
+  - src/main/dist/themes/default/assets/js/jquery-2.1.1.min.js
 
 /*!
 * Bootstrap v3.0.0 by @fat and @mdo
@@ -228,6 +225,19 @@ For the Twitter Bootstrap components:
 * Designed and built with all the love in the world by @mdo and @fat.
 */
 
+For Font-Awesome components:
+
+  - src/main/dist/themes/default/assets/fonts/FontAwesome.otf
+  - src/main/dist/themes/default/assets/fonts/fontawesome-webfont.eot
+  - src/main/dist/themes/default/assets/fonts/fontawesome-webfont.svg
+  - src/main/dist/themes/default/assets/fonts/fontawesome-webfont.ttf
+  - src/main/dist/themes/default/assets/fonts/fontawesome-webfont.woff
+  - src/main/dist/themes/default/assets/css/font-awesome.min.css
+
+/*!
+ *  Font Awesome 4.1.0 by @davegandy - http://fontawesome.io - @fontawesome
+ *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
+ */
 
 For ant-1.9.1, ant-launcher-1.9.1 components:
 
@@ -321,7 +331,7 @@ For commons-cli-1.2 components:
  * limitations under the License.
  */
 
-For commons-lang3-3.1 components:
+For commons-lang3-3.2 components:
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -340,7 +350,26 @@ For commons-lang3-3.1 components:
  * limitations under the License.
  */
 
-For groovy-all-2.1.4 components:
+For commons-codec-1.9.jar:
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+For groovy-all-2.3.6 components:
 
 /*
  * Copyright 2008-2013 the original author or authors.
@@ -377,13 +406,128 @@ For parboiled-core-1.1.4, parboiled-java-1.1.4 components:
  * limitations under the License.
  */
 
+For jackson-core-2.2.2, jackson-databind-2.2.2, jackson-databind-2.2.2 components:
 
-For pegdown-1.2.1 components:
+/* Jackson JSON-processor.
+ *
+ * Copyright (c) 2007- Tatu Saloranta, tatu.saloranta@iki.fi
+ */
+
+For jcl-over-slf4j-1.7.7 components:
 
 /*
- * Copyright (C) 2010-2011 Mathias Doenitz
+ * Copyright 2001-2004 The Apache Software Foundation.
  *
- * Based on peg-markdown (C) 2008-2010 John MacFarlane
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+For jericho-html-3.3 components:
+
+// Jericho HTML Parser - Java based library for analysing and manipulating HTML
+// Version 3.3
+// Copyright (C) 2004-2009 Martin Jericho
+// http://jericho.htmlparser.net/
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of either one of the following licences:
+//
+// 1. The Eclipse Public License (EPL) version 1.0,
+// included in this distribution in the file licence-epl-1.0.html
+// or available at http://www.eclipse.org/legal/epl-v10.html
+//
+// 2. The GNU Lesser General Public License (LGPL) version 2.1 or later,
+// included in this distribution in the file licence-lgpl-2.1.txt
+// or available at http://www.gnu.org/licenses/lgpl.txt
+//
+// This library is distributed on an "AS IS" basis,
+// WITHOUT WARRANTY OF ANY KIND, either express or implied.
+// See the individual licence texts for more details.
+
+For lang-groovy-2.1.0-final components:
+
+/**
+ * Copyright 2013 Red Hat, Inc.
+ *
+ * Red Hat licenses this file to you under the Apache License, version 2.0
+ * (the "License"); you may not use this file except in compliance with the
+ * License.  You may obtain a copy of the License at:
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
+For log4j-1.2.16.jar components:
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+For logback-core-1.1.2, logback-classic-1.1.2 components:
+
+/**
+ * Logback: the reliable, generic, fast and flexible logging framework.
+ * Copyright (C) 1999-2013, QOS.ch. All rights reserved.
+ *
+ * This program and the accompanying materials are dual-licensed under
+ * either the terms of the Eclipse Public License v1.0 as published by
+ * the Eclipse Foundation
+ *
+ *   or (per the licensee's choosing)
+ *
+ * under the terms of the GNU Lesser General Public License version 2.1
+ * as published by the Free Software Foundation.
+ */
+
+For netty-all-4.0.20.Final components:
+
+/*
+ * Copyright 2012 The Netty Project
+ *
+ * The Netty Project licenses this file to you under the Apache License,
+ * version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
+For pegdown-1.4.2, parboiled-core-1.1.6, parboiled-java-1.1.6 components:
+
+/*
+ * Copyright (C) 2009-2011 Mathias Doenitz
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -396,4 +540,68 @@ For pegdown-1.2.1 components:
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ */
+
+For slf4j-api-1.7.7 components:
+
+/**
+ * Copyright (c) 2004-2011 QOS.ch
+ * All rights reserved.
+ *
+ * Permission is hereby granted, free  of charge, to any person obtaining
+ * a  copy  of this  software  and  associated  documentation files  (the
+ * "Software"), to  deal in  the Software without  restriction, including
+ * without limitation  the rights to  use, copy, modify,  merge, publish,
+ * distribute,  sublicense, and/or sell  copies of  the Software,  and to
+ * permit persons to whom the Software  is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The  above  copyright  notice  and  this permission  notice  shall  be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE  SOFTWARE IS  PROVIDED  "AS  IS", WITHOUT  WARRANTY  OF ANY  KIND,
+ * EXPRESS OR  IMPLIED, INCLUDING  BUT NOT LIMITED  TO THE  WARRANTIES OF
+ * MERCHANTABILITY,    FITNESS    FOR    A   PARTICULAR    PURPOSE    AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+For spring-core-4.0.6.RELEASE, spring-aop-4.0.6.RELEASE, spring-beans-4.0.6.RELEASE,
+spring-context-4.0.6.RELEASE, spring-expression-4.0.6.RELEASE components:
+
+/*
+ * Copyright 2002-2012 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+For vertx-core-2.1.2, vertx-platform-2.1.2 components:
+
+/*
+ * Copyright (c) 2011-2013 The original author or authors
+ * ------------------------------------------------------
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * and Apache License v2.0 which accompanies this distribution.
+ *
+ *     The Eclipse Public License is available at
+ *     http://www.eclipse.org/legal/epl-v10.html
+ *
+ *     The Apache License v2.0 is available at
+ *     http://www.opensource.org/licenses/apache2.0.php
+ *
+ * You may elect to redistribute this code under either of these licenses.
  */
