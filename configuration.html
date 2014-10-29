@@ -1,0 +1,254 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Configuration - Gaiden</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/highlight.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/my.css">
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="header">
+        <i class="fa fa-bars sidebar-toggle"></i>
+        <span class="title"><a href="index.html">Gaiden</a></span>
+      </div>
+      <div class="sidebar">
+        <ul>
+          <li class="unnumbered visible">
+            <a href="getting-started.html" data-alt-hash="getting-started">Getting Started</a>
+            <ul>
+              <li class="unnumbered visible"><a href="getting-started.html#installation">Installation</a></li>
+              <li class="unnumbered visible"><a href="getting-started.html#create-project">Create Project</a></li>
+              <li class="unnumbered visible"><a href="getting-started.html#project-structure">Project Structure</a></li>
+              <li class="unnumbered visible"><a href="getting-started.html#writing-a-page">Writing a page</a></li>
+              <li class="unnumbered visible"><a href="getting-started.html#building-a-document">Building a document</a></li>
+            </ul>
+          </li>
+          <li class="unnumbered visible">
+            <a href="commands.html" data-alt-hash="commands">Commands</a>
+            <ul>
+              <li class="unnumbered visible"><a href="commands.html#build">build</a></li>
+              <li class="unnumbered visible"><a href="commands.html#clean">clean</a></li>
+              <li class="unnumbered visible"><a href="commands.html#create-project">create-project</a></li>
+              <li class="unnumbered visible"><a href="commands.html#help">help</a></li>
+              <li class="unnumbered visible"><a href="commands.html#install-theme">install-theme</a></li>
+              <li class="unnumbered visible"><a href="commands.html#watch">watch</a></li>
+              <li class="unnumbered visible"><a href="commands.html#wrapper">wrapper</a></li>
+            </ul>
+          </li>
+          <li class="unnumbered visible">
+            <a href="configuration.html" data-alt-hash="configuration">Configuration</a>
+            <ul>
+              <li class="unnumbered visible"><a href="configuration.html#settings">Settings</a></li>
+              <li class="unnumbered visible"><a href="configuration.html#encoding">Encoding</a></li>
+            </ul>
+          </li>
+          <li class="unnumbered visible">
+            <a href="theme.html" data-alt-hash="theme">Theme</a>
+            <ul>
+              <li class="unnumbered visible"><a href="theme.html#specifying-a-theme">Specifying a theme</a></li>
+              <li class="unnumbered visible"><a href="theme.html#installing-a-theme">Installing a theme</a></li>
+              <li class="unnumbered visible"><a href="theme.html#directory-structure-of-themes">Directory structure of themes</a></li>
+              <li class="unnumbered visible">
+                <a href="theme.html#using-layouts">Using layouts</a>
+                <ul>
+                  <li class="unnumbered visible"><a href="theme.html#configgroovy">config.groovy</a></li>
+                  <li class="unnumbered visible"><a href="theme.html#pagesgroovy">pages.groovy</a></li>
+                </ul>
+              </li>
+              <li class="unnumbered visible">
+                <a href="theme.html#customizing-layouts">Customizing layouts</a>
+                <ul>
+                  <li class="unnumbered visible">
+                    <a href="theme.html#properties-and-methods">Properties and Methods</a>
+                    <ul>
+                      <li class="unnumbered invisible"><a href="theme.html#title">title</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#content">content</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#currentpage">currentPage</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#metadata">metadata</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#prevpage">prevPage</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#nextpage">nextPage</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#homepage">homePage</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#document">document</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#config">config</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#resource">resource</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#include">include</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#extensionscripts">extensionScripts</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#extensionstyles">extensionStyles</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li class="unnumbered visible">
+            <a href="extensions.html" data-alt-hash="extensions">Extensions</a>
+            <ul>
+              <li class="unnumbered visible">
+                <a href="extensions.html#using-extensions">Using Extensions</a>
+                <ul>
+                  <li class="unnumbered visible"><a href="extensions.html#static-resources-of-extensions">Static resources of extensions</a></li>
+                  <li class="unnumbered visible"><a href="extensions.html#configuration-of-extensions">Configuration of extensions</a></li>
+                  <li class="unnumbered visible"><a href="extensions.html#filters-of-extensions">Filters of extensions</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="content">
+        <div class="content-handle"></div>
+        <div class="content-container">
+          <div class="content-nav content-nav-top">
+            <a class="prev-page" href="commands.html">
+            <i class="fa fa-angle-left"></i>
+            Commands
+            </a>
+            <a class="next-page" href="theme.html">
+            Theme
+            <i class="fa fa-angle-right"></i>
+            </a>
+          </div>
+          <div class="page-toc">
+            <ul>
+              <li class="unnumbered visible">
+                <a href="#configuration">Configuration</a>
+                <ul>
+                  <li class="unnumbered visible"><a href="#settings">Settings</a></li>
+                  <li class="unnumbered visible"><a href="#encoding">Encoding</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="main-content">
+            <h1 id="configuration">Configuration</h1>
+            <p>Gaiden has two configuration files: <code>config.groovy</code> and <code>pages.groovy</code>.</p>
+            <p><code>config.groovy</code> provides settings for generating the document.</p>
+            <p><code>pages.groovy</code> provides files list and settings for table of contents. See <a href="theme.html#using-layouts">Using layouts</a>.</p>
+            <p>You can customize behavior by changing these settings.</p>
+            <h2 id="settings">Settings</h2>
+            <dl>
+              <dt>title</dt>
+              <dd>
+                <p>Base title of pages.</p>
+                <p><strong>Note:</strong> <a href="#encoding">check encoding</a> for the title using multi-bytes.</p>
+              </dd>
+              <dt>theme</dt>
+              <dd>
+                <p>This setting specifies a theme.</p>
+                <p><strong>default:</strong> <code>default</code> (means ./themes/default/ )</p>
+              </dd>
+              <dt>layout</dt>
+              <dd>
+                <p>This setting specifies a layout file which is used by default.</p>
+                <p><strong>default:</strong> <code>main</code> (means main.html in theme directory)</p>
+              </dd>
+              <dt>inputEncoding</dt>
+              <dd>
+                <p>The encoding of input Markdown resource.</p>
+                <p><strong>default:</strong> <code>UTF-8</code></p>
+              </dd>
+              <dt>outputEncoding</dt>
+              <dd>
+                <p>The encoding of output document.</p>
+                <p><strong>default:</strong> <code>UTF-8</code></p>
+              </dd>
+              <dt>documentTocDepth</dt>
+              <dd>
+                <p>The maximum depth that is used in generating a table of contents of the entire document. A Header Level can be used in this setting.</p>
+                <p><strong>default:</strong> <code>4</code></p>
+              </dd>
+              <dt>pageTocDepth</dt>
+              <dd>
+                <p>The maximum depth that is used in generating a table of contents of a page. A Header Level can be used in this setting.</p>
+                <p><strong>default:</strong> <code>99</code></p>
+              </dd>
+              <dt>numbering</dt>
+              <dd>
+                <p>This parameter enables the numbering of the documentation.</p>
+                <p><strong>default:</strong> <code>true</code></p>
+              </dd>
+              <dt>numberingOffset</dt>
+              <dd>
+                <p>This parameter represents the offset to start the numbering. A Header Level can be used in this setting. This parameter is based on 0.</p>
+                <p><strong>default:</strong> <code>0</code></p>
+              </dd>
+              <dt>numberingDepth</dt>
+              <dd>
+                <p>This parameter represents the depth to end the numbering. A Header Level can be used in this setting. This parameter is based on 0.</p>
+                <p><strong>default:</strong> <code>4</code></p>
+              </dd>
+              <dt>format</dt>
+              <dd>
+                <p>This parameter enables the formatting of the generated document.</p>
+                <p><strong>default:</strong> <code>true</code></p>
+              </dd>
+              <dt>readmeToIndex</dt>
+              <dd>
+                <p>If a file name is <code>README.md</code>, Gaiden will change the file name to <code>index.html</code> when generating the document.</p>
+                <p><strong>default:</strong> <code>true</code></p>
+              </dd>
+              <dt>assetTypes</dt>
+              <dd>
+                <p>Types of asset that is copied when generating the document.</p>
+                <p><strong>default</strong> <code>[&#39;jpg&#39;, &#39;jpeg&#39;, &#39;png&#39;, &#39;gif&#39;]</code></p>
+              </dd>
+              <dt>filters</dt>
+              <dd>
+                <p>Gaiden provides the ability to hook into building events. To create a filter, you can use Grails-like Filter DSL:</p>
+                <pre><code class="nohighlight">filters = {
+    all {
+        before = { text -&gt;
+            text.replaceAll(/MY_REPLACE_TEXT_1/, &#39;**HELLO**&#39;)
+        }
+        after = { text -&gt;
+            text.replaceAll(/&lt;h2.*?&gt;MY_REPLACE_TEXT_2&lt;\/h2&gt;/, &#39;&lt;i&gt;BYE&lt;/i&gt;&#39;)
+        }
+        afterTemplate = { text -&gt;
+            text.replaceAll(/TITLE/, &#39;GOOD&#39;)
+        }
+    }
+}
+</code></pre>
+                <p>Each filter is defined with the filter name within the filters block. Within the body of the filter, you can define one or several of the following interceptor types for the filter:</p>
+                <ul>
+                  <li>before - Executed before Markdown is processed. Takes a Markdown text as an argument.</li>
+                  <li>after - Executed after Markdown is processed. Takes a Converted HTML text as an argument.</li>
+                  <li>afterTemplate - Executed after the layout is applied. Takes a full HTML text as an argument.</li>
+                </ul>
+              </dd>
+            </dl>
+            <h2 id="encoding">Encoding</h2>
+            <p>The encoding of <code>config.groovy</code> must be same as the <code>file.encoding</code> system property. If you want to use another encoding, you can use <code>JAVA_OPTS</code> or <code>GAIDEN_OPTS</code> to pass JVM options to Gaiden as follows.</p>
+            <p>For Unix:</p>
+            <pre><code class="sh">$ export GAIDEN_OPTS=&quot;-Dfile.encoding=Shift_JIS&quot;
+</code></pre>
+            <p>For Windows:</p>
+            <pre><code class="ps">&gt; set GAIDEN_OPTS=&quot;-Dfile.encoding=UTF-8&quot;
+</code></pre>
+          </div>
+          <div class="content-nav content-nav-bottom">
+            <a class="prev-page" href="commands.html">
+            <i class="fa fa-angle-left"></i>
+            Commands
+            </a>
+            <a class="next-page" href="theme.html">
+            Theme
+            <i class="fa fa-angle-right"></i>
+            </a>
+          </div>
+          <div class="footer">
+            <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/highlight.js"></script>
+    <script src="js/application.js"></script>
+    <script src="js/my.js"></script>
+  </body>
+</html>

@@ -1,0 +1,283 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Theme - Gaiden</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/highlight.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/my.css">
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="header">
+        <i class="fa fa-bars sidebar-toggle"></i>
+        <span class="title"><a href="index.html">Gaiden</a></span>
+      </div>
+      <div class="sidebar">
+        <ul>
+          <li class="unnumbered visible">
+            <a href="getting-started.html" data-alt-hash="getting-started">Getting Started</a>
+            <ul>
+              <li class="unnumbered visible"><a href="getting-started.html#installation">Installation</a></li>
+              <li class="unnumbered visible"><a href="getting-started.html#create-project">Create Project</a></li>
+              <li class="unnumbered visible"><a href="getting-started.html#project-structure">Project Structure</a></li>
+              <li class="unnumbered visible"><a href="getting-started.html#writing-a-page">Writing a page</a></li>
+              <li class="unnumbered visible"><a href="getting-started.html#building-a-document">Building a document</a></li>
+            </ul>
+          </li>
+          <li class="unnumbered visible">
+            <a href="commands.html" data-alt-hash="commands">Commands</a>
+            <ul>
+              <li class="unnumbered visible"><a href="commands.html#build">build</a></li>
+              <li class="unnumbered visible"><a href="commands.html#clean">clean</a></li>
+              <li class="unnumbered visible"><a href="commands.html#create-project">create-project</a></li>
+              <li class="unnumbered visible"><a href="commands.html#help">help</a></li>
+              <li class="unnumbered visible"><a href="commands.html#install-theme">install-theme</a></li>
+              <li class="unnumbered visible"><a href="commands.html#watch">watch</a></li>
+              <li class="unnumbered visible"><a href="commands.html#wrapper">wrapper</a></li>
+            </ul>
+          </li>
+          <li class="unnumbered visible">
+            <a href="configuration.html" data-alt-hash="configuration">Configuration</a>
+            <ul>
+              <li class="unnumbered visible"><a href="configuration.html#settings">Settings</a></li>
+              <li class="unnumbered visible"><a href="configuration.html#encoding">Encoding</a></li>
+            </ul>
+          </li>
+          <li class="unnumbered visible">
+            <a href="theme.html" data-alt-hash="theme">Theme</a>
+            <ul>
+              <li class="unnumbered visible"><a href="theme.html#specifying-a-theme">Specifying a theme</a></li>
+              <li class="unnumbered visible"><a href="theme.html#installing-a-theme">Installing a theme</a></li>
+              <li class="unnumbered visible"><a href="theme.html#directory-structure-of-themes">Directory structure of themes</a></li>
+              <li class="unnumbered visible">
+                <a href="theme.html#using-layouts">Using layouts</a>
+                <ul>
+                  <li class="unnumbered visible"><a href="theme.html#configgroovy">config.groovy</a></li>
+                  <li class="unnumbered visible"><a href="theme.html#pagesgroovy">pages.groovy</a></li>
+                </ul>
+              </li>
+              <li class="unnumbered visible">
+                <a href="theme.html#customizing-layouts">Customizing layouts</a>
+                <ul>
+                  <li class="unnumbered visible">
+                    <a href="theme.html#properties-and-methods">Properties and Methods</a>
+                    <ul>
+                      <li class="unnumbered invisible"><a href="theme.html#title">title</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#content">content</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#currentpage">currentPage</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#metadata">metadata</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#prevpage">prevPage</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#nextpage">nextPage</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#homepage">homePage</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#document">document</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#config">config</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#resource">resource</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#include">include</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#extensionscripts">extensionScripts</a></li>
+                      <li class="unnumbered invisible"><a href="theme.html#extensionstyles">extensionStyles</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li class="unnumbered visible">
+            <a href="extensions.html" data-alt-hash="extensions">Extensions</a>
+            <ul>
+              <li class="unnumbered visible">
+                <a href="extensions.html#using-extensions">Using Extensions</a>
+                <ul>
+                  <li class="unnumbered visible"><a href="extensions.html#static-resources-of-extensions">Static resources of extensions</a></li>
+                  <li class="unnumbered visible"><a href="extensions.html#configuration-of-extensions">Configuration of extensions</a></li>
+                  <li class="unnumbered visible"><a href="extensions.html#filters-of-extensions">Filters of extensions</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="content">
+        <div class="content-handle"></div>
+        <div class="content-container">
+          <div class="content-nav content-nav-top">
+            <a class="prev-page" href="configuration.html">
+            <i class="fa fa-angle-left"></i>
+            Configuration
+            </a>
+            <a class="next-page" href="extensions.html">
+            Extensions
+            <i class="fa fa-angle-right"></i>
+            </a>
+          </div>
+          <div class="page-toc">
+            <ul>
+              <li class="unnumbered visible">
+                <a href="#theme">Theme</a>
+                <ul>
+                  <li class="unnumbered visible"><a href="#specifying-a-theme">Specifying a theme</a></li>
+                  <li class="unnumbered visible"><a href="#installing-a-theme">Installing a theme</a></li>
+                  <li class="unnumbered visible"><a href="#directory-structure-of-themes">Directory structure of themes</a></li>
+                  <li class="unnumbered visible">
+                    <a href="#using-layouts">Using layouts</a>
+                    <ul>
+                      <li class="unnumbered visible"><a href="#configgroovy">config.groovy</a></li>
+                      <li class="unnumbered visible"><a href="#pagesgroovy">pages.groovy</a></li>
+                    </ul>
+                  </li>
+                  <li class="unnumbered visible">
+                    <a href="#customizing-layouts">Customizing layouts</a>
+                    <ul>
+                      <li class="unnumbered visible">
+                        <a href="#properties-and-methods">Properties and Methods</a>
+                        <ul>
+                          <li class="unnumbered visible"><a href="#title">title</a></li>
+                          <li class="unnumbered visible"><a href="#content">content</a></li>
+                          <li class="unnumbered visible"><a href="#currentpage">currentPage</a></li>
+                          <li class="unnumbered visible"><a href="#metadata">metadata</a></li>
+                          <li class="unnumbered visible"><a href="#prevpage">prevPage</a></li>
+                          <li class="unnumbered visible"><a href="#nextpage">nextPage</a></li>
+                          <li class="unnumbered visible"><a href="#homepage">homePage</a></li>
+                          <li class="unnumbered visible"><a href="#document">document</a></li>
+                          <li class="unnumbered visible"><a href="#config">config</a></li>
+                          <li class="unnumbered visible"><a href="#resource">resource</a></li>
+                          <li class="unnumbered visible"><a href="#include">include</a></li>
+                          <li class="unnumbered visible"><a href="#extensionscripts">extensionScripts</a></li>
+                          <li class="unnumbered visible"><a href="#extensionstyles">extensionStyles</a></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="main-content">
+            <h1 id="theme">Theme</h1>
+            <p>Gaiden supports changing the look and feel of a generated document via themes. A theme is a collection of HTML layouts, stylesheets, images, javascripts, and other static files.</p>
+            <h2 id="specifying-a-theme">Specifying a theme</h2>
+            <p>To configure a theme, you should specify the theme name in your <code>config.groovy</code>:</p>
+            <pre><code class="nohighlight">theme = &#39;theme name&#39;
+</code></pre>
+            <p>When the theme name is not specified, &ldquo;default&rdquo; of a default theme name is used.</p>
+            <h2 id="installing-a-theme">Installing a theme</h2>
+            <p>You can install a theme using an &lsquo;install-theme&rsquo; command at the top of an existing Gaiden project:</p>
+            <pre><code class="nohighlight">gaiden install-theme &lt;theme name&gt;
+</code></pre>
+            <p>The <code>install-theme</code> command will install resources of the given theme name to a <code>themes</code> directory. You can customize these resources to change the look and feel of a generated document.</p>
+            <h2 id="directory-structure-of-themes">Directory structure of themes</h2>
+            <p>The <code>themes</code> directory structure looks like this:</p>
+            <pre><code class="nohighlight">&lt;your project&gt;
+├── themes
+│   ├── &lt;theme name&gt;
+│   │   ├── layouts
+│   │   │   └── ...
+│   │   └── assets
+│   │       └── ...
+│   ...
+</code></pre>
+            <p>The themes which are installed in the your <code>themes</code> directory are called &lsquo;User Theme&rsquo;.</p>
+            <p>The names of immediate subdirectories of the <code>themes</code> directory are used as a theme name. For example, the theme name of a directory called <code>themes/simple</code> is a <code>simple</code>.</p>
+            <p>A theme directory contains two directory which be called &lsquo;layouts&rsquo; and &lsquo;assets&rsquo;.</p>
+            <dl>
+              <dt>layouts</dt>
+              <dd>Layout files. The file name of the layout file is used as a layout name. The layout name can be specified in <code>config.groovy</code> or <code>pages.groovy</code>.</dd>
+              <dt>assets</dt>
+              <dd>Stylesheets, Images, JavaScripts, and other static files. These files will be copied to the output directory.</dd>
+            </dl>
+            <p>If the user theme is a same name as a bundled theme by default, the user theme takes priority. It means that assets of a bundled theme are overwritten by assets of a user theme. And a layout file of a user theme is used if there is a layout file with a same name. In other words, you can remove resources which are not changed in installed resources.</p>
+            <h2 id="using-layouts">Using layouts</h2>
+            <p>You can specify a layout which you want to use. There are two ways to specify the theme.</p>
+            <h3 id="configgroovy">config.groovy</h3>
+            <p>In <code>config.groovy</code>, you can specify a layout name as follows:</p>
+            <pre><code class="nohighlight">layout = &#39;layout name&#39;
+</code></pre>
+            <p>The default value is <code>main</code>. This setting specifies a layout which is used by default.</p>
+            <h3 id="pagesgroovy">pages.groovy</h3>
+            <p>In <code>pages.groovy</code>, you can specify a layout name for each page as follows:</p>
+            <pre><code class="nohighlight">&#39;introduction.md&#39;(layout: &#39;layout name&#39;)
+&#39;install.md&#39;(layout: &#39;other layout name&#39;)
+&#39;examples.md&#39;
+</code></pre>
+            <p>This settings which is specified in <code>pages.groovy</code> get preference over the setting on <code>config.groovy</code>.</p>
+            <h2 id="customizing-layouts">Customizing layouts</h2>
+            <p>You can change the appearance of a generated document by customizing layouts. Here is a simple example of a layout:</p>
+            <pre><code class="nohighlight">&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;$title&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    $content
+    ${include(&#39;footer&#39;)}
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+            <p>The Layout supports JSP-like scriptlets, script, and EL expressions. Internally, the <a href="http://groovy.codehaus.org/api/groovy/text/SimpleTemplateEngine.html">SimpleTemplateEngine</a> which is provided by Groovy is used for rendering a document.</p>
+            <h3 id="properties-and-methods">Properties and Methods</h3>
+            <p>You can use the following properties and methods in your layout.</p>
+            <h4 id="title">title</h4>
+            <p>The title which is configured in <code>config.groovy</code>.</p>
+            <h4 id="content">content</h4>
+            <p>The content which is a generated html from a Markdown file.</p>
+            <h4 id="currentpage">currentPage</h4>
+            <p>The <code>gaiden.Page</code> instance of the target page.</p>
+            <h4 id="metadata">metadata</h4>
+            <p>The metadata which is configured in <code>config.groovy</code> for the target page.</p>
+            <h4 id="prevpage">prevPage</h4>
+            <p>The previous page of the target page.</p>
+            <h4 id="nextpage">nextPage</h4>
+            <p>The next page of the target page.</p>
+            <h4 id="homepage">homePage</h4>
+            <p>The home page which is configured in <code>config.groovy</code>. If it is not configured, the first page in <code>pages.groovy</code> is used.</p>
+            <h4 id="document">document</h4>
+            <p>The document is a instance of <code>gaiden.Document</code>.</p>
+            <h4 id="config">config</h4>
+            <p>The config is a instance of <code>gaiden.GaidenConfig</code>.</p>
+            <h4 id="resource">resource</h4>
+            <p>The resource method is used to create a link to the static resources, e.g. image, css and javascript.</p>
+            <pre><code class="nohighlight">&lt;script src=&quot;${resource(&#39;js/application.js&#39;)}&quot;&gt;&lt;/script&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;${resource(&#39;js/application.js&#39;)}&quot;&gt;
+</code></pre>
+            <p>The path of the argument is processed as a relative path from the assets directory.</p>
+            <h4 id="include">include</h4>
+            <p>The include method is used to include another layout as follows:</p>
+            <pre><code class="nohighlight">${include(&#39;footer&#39;)}
+</code></pre>
+            <p>The layout name of the argument is resolved from the layouts directory. Note that the layout name does not contain an extension such as &lsquo;html&rsquo;.</p>
+            <h4 id="extensionscripts">extensionScripts</h4>
+            <p>The extensionScripts is a list of JavaScript file of all that is included in installed extensions. Entries which are included in the list are an instance of <code>java.nio.file.Path</code>. This can be used as follows:</p>
+            <pre><code class="nohighlight">&lt;% extensionScripts.each { script -&gt; %&gt;
+&lt;script src=&quot;${script}&quot;&gt;&lt;/script&gt;
+&lt;% } %&gt;
+</code></pre>
+            <h4 id="extensionstyles">extensionStyles</h4>
+            <p>The extensionScripts is a list of CSS file of all that is included in installed extensions. Entries which are included in the list are an instance of <code>java.nio.file.Path</code>. This can be used as follows:</p>
+            <pre><code class="nohighlight">&lt;% extensionStyles.each { style -&gt; %&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;${style}&quot;&gt;
+&lt;% } %&gt;
+</code></pre>
+          </div>
+          <div class="content-nav content-nav-bottom">
+            <a class="prev-page" href="configuration.html">
+            <i class="fa fa-angle-left"></i>
+            Configuration
+            </a>
+            <a class="next-page" href="extensions.html">
+            Extensions
+            <i class="fa fa-angle-right"></i>
+            </a>
+          </div>
+          <div class="footer">
+            <p class="credit text-muted">Powered by <a href="https://github.com/kobo/gaiden">Gaiden</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/highlight.js"></script>
+    <script src="js/application.js"></script>
+    <script src="js/my.js"></script>
+  </body>
+</html>
