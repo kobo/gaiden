@@ -1,0 +1,5 @@
+"getting-started.md"
+"commands.md"
+"configuration.md"
+"theme.md"
+"extensions.md"
