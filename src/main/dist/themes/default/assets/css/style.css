@@ -209,7 +209,7 @@ a:hover {
     height: 100%;
     overflow: auto;
     border-right: 1px solid #ccc;
-    padding: 1em .5em 1.5em 1.5em;
+    padding: 1em .5em 4em 1.5em;
     background: #eee;
     z-index: 66;
 }
