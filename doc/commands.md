@@ -32,7 +32,7 @@ install-theme
 ```sh
 $ gaiden install-theme <theme-name>
 ```
-This command installs layouts and static resources of the specified theme for customizing look-and-feel. You can specify **default** theme as `<theme-name>` by default.
+This command installs layouts and static resources of the specified theme for customizing look-and-feel. You can specify `default` theme as `<theme-name>` by default.
 
 watch
 -----
