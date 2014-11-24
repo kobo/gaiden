@@ -76,7 +76,7 @@ Writing a page
 
 To write a page, you can use the Markdown.
 If you don't know the Markdown, please refer to
-[Markdown Syntax Guide](Markdown Syntax Guide) at Daring Firebal.
+[Markdown Syntax Guide](http://daringfireball.net/projects/markdown/syntax "Daring Fireball: Markdown Syntax Documentation") at Daring Firebal.
 
 These pages can be located in under the source directory.
 The source directory is set the project root directory by default.
