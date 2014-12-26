@@ -23,11 +23,12 @@ import org.vertx.groovy.core.http.HttpServerRequest
 import org.vertx.groovy.core.http.ServerWebSocket
 
 import java.nio.file.Path
+import java.util.concurrent.CopyOnWriteArrayList
 
 @CompileStatic
 class EmbeddedHttpServer {
 
-    private List<ServerWebSocket> webSockets = [].asSynchronized()
+    private List<ServerWebSocket> webSockets = [] as CopyOnWriteArrayList
     private HttpServer httpServer
 
     int port
