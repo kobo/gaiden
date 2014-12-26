@@ -77,10 +77,14 @@ class WatchCommand extends AbstractCommand {
     }
 
     private void build() {
-        GaidenApplication.initialize()
-        def command = GaidenApplication.getBean(BuildCommand)
-        GaidenApplication.config.add("watch", true)
-        GaidenApplication.config.add("serverPort", server.port)
-        command.execute()
+        try {
+            GaidenApplication.initialize()
+            def command = GaidenApplication.getBean(BuildCommand)
+            GaidenApplication.config.add("watch", true)
+            GaidenApplication.config.add("serverPort", server.port)
+            command.execute()
+        } catch (IOException e) {
+            println getMessage("command.watch.io.error", [e.class.name, e.message])
+        }
     }
 }
