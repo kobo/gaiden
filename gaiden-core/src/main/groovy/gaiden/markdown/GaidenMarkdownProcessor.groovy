@@ -58,7 +58,7 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
 
     RootNode parseMarkdown(PageSource pageSource) {
         def content = gaidenConfig.filters.inject(pageSource.content) { String text, Entry<String, Filter> entry ->
-            entry.value.doBefore(text)
+            entry.value.doBefore(text, gaidenConfig, pageSource)
         } as String
 
         return parseMarkdown(content.toCharArray())
@@ -70,7 +70,7 @@ class GaidenMarkdownProcessor extends PegDownProcessor {
         def html = new GaidenToHtmlSerializer(gaidenConfig, linkRenderer, imageRenderer, page).toHtml(page.contentNode)
 
         return gaidenConfig.filters.inject(html) { String text, Entry<String, Filter> entry ->
-            entry.value.doAfter(text)
+            entry.value.doAfter(text, gaidenConfig, page, document)
         } as String
     }
 

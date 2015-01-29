@@ -16,9 +16,6 @@
 
 package gaiden
 
-import groovy.transform.CompileStatic
-
-@CompileStatic
 class Filter {
 
     String name
@@ -27,23 +24,54 @@ class Filter {
     Closure after
     Closure afterTemplate
 
-    String doBefore(String text) {
+    String doBefore(String text, GaidenConfig gaidenConfig, PageSource pageSource) {
         if (before) {
-            return before.call(text)
+            switch (before.parameterTypes.size()) {
+                case 1:
+                    return before.call(text)
+                case 2:
+                    return before.call(text, gaidenConfig)
+                case 3:
+                    return before.call(text, gaidenConfig, pageSource)
+                default:
+                    throw new IllegalArgumentException("A parameter type of closure for filter is invalid: ${before.parameterTypes}")
+            }
         }
         return text
     }
 
-    String doAfter(String text) {
+    String doAfter(String text, GaidenConfig gaidenConfig, Page page, Document document) {
         if (after) {
-            return after.call(text)
+            switch (after.parameterTypes.size()) {
+                case 1:
+                    return after.call(text)
+                case 2:
+                    return after.call(text, gaidenConfig)
+                case 3:
+                    return after.call(text, gaidenConfig, page)
+                case 4:
+                    return after.call(text, gaidenConfig, page, document)
+                default:
+                    throw new IllegalArgumentException("A parameter type of closure for filter is invalid: ${after.parameterTypes}")
+            }
         }
         return text
     }
 
-    String doAfterTemplate(String text) {
+    String doAfterTemplate(String text, GaidenConfig gaidenConfig, Page page, Document document) {
         if (afterTemplate) {
-            return afterTemplate.call(text)
+            switch (afterTemplate.parameterTypes.size()) {
+                case 1:
+                    return afterTemplate.call(text)
+                case 2:
+                    return afterTemplate.call(text, gaidenConfig)
+                case 3:
+                    return afterTemplate.call(text, gaidenConfig, page)
+                case 4:
+                    return afterTemplate.call(text, gaidenConfig, page, document)
+                default:
+                    throw new IllegalArgumentException("A parameter type of closure for filter is invalid: ${afterTemplate.parameterTypes}")
+            }
         }
         return text
     }
