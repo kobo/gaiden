@@ -65,7 +65,7 @@ class ImageRenderer {
      * @return {@link ImageElement}'s instance
      */
     ImageElement render(String imagePath, String alt) {
-        if (UrlUtils.isUrl(imagePath) || Paths.get(imagePath).absolute) {
+        if (UrlUtils.isUrl(imagePath) || imagePath.startsWith('/')) {
             return new ImageElement(src: imagePath, alt: alt)
         }
 
