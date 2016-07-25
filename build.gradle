@@ -16,7 +16,7 @@
 
 defaultTasks 'clean', 'install'
 
-version = '1.0.1'
+version = project.version
 
 allprojects {
     apply plugin: 'idea'
