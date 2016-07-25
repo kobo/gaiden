@@ -41,3 +41,4 @@ subprojects {
 apply from: "gradle/git.gradle"
 apply from: "gradle/distribution.gradle"
 apply from: "gradle/sample.gradle"
+apply from: "gradle/sdkman.gradle"
