@@ -76,6 +76,9 @@ abstract class FunctionalSpec extends GaidenSpec {
             if (PathUtils.getExtension(file) == "html") {
                 def actual = format(outputFile.text)
                 def expected = format(file.text)
+                if (System.getProperty('file.separator') == "\\") {
+                    expected = expected.replaceAll(/(href|src)="((?!http|https|\/about\/)[^"].*)"/){ it[1] + '="' + it[2].replaceAll("\\/", "\\\\") + '"' }
+                }
                 assertThat(actual, is(expected))
             }
         }
