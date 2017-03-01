@@ -31,6 +31,7 @@ class GaidenConfigSpec extends GaidenSpec {
             | title = "Test Title"
             | sourceDirectoryPath = "test/source"
             | outputDirectoryPath = "test/build/html"
+            | distFileName = "test-dist"
             | inputEncoding = "UTF-8"
             | outputEncoding = "UTF-8"
             | dynamicProperty = "dynamic"
@@ -47,6 +48,7 @@ class GaidenConfigSpec extends GaidenSpec {
             gaidenConfig.title == "Test Title"
             gaidenConfig.sourceDirectory == gaidenConfig.projectDirectory.resolve("test/source")
             gaidenConfig.outputDirectory == gaidenConfig.projectDirectory.resolve("test/build/html")
+            gaidenConfig.distFileName == "test-dist"
             gaidenConfig.inputEncoding == "UTF-8"
             gaidenConfig.outputEncoding == "UTF-8"
             gaidenConfig.homePage == gaidenConfig.sourceDirectory.resolve("README.md")

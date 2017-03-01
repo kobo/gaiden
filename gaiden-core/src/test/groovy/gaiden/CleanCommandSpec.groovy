@@ -19,6 +19,7 @@ package gaiden
 import gaiden.command.CleanCommand
 
 import java.nio.file.Files
+import java.nio.file.Path
 
 class CleanCommandSpec extends FunctionalSpec {
 
@@ -32,5 +33,23 @@ class CleanCommandSpec extends FunctionalSpec {
 
         then:
             Files.notExists(outputDirectory)
+    }
+
+    def "'execute' should clean the build directory and the dist file"() {
+        given:
+            def command = applicationContext.getBean(CleanCommand)
+            assert Files.exists(outputDirectory)
+
+        and:
+            Path distFile = projectDirectory.resolve(GaidenConfig.DEFAULT_DIST_FILE_NAME + ".zip")
+            distFile.toFile().text = "TEST_DIST_FILE"
+            assert Files.exists(distFile)
+
+        when:
+            command.execute()
+
+        then:
+            Files.notExists(outputDirectory)
+            Files.notExists(distFile)
     }
 }

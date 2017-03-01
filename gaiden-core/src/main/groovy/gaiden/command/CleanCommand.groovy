@@ -40,6 +40,7 @@ class CleanCommand extends AbstractCommand {
     @Override
     void execute(CommandLine commandLine) {
         gaidenConfig.outputDirectory.deleteDir()
+        gaidenConfig.projectDirectory.resolve(gaidenConfig.distFileName + ".zip").toFile().delete()
         println getMessage("command.clean.success.message")
     }
 }
