@@ -20,6 +20,10 @@ $ gaiden create-project <project-name>
 ```
 The starting point for Gaiden. This command creates a project template using the `<project name>` specified.
 
+dist
+-----
+This command makes the zipped archive of HTML files, which is named **dist.zip** by default.
+
 help
 -------------
 ```sh
