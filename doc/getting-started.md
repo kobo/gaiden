@@ -8,10 +8,10 @@ You need a [Java SE](http://www.oracle.com/technetwork/java/javase/downloads/ind
 installed, but it is not necessary to install Groovy because it's bundled with
 the Gaiden distribution.
 
-Installing Gaiden on Unix based systems is easiest with [GVM](http://gvmtool.net/):
+Installing Gaiden on Unix based systems is easiest with [SDKMAN!](http://sdkman.io/):
 
 ```sh
-$ gvm install gaiden
+$ sdk install gaiden
 ```
 
 Or download [a binary distribution of Gaiden](https://github.com/kobo/gaiden/releases)
