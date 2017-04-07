@@ -1,0 +1,16 @@
+.header,
+.footer,
+.sidebar,
+.content-nav,
+.page-toc {
+    display: none;
+}
+
+.content {
+    margin-left: 0;
+    padding: 0;
+}
+
+.content .content-container {
+    padding: 1em;
+}
