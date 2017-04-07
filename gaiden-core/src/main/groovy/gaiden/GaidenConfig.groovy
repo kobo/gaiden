@@ -44,6 +44,7 @@ class GaidenConfig {
     static final String DEFAULT_ENCODING = "UTF-8"
 
     static final String DEFAULT_BUILD_DIRECTORY = "build"
+    static final String DEFAULT_DIST_FILE_NAME = "dist"
     static final String THEMES_DIRECTORY = "themes"
     static final String PROJECT_TEMPLATE_DIRECTORY = "template"
     static final String LAYOUTS_DIRECTORY = "layouts"
@@ -76,6 +77,9 @@ class GaidenConfig {
 
     /** The path of directory to be outputted a document */
     Path outputDirectory = defaultProjectDirectory.resolve(DEFAULT_BUILD_DIRECTORY)
+
+    /** The base name of a zipped archive of HTML files */
+    String distFileName = DEFAULT_DIST_FILE_NAME
 
     /** The input encoding of files */
     String inputEncoding = DEFAULT_ENCODING
