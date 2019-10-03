@@ -1,5 +1,5 @@
 language: groovy
 jdk:
-  - oraclejdk8
+  - openjdk8
 script: ./gradlew test -i
 
