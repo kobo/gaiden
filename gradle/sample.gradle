@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-task createSampleProject << {
-    ext.sampleProject = file("$buildDir/sample-project")
-    copy {
-        into sampleProject
-        from file("src/sample/sample-project")
-    }
+task createSampleProject {
+    doLast {
+        ext.sampleProject = file("$buildDir/sample-project")
+        copy {
+            into sampleProject
+            from file("src/sample/sample-project")
+        }
 
-    if (System.getProperty("gaiden.theme")) {
-        file("$sampleProject/config.groovy").append """theme = "${System.getProperty("gaiden.theme")}"\n"""
-    }
+        if (System.getProperty("gaiden.theme")) {
+            file("$sampleProject/config.groovy").append """theme = "${System.getProperty("gaiden.theme")}"\n"""
+        }
 
-    println "Created a sample project at $sampleProject"
+        println "Created a sample project at $sampleProject"
+    }
 }
 
-task buildSampleProject(dependsOn: ["install", "createSampleProject"]) << {
-    executeCommand(["$buildDir/install/gaiden/bin/gaiden", "build"], createSampleProject.sampleProject)
+task buildSampleProject(dependsOn: ["install", "createSampleProject"]) {
+    doLast {
+        executeCommand(["$buildDir/install/gaiden/bin/gaiden", "build"], createSampleProject.sampleProject)
+    }
 }
 
 def executeCommand(List command, File workDir, Map env = [:]) {
