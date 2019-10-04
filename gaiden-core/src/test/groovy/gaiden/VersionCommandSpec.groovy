@@ -22,14 +22,14 @@ class VersionCommandSpec extends FunctionalSpec {
 
     def "display a version"() {
         given:
-            def printStream = Mock(PrintStream)
-            System.out = printStream
-            def command = applicationContext.getBean(VersionCommand)
+        def printStream = Mock(PrintStream)
+        System.out = printStream
+        def command = applicationContext.getBean(VersionCommand)
 
         when:
-            command.execute()
+        command.execute()
 
         then:
-            1 * printStream.println({ it =~ /Version/ })
+        1 * printStream.println({ it =~ /Version/ })
     }
 }

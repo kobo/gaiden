@@ -22,12 +22,12 @@ class CreateProjectCommandSpec extends FunctionalSpec {
 
     def "create a new project"() {
         given:
-            def command = applicationContext.getBean(CreateProjectCommand)
+        def command = applicationContext.getBean(CreateProjectCommand)
 
         when:
-            command.execute(["new-project"])
+        command.execute(["new-project"])
 
         then:
-            assertDirectory(projectDirectory.resolve("new-project"), gaidenConfig.applicationInitialProjectTemplateDirectory)
+        assertDirectory(projectDirectory.resolve("new-project"), gaidenConfig.applicationInitialProjectTemplateDirectory)
     }
 }

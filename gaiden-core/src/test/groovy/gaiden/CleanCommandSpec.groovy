@@ -25,31 +25,31 @@ class CleanCommandSpec extends FunctionalSpec {
 
     def "'execute' should clean the build directory"() {
         given:
-            def command = applicationContext.getBean(CleanCommand)
-            assert Files.exists(outputDirectory)
+        def command = applicationContext.getBean(CleanCommand)
+        assert Files.exists(outputDirectory)
 
         when:
-            command.execute()
+        command.execute()
 
         then:
-            Files.notExists(outputDirectory)
+        Files.notExists(outputDirectory)
     }
 
     def "'execute' should clean the build directory and the dist file"() {
         given:
-            def command = applicationContext.getBean(CleanCommand)
-            assert Files.exists(outputDirectory)
+        def command = applicationContext.getBean(CleanCommand)
+        assert Files.exists(outputDirectory)
 
         and:
-            Path distFile = projectDirectory.resolve(GaidenConfig.DEFAULT_DIST_FILE_NAME + ".zip")
-            distFile.toFile().text = "TEST_DIST_FILE"
-            assert Files.exists(distFile)
+        Path distFile = projectDirectory.resolve(GaidenConfig.DEFAULT_DIST_FILE_NAME + ".zip")
+        distFile.toFile().text = "TEST_DIST_FILE"
+        assert Files.exists(distFile)
 
         when:
-            command.execute()
+        command.execute()
 
         then:
-            Files.notExists(outputDirectory)
-            Files.notExists(distFile)
+        Files.notExists(outputDirectory)
+        Files.notExists(distFile)
     }
 }

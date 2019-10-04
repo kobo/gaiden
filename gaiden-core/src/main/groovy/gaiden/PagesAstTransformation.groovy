@@ -28,8 +28,8 @@ import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.transform.ASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
 
-import static org.codehaus.groovy.ast.expr.MethodCallExpression.*
-import static org.codehaus.groovy.ast.expr.VariableExpression.*
+import static org.codehaus.groovy.ast.expr.MethodCallExpression.NO_ARGUMENTS
+import static org.codehaus.groovy.ast.expr.VariableExpression.THIS_EXPRESSION
 
 @GroovyASTTransformation(phase = CompilePhase.CANONICALIZATION)
 class PagesAstTransformation implements ASTTransformation {

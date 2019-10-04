@@ -239,8 +239,8 @@ class GaidenConfig {
             def name = directory.fileName.toString()
             def configFile = directory.resolve(GAIDEN_CONFIG_FILENAME)
             extensions[name] = new Extension([
-                name           : name,
-                configObject   : Files.exists(configFile) ? parse(configFile) : new ConfigObject(),
+                name: name,
+                configObject: Files.exists(configFile) ? parse(configFile) : new ConfigObject(),
                 assetsDirectory: directory.resolve(ASSETS_DIRECTORY),
             ])
         }

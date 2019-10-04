@@ -33,7 +33,7 @@ import org.pegdown.ast.SpecialAttributesNode
 
 import java.nio.file.Files
 
-import static org.pegdown.FastEncoder.*
+import static org.pegdown.FastEncoder.encode
 
 /**
  * A Renderer for link node.

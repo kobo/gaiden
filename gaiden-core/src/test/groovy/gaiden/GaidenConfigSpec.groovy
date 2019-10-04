@@ -27,7 +27,7 @@ class GaidenConfigSpec extends GaidenSpec {
 
     def "initialize the configuration with GaidenConfig.groovy"() {
         given:
-            gaidenConfigFile.write '''
+        gaidenConfigFile.write '''
             | title = "Test Title"
             | sourceDirectoryPath = "test/source"
             | outputDirectoryPath = "test/build/html"
@@ -38,21 +38,21 @@ class GaidenConfigSpec extends GaidenSpec {
             | dynamic.nested = "nested"
             | homePage = "README.md"
             '''.stripMargin()
-            def gaidenConfig = new GaidenConfig()
-            gaidenConfig.sourceDirectory
+        def gaidenConfig = new GaidenConfig()
+        gaidenConfig.sourceDirectory
 
         when:
-            gaidenConfig.loadConfig(gaidenConfigFile)
+        gaidenConfig.loadConfig(gaidenConfigFile)
 
         then:
-            gaidenConfig.title == "Test Title"
-            gaidenConfig.sourceDirectory == gaidenConfig.projectDirectory.resolve("test/source")
-            gaidenConfig.outputDirectory == gaidenConfig.projectDirectory.resolve("test/build/html")
-            gaidenConfig.distFileName == "test-dist"
-            gaidenConfig.inputEncoding == "UTF-8"
-            gaidenConfig.outputEncoding == "UTF-8"
-            gaidenConfig.homePage == gaidenConfig.sourceDirectory.resolve("README.md")
-            gaidenConfig.dynamicProperty == "dynamic"
-            gaidenConfig.dynamic.nested == "nested"
+        gaidenConfig.title == "Test Title"
+        gaidenConfig.sourceDirectory == gaidenConfig.projectDirectory.resolve("test/source")
+        gaidenConfig.outputDirectory == gaidenConfig.projectDirectory.resolve("test/build/html")
+        gaidenConfig.distFileName == "test-dist"
+        gaidenConfig.inputEncoding == "UTF-8"
+        gaidenConfig.outputEncoding == "UTF-8"
+        gaidenConfig.homePage == gaidenConfig.sourceDirectory.resolve("README.md")
+        gaidenConfig.dynamicProperty == "dynamic"
+        gaidenConfig.dynamic.nested == "nested"
     }
 }

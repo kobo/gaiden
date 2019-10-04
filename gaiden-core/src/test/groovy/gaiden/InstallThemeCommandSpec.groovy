@@ -23,36 +23,36 @@ class InstallThemeCommandSpec extends FunctionalSpec {
 
     def "install with a valid theme name"() {
         given:
-            def theme = "default"
-            def command = applicationContext.getBean(InstallThemeCommand)
+        def theme = "default"
+        def command = applicationContext.getBean(InstallThemeCommand)
 
         when:
-            command.execute([theme])
+        command.execute([theme])
 
         then:
-            assertDirectory(gaidenConfig.getProjectThemeDirectory(theme), gaidenConfig.getApplicationThemeDirectory(theme))
+        assertDirectory(gaidenConfig.getProjectThemeDirectory(theme), gaidenConfig.getApplicationThemeDirectory(theme))
     }
 
     def "install without a theme name"() {
         given:
-            def command = applicationContext.getBean(InstallThemeCommand)
+        def command = applicationContext.getBean(InstallThemeCommand)
 
         when:
-            command.execute([])
+        command.execute([])
 
         then:
-            thrown(GaidenException)
+        thrown(GaidenException)
     }
 
     def "install with an invalid theme name"() {
         given:
-            def theme = "invalid theme"
-            def command = applicationContext.getBean(InstallThemeCommand)
+        def theme = "invalid theme"
+        def command = applicationContext.getBean(InstallThemeCommand)
 
         when:
-            command.execute([theme])
+        command.execute([theme])
 
         then:
-            thrown(GaidenException)
+        thrown(GaidenException)
     }
 }

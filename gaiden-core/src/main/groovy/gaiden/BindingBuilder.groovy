@@ -26,7 +26,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-import static org.apache.commons.lang3.StringEscapeUtils.*
+import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4
 
 /**
  * Builder for binding to be passed to a template engine.
@@ -51,20 +51,20 @@ class BindingBuilder {
      */
     Map<String, Object> build() {
         [
-            title           : escapeHtml4(gaidenConfig.title),
-            document        : document,
-            content         : content,
-            metadata        : page.metadata,
-            currentPage     : page,
-            prevPage        : document.previousPageOf(page),
-            nextPage        : document.nextPageOf(page),
-            config          : gaidenConfig,
-            homePage        : document.homePage,
+            title: escapeHtml4(gaidenConfig.title),
+            document: document,
+            content: content,
+            metadata: page.metadata,
+            currentPage: page,
+            prevPage: document.previousPageOf(page),
+            nextPage: document.nextPageOf(page),
+            config: gaidenConfig,
+            homePage: document.homePage,
             extensionScripts: extensionScripts,
-            extensionStyles : extensionStyles,
-            resource        : this.&getResource,
-            render          : this.&render,
-            include         : this.&include,
+            extensionStyles: extensionStyles,
+            resource: this.&getResource,
+            render: this.&render,
+            include: this.&include,
         ]
     }
 

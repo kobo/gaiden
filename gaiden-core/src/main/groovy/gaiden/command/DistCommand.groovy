@@ -16,17 +16,14 @@
 
 package gaiden.command
 
-import gaiden.Document
-import gaiden.DocumentBuilder
-import gaiden.DocumentWriter
 import gaiden.GaidenApplication
 import gaiden.GaidenConfig
-import gaiden.SourceCollector
-import java.nio.file.Path
-import java.nio.file.Files
 import org.apache.commons.cli.CommandLine
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+
+import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  * The 'dist' command.
@@ -58,7 +55,7 @@ class DistCommand extends AbstractCommand {
         // Make a zip file.
         def destFilePath = gaidenConfig.projectDirectory.resolve(gaidenConfig.distFileName + ".zip")
         new AntBuilder().zip(destfile: destFilePath.toString(), basedir: tempBaseDir.toString())
-        println "Created dist file: " +  destFilePath
+        println "Created dist file: " + destFilePath
 
         // Clean up.
         tempBaseDir.toFile().deleteDir()

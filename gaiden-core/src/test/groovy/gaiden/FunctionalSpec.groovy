@@ -27,8 +27,8 @@ import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.Path
 
-import static org.hamcrest.CoreMatchers.*
-import static org.junit.Assert.*
+import static org.hamcrest.CoreMatchers.is
+import static org.junit.Assert.assertThat
 
 abstract class FunctionalSpec extends GaidenSpec {
 
@@ -77,7 +77,7 @@ abstract class FunctionalSpec extends GaidenSpec {
                 def actual = format(outputFile.text)
                 def expected = format(file.text)
                 if (System.getProperty('file.separator') == "\\") {
-                    expected = expected.replaceAll(/(href|src)="((?!http|https|\/about\/)[^"].*)"/){ it[1] + '="' + it[2].replaceAll("\\/", "\\\\") + '"' }
+                    expected = expected.replaceAll(/(href|src)="((?!http|https|\/about\/)[^"].*)"/) { it[1] + '="' + it[2].replaceAll("\\/", "\\\\") + '"' }
                 }
                 assertThat(actual, is(expected))
             }

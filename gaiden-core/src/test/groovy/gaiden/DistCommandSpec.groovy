@@ -25,17 +25,17 @@ class DistCommandSpec extends FunctionalSpec {
 
     def "make a zipped archive"() {
         given:
-            setupProjectDirectory("src/test/resources/test-project")
-            def command = applicationContext.getBean(DistCommand)
+        setupProjectDirectory("src/test/resources/test-project")
+        def command = applicationContext.getBean(DistCommand)
 
         when:
-            command.execute()
+        command.execute()
 
         then:
-            Path distFile = gaidenConfig.projectDirectory.resolve(GaidenConfig.DEFAULT_DIST_FILE_NAME + ".zip")
-            Files.exists(distFile)
+        Path distFile = gaidenConfig.projectDirectory.resolve(GaidenConfig.DEFAULT_DIST_FILE_NAME + ".zip")
+        Files.exists(distFile)
 
         cleanup:
-            distFile.toFile().delete()
+        distFile.toFile().delete()
     }
 }

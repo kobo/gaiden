@@ -80,13 +80,13 @@ class DocumentWriter {
         }
 
         def binding = new BindingBuilder([
-            gaidenConfig     : gaidenConfig,
-            messageSource    : messageSource,
+            gaidenConfig: gaidenConfig,
+            messageSource: messageSource,
             markdownProcessor: markdownProcessor,
-            page             : page,
-            document         : document,
-            content          : markdownProcessor.convertToHtml(page, document),
-            templateEngine   : templateEngine,
+            page: page,
+            document: document,
+            content: markdownProcessor.convertToHtml(page, document),
+            templateEngine: templateEngine,
         ]).build()
 
         def content = templateEngine.make(page.metadata.layout as String, binding)

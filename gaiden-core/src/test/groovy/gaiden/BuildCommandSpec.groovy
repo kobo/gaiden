@@ -18,31 +18,29 @@ package gaiden
 
 import gaiden.command.BuildCommand
 
-import java.nio.file.Paths
-
 class BuildCommandSpec extends FunctionalSpec {
 
     def "build a document"() {
         given:
-            setupProjectDirectory("src/test/resources/test-project")
-            def command = applicationContext.getBean(BuildCommand)
+        setupProjectDirectory("src/test/resources/test-project")
+        def command = applicationContext.getBean(BuildCommand)
 
         when:
-            command.execute()
+        command.execute()
 
         then:
-            assertOutputDirectory "src/test/resources/test-project/build"
+        assertOutputDirectory "src/test/resources/test-project/build"
     }
 
     def "build a document without 'pages.groovy'"() {
         given:
-            setupProjectDirectory("src/test/resources/without-pages")
-            def command = applicationContext.getBean(BuildCommand)
+        setupProjectDirectory("src/test/resources/without-pages")
+        def command = applicationContext.getBean(BuildCommand)
 
         when:
-            command.execute()
+        command.execute()
 
         then:
-            assertOutputDirectory "src/test/resources/without-pages/build"
+        assertOutputDirectory "src/test/resources/without-pages/build"
     }
 }
