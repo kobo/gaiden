@@ -42,6 +42,7 @@ ruleset {
     DuplicateMapKey
     DuplicateSetValue
     EmptyCatchBlock
+    EmptyClass
     EmptyElseBlock
     EmptyFinallyBlock
     EmptyForStatement
@@ -60,6 +61,7 @@ ruleset {
     HardCodedWindowsFileSeparator
     HardCodedWindowsRootDirectory
     IntegerGetInteger
+    MultipleUnaryOperators
     RandomDoubleCoercedToZero
     RemoveAllOnSelf
     ReturnFromFinallyBlock
@@ -90,6 +92,7 @@ ruleset {
     SynchronizedOnThis
     SynchronizedReadObjectMethod
     SystemRunFinalizersOnExit
+    ThisReferenceEscapesConstructor
     ThreadGroup
     ThreadLocalNotStaticFinal
     ThreadYield
@@ -101,16 +104,23 @@ ruleset {
     // rulesets/convention.xml
     ConfusingTernary
     //CouldBeElvis
+    CouldBeSwitchStatement
     HashtableIsObsolete
+    IfStatementCouldBeTernary
     InvertedIfElse
     LongLiteralWithLowerCaseL
+    //NoDef
+    NoTabCharacter
+    NoTabCharacter
     ParameterReassignment
     TernaryCouldBeElvis
+    //TrailingComma
     VectorIsObsolete
 
     // rulesets/design.xml
     //AbstractClassWithPublicConstructor
     //AbstractClassWithoutAbstractMethod
+    AssignmentToStaticFieldFromInstanceMethod
     BooleanMethodReturnsNull
     //BuilderMethodWithSideEffects
     CloneableWithoutClone
@@ -120,18 +130,27 @@ ruleset {
     EmptyMethodInAbstractClass
     FinalClassWithProtectedMember
     ImplementationAsType
+    //Instanceof
+    LocaleSetDefault
+    NestedForLoop
     //PrivateFieldCouldBeFinal
     PublicInstanceField
     ReturnsNullInsteadOfEmptyArray
     //ReturnsNullInsteadOfEmptyCollection
     SimpleDateFormatMissingLocale
     StatelessSingleton
+    ToStringReturnsNull
 
     // rulesets/dry.xml
     //DuplicateListLiteral
     //DuplicateMapLiteral
     //DuplicateNumberLiteral
     //DuplicateStringLiteral
+
+    // rulesets/enhanced.xml
+    CloneWithoutCloneable
+    JUnitAssertEqualsConstantActualValue
+    UnsafeImplementationAsMap
 
     // rulesets/exceptions.xml
     CatchArrayIndexOutOfBoundsException
@@ -144,6 +163,8 @@ ruleset {
     CatchThrowable
     ConfusingClassNamedException
     ExceptionExtendsError
+    ExceptionExtendsThrowable
+    ExceptionNotThrown
     MissingNewInThrowStatement
     //ReturnNullFromCatchBlock
     SwallowThreadDeath
@@ -154,29 +175,59 @@ ruleset {
     ThrowThrowable
 
     // rulesets/formatting.xml
+    //BlankLineBeforePackage
     BracesForClass
     BracesForForLoop
     BracesForIfElse
     BracesForMethod
     BracesForTryCatchFinally
-    ClassJavadoc
+    //ClassJavadoc
+    ClosureStatementOnOpeningLineOfMultipleLineClosure
+    ConsecutiveBlankLines
+    //FileEndsWithoutNewline
     //LineLength
+    MissingBlankLineAfterImports
+    MissingBlankLineAfterPackage
+    SpaceAfterCatch
+    //SpaceAfterClosingBrace
+    SpaceAfterComma
+    SpaceAfterFor
+    SpaceAfterIf
+    //SpaceAfterOpeningBrace
+    SpaceAfterSemicolon
+    SpaceAfterSwitch
+    SpaceAfterWhile
+    SpaceAroundClosureArrow
+    SpaceAroundMapEntryColon {
+        characterAfterColonRegex = /\s/
+    }
+    SpaceAroundOperator
+    //SpaceBeforeClosingBrace
+    //SpaceBeforeOpeningBrace
+    TrailingWhitespace
 
     // rulesets/generic.xml
+    IllegalClassMember
     IllegalClassReference
     IllegalPackageReference
     IllegalRegex
+    IllegalString
+    IllegalSubclass
     RequiredRegex
     RequiredString
     StatelessClass
 
     // rulesets/grails.xml
-    //GrailsDomainHasEquals
-    //GrailsDomainHasToString
-    //GrailsPublicControllerMethod
+    GrailsDomainHasEquals
+    GrailsDomainHasToString
+    GrailsDomainReservedSqlKeywordName
+    GrailsDomainWithServiceReference
+    GrailsDuplicateConstraint
+    GrailsDuplicateMapping
+    GrailsMassAssignment
+    GrailsPublicControllerMethod
     GrailsServletContextReference
-    GrailsSessionReference
-    //GrailsStatelessService
+    GrailsStatelessService
 
     // rulesets/groovyism.xml
     AssignCollectionSort
@@ -206,6 +257,7 @@ ruleset {
     ExplicitStackInstantiation
     ExplicitTreeSetInstantiation
     GStringAsMapKey
+    GStringExpressionWithinString
     //GetterMethodCouldBeProperty
     GroovyLangImmutable
     UseCollectMany
@@ -216,6 +268,7 @@ ruleset {
     ImportFromSamePackage
     ImportFromSunPackages
     //MisorderedStaticImports
+    //NoWildcardImports
     UnnecessaryGroovyImport
     UnusedImport
 
@@ -231,13 +284,17 @@ ruleset {
     JUnitAssertAlwaysFails
     JUnitAssertAlwaysSucceeds
     JUnitFailWithoutMessage
-    JUnitPublicNonTestMethod
+    JUnitLostTest
+    JUnitPublicField
+    //JUnitPublicNonTestMethod
+    //JUnitPublicProperty
     JUnitSetUpCallsSuper
     JUnitStyleAssertions
     JUnitTearDownCallsSuper
     JUnitTestMethodWithoutAssert
     JUnitUnnecessarySetUp
     JUnitUnnecessaryTearDown
+    JUnitUnnecessaryThrowsException
     SpockIgnoreRestUsed
     UnnecessaryFail
     UseAssertEqualsInsteadOfAssertTrue
@@ -252,7 +309,7 @@ ruleset {
     LoggerWithWrongModifiers
     LoggingSwallowsStacktrace
     MultipleLoggers
-    PrintStackTrace
+    //PrintStackTrace
     //Println
     //SystemErrPrint
     SystemOutPrint
@@ -260,13 +317,17 @@ ruleset {
     // rulesets/naming.xml
     AbstractClassName
     ClassName
+    ClassNameSameAsFilename
+    ClassNameSameAsSuperclass
     ConfusingMethodName
     //FactoryMethodName
     FieldName
     InterfaceName
+    InterfaceNameSameAsSuperInterface
     //MethodName
     ObjectOverrideMisspelledMethodName
     PackageName
+    PackageNameMatchesFilePath
     ParameterName
     PropertyName
     VariableName
@@ -283,18 +344,20 @@ ruleset {
     UnsafeArrayDeclaration
 
     // rulesets/serialization.xml
+    EnumCustomSerializationIgnored
     SerialPersistentFields
     SerialVersionUID
     //SerializableClassMustDefineSerialVersionUID
 
     // rulesets/size.xml
-    AbcComplexity
+    AbcMetric(maxMethodAbcScore: 100)
     ClassSize
-    CrapMetric
-    CyclomaticComplexity
+    CrapMetric   // Requires the GMetrics jar and a Cobertura coverage file
+    CyclomaticComplexity   // Requires the GMetrics jar
     MethodCount
-    MethodSize
-    NestedBlockDepth
+    MethodSize(maxLines: 200)
+    NestedBlockDepth(maxNestedBlockDepth: 10)
+    ParameterCount
 
     // rulesets/unnecessary.xml
     AddEmptyString
@@ -306,6 +369,7 @@ ruleset {
     UnnecessaryBooleanInstantiation
     UnnecessaryCallForLastElement
     UnnecessaryCallToSubstring
+    //UnnecessaryCast
     UnnecessaryCatchBlock
     UnnecessaryCollectCall
     UnnecessaryCollectionCall
@@ -319,7 +383,7 @@ ruleset {
     UnnecessaryFinalOnPrivateMethod
     UnnecessaryFloatInstantiation
     //UnnecessaryGString
-    UnnecessaryGetter
+    //UnnecessaryGetter
     UnnecessaryIfStatement
     UnnecessaryInstanceOfCheck
     UnnecessaryInstantiationToGetClass
@@ -334,11 +398,14 @@ ruleset {
     UnnecessaryParenthesesForMethodCallWithClosure
     UnnecessaryPublicModifier
     //UnnecessaryReturnKeyword
+    UnnecessarySafeNavigationOperator
     UnnecessarySelfAssignment
     UnnecessarySemicolon
+    UnnecessarySetter
     UnnecessaryStringInstantiation
     //UnnecessarySubstring
     UnnecessaryTernaryExpression
+    UnnecessaryToString
     UnnecessaryTransientModifier
 
     // rulesets/unused.xml
@@ -346,8 +413,7 @@ ruleset {
     UnusedMethodParameter
     UnusedObject
     UnusedPrivateField
-    UnusedPrivateMethod
+    //UnusedPrivateMethod
     UnusedPrivateMethodParameter
     UnusedVariable
-
 }

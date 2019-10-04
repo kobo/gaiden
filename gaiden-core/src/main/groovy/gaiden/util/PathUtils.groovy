@@ -134,7 +134,7 @@ class PathUtils {
     }
 
     static void eachFileRecurse(Path path, List<Path> skipDirectories = [],
-                                @ClosureParams(value = SimpleType.class, options = "java.nio.file.Path") Closure closure) {
+                                @ClosureParams(value = SimpleType, options = "java.nio.file.Path") Closure closure) {
         checkDir(path)
         Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
             @Override

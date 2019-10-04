@@ -111,7 +111,7 @@ class GaidenConfig {
 
     List<String> assetTypes = ["jpg", "jpeg", "png", "gif"]
 
-    LinkedHashMap<String, Filter> filters = [:]
+    Map<String, Filter> filters = [:] as LinkedHashMap
 
     SortedMap<String, Extension> extensions = new TreeMap<>()
 

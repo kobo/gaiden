@@ -81,7 +81,7 @@ class HeaderParser extends ToHtmlSerializer {
         }
 
         def parentHeaders = getParentHeaders(headerNode.level)
-        def parentHash = parentHeaders.collect { it.hash }.join("")
+        def parentHash = parentHeaders*.hash.join("")
         "id-${DigestUtils.sha1Hex(parentHash + title)}"
     }
 

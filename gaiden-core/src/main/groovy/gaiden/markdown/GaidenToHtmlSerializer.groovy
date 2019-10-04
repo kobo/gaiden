@@ -82,7 +82,7 @@ class GaidenToHtmlSerializer extends ToHtmlSerializer {
         }
         visitChildren(gaidenHeaderNode)
 
-        printer.print('<').print('/').print(tag).print('>');
+        printer.print('<').print('/').print(tag).print('>')
     }
 
     @Override

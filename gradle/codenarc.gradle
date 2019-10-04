@@ -15,9 +15,15 @@
  */
 
 apply plugin: 'codenarc'
-codenarc {
-    configFile rootProject.file('codenarc.groovy')
-    ignoreFailures = true
-    reportFormat = 'xml'
-}
 
+task codenarc {
+    dependsOn tasks.withType(CodeNarc) { Task task ->
+        configFile rootProject.file('codenarc.groovy')
+
+        exclude '**/UrlMappings.groovy'
+
+        reports {
+            html.enabled = true
+        }
+    }
+}

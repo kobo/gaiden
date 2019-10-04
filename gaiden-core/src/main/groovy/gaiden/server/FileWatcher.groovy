@@ -22,14 +22,15 @@ import org.apache.commons.io.monitor.FileAlterationListenerAdaptor
 import org.apache.commons.io.monitor.FileAlterationObserver
 
 import java.nio.file.Path
+import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 
 @CompileStatic
 class FileWatcher {
 
-    private LinkedBlockingQueue changedFiles = []
-    private LinkedBlockingQueue createdFiles = []
-    private LinkedBlockingQueue deletedFiles = []
+    private BlockingQueue changedFiles = [] as LinkedBlockingQueue
+    private BlockingQueue createdFiles = [] as LinkedBlockingQueue
+    private BlockingQueue deletedFiles = [] as LinkedBlockingQueue
     private FileAlterationObserver observer
 
     FileWatcher(Path path, List<Path> excludes = []) {

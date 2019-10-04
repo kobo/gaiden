@@ -63,9 +63,9 @@ class PagesAstTransformation implements ASTTransformation {
                     }
                 }
                 return statement
-            } else {
-                return new ExpressionStatement(new MethodCallExpression(THIS_EXPRESSION, expr.expression.text, NO_ARGUMENTS))
             }
+
+            return new ExpressionStatement(new MethodCallExpression(THIS_EXPRESSION, expr.expression.text, NO_ARGUMENTS))
         }
     }
 }

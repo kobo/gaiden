@@ -42,7 +42,7 @@ class PagesParser {
         configuration.addCompilationCustomizers(new ASTTransformationCustomizer(new PagesAstTransformation()))
         GroovyShell shell = new GroovyShell(new Binding(), configuration)
         DelegatingScript script = shell.parse(pagesFile.getText(encoding)) as DelegatingScript
-        script.setDelegate(this)
+        script.delegate = this
         script.run()
         pageReferences
     }

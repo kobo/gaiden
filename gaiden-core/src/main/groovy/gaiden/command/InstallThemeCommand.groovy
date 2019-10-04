@@ -50,6 +50,6 @@ class InstallThemeCommand extends AbstractCommand {
 
     @Override
     String getFullUsage() {
-        "${super.getFullUsage()}\n${getMessage('command.install.theme.themes.message', [gaidenConfig.installedThemes.join(",")])}"
+        "${super.fullUsage}\n${getMessage('command.install.theme.themes.message', [gaidenConfig.installedThemes.join(",")])}"
     }
 }

@@ -53,7 +53,7 @@ class DocumentBuilder {
         def pages = buildPages(documentSource, pageReferences)
         def pageOrder = getPageOrder(pageReferences, pages)
         def homePage = getHomePage(pages, pageOrder)
-        setHeaderNumbers(pageOrder)
+        headerNumbers = pageOrder
 
         new Document(homePage: homePage, pages: pages, pageOrder: pageOrder)
     }
