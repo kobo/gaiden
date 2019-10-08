@@ -17,3 +17,4 @@
 numbering = false
 homePage = "README.md"
 documentTocDepth = 2
+outputDirectoryPath = "../build/doc"
