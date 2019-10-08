@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/highlight.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/print.css" media="print">
     <link rel="stylesheet" href="css/my.css">
   </head>
   <body>
@@ -34,6 +35,7 @@
               <li class="unnumbered visible"><a href="commands.html#build">build</a></li>
               <li class="unnumbered visible"><a href="commands.html#clean">clean</a></li>
               <li class="unnumbered visible"><a href="commands.html#create-project">create-project</a></li>
+              <li class="unnumbered visible"><a href="commands.html#dist">dist</a></li>
               <li class="unnumbered visible"><a href="commands.html#help">help</a></li>
               <li class="unnumbered visible"><a href="commands.html#install-theme">install-theme</a></li>
               <li class="unnumbered visible"><a href="commands.html#watch">watch</a></li>
@@ -145,8 +147,8 @@
             <h1 id="getting-started">Getting Started</h1>
             <h2 id="installation">Installation</h2>
             <p>You need a <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html" title="Java SE Downloads">Java SE</a> installed, but it is not necessary to install Groovy because it&rsquo;s bundled with the Gaiden distribution.</p>
-            <p>Installing Gaiden on Unix based systems is easiest with <a href="http://gvmtool.net/">GVM</a>:</p>
-            <pre><code class="sh">$ gvm install gaiden
+            <p>Installing Gaiden on Unix based systems is easiest with <a href="http://sdkman.io/">SDKMAN!</a>:</p>
+            <pre><code class="sh">$ sdk install gaiden
 </code></pre>
             <p>Or download <a href="https://github.com/kobo/gaiden/releases">a binary distribution of Gaiden</a> and unpack it into some file on your local file system. Add the <code>bin</code> directory path in unpacked the distribution to your <code>PATH</code> environment variable.</p>
             <h2 id="create-project">Create Project</h2>
@@ -179,7 +181,7 @@
               </dd>
             </dl>
             <h2 id="writing-a-page">Writing a page</h2>
-            <p>To write a page, you can use the Markdown. If you don&rsquo;t know the Markdown, please refer to [Markdown Syntax Guide](Markdown Syntax Guide) at Daring Firebal.</p>
+            <p>To write a page, you can use the Markdown. If you don&rsquo;t know the Markdown, please refer to <a href="http://daringfireball.net/projects/markdown/syntax" title="Daring Fireball: Markdown Syntax Documentation">Markdown Syntax Guide</a> at Daring Firebal.</p>
             <p>These pages can be located in under the source directory. The source directory is set the project root directory by default.</p>
             <p>Let&rsquo;s create a new page called <code>my-page.md</code> in your project root directory.</p>
             <pre><code class="nohighlight"># My Page
