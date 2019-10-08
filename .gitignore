@@ -1,0 +1,6 @@
+.gradle/
+build/
+css/print.css
+doc/
+gaiden-core/
+gaiden-wrapper/
