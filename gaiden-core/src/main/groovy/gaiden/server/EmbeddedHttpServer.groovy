@@ -33,8 +33,8 @@ class EmbeddedHttpServer {
 
     int port
 
-    EmbeddedHttpServer(Path outputDirectory) {
-        this.port = localPort
+    EmbeddedHttpServer(int port, Path outputDirectory) {
+        this.port = port ?: localPort
         this.httpServer = Vertx.newVertx().createHttpServer().websocketHandler { ServerWebSocket webSocket ->
             webSocket.closeHandler {
                 webSockets.remove(webSocket)
