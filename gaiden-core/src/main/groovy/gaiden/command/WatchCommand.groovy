@@ -45,7 +45,7 @@ class WatchCommand extends AbstractCommand {
 
     @Override
     void execute(CommandLine commandLine) {
-        server = new EmbeddedHttpServer(gaidenConfig.outputDirectory)
+        server = new EmbeddedHttpServer(gaidenConfig.watchPort, gaidenConfig.outputDirectory)
         server.start()
 
         // At first, normally build a documentation.

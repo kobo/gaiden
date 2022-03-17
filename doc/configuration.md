@@ -124,6 +124,12 @@ Within the body of the filter, you can define one or several of the following in
 * after - Executed after Markdown is processed. Takes a Converted HTML text as an argument. The closure must return the whole text of result of filtering.
 * afterTemplate - Executed after the layout is applied. Takes a full HTML text as an argument. The closure must return the whole text of result of filtering.
 
+### watchPort
+
+This parameter specifies a server port for `watch` command.
+
+**default:** `0` (resolved automatically)
+
 
 Encoding
 --------
