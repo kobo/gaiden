@@ -109,14 +109,13 @@ class GaidenConfig {
 
     boolean readmeToIndex = true
 
-
     List<String> assetTypes = ["jpg", "jpeg", "png", "gif"]
 
     Map<String, Filter> filters = [:] as LinkedHashMap
 
     SortedMap<String, Extension> extensions = new TreeMap<>()
 
-    int watchPort = 0
+    int watchPort = Integer.parseInt(System.getenv("GAIDEN_WATCH_PORT") ?: "0")
 
     Path getApplicationInitialProjectTemplateDirectory() {
         applicationDirectory.resolve(PROJECT_TEMPLATE_DIRECTORY)
@@ -210,6 +209,13 @@ class GaidenConfig {
         filters.putAll(new FilterBuilder().build(closure).collectEntries { Filter filter ->
             [(filter.name), filter]
         })
+    }
+
+    void setWatchPort(int watchPort) {
+        if (System.getenv("GAIDEN_WATCH_PORT")) {
+            return // just ignored
+        }
+        this.watchPort = watchPort
     }
 
     @PostConstruct
