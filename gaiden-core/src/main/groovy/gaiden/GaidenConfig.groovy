@@ -76,7 +76,7 @@ class GaidenConfig {
     Path sourceDirectory = defaultProjectDirectory
 
     /** The path of directory to be outputted a document */
-    Path outputDirectory = defaultProjectDirectory.resolve(DEFAULT_BUILD_DIRECTORY)
+    Path outputDirectory = defaultProjectDirectory.resolve(System.getenv("GAIDEN_OUTPUT_DIR") ?: DEFAULT_BUILD_DIRECTORY)
 
     /** The base name of a zipped archive of HTML files */
     String distFileName = DEFAULT_DIST_FILE_NAME
@@ -192,6 +192,9 @@ class GaidenConfig {
     }
 
     void setOutputDirectoryPath(String outputDirectoryPath) {
+        if (System.getenv("GAIDEN_OUTPUT_DIR")) {
+            return // just ignored
+        }
         outputDirectory = projectDirectory.resolve(outputDirectoryPath)
     }
 
