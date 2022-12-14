@@ -76,7 +76,7 @@ class GaidenConfig {
     Path sourceDirectory = defaultProjectDirectory
 
     /** The path of directory to be outputted a document */
-    Path outputDirectory = defaultProjectDirectory.resolve(DEFAULT_BUILD_DIRECTORY)
+    Path outputDirectory = defaultProjectDirectory.resolve(System.getenv("GAIDEN_OUTPUT_DIR") ?: DEFAULT_BUILD_DIRECTORY)
 
     /** The base name of a zipped archive of HTML files */
     String distFileName = DEFAULT_DIST_FILE_NAME
@@ -109,14 +109,13 @@ class GaidenConfig {
 
     boolean readmeToIndex = true
 
-
     List<String> assetTypes = ["jpg", "jpeg", "png", "gif"]
 
     Map<String, Filter> filters = [:] as LinkedHashMap
 
     SortedMap<String, Extension> extensions = new TreeMap<>()
 
-    int watchPort = 0
+    int watchPort = Integer.parseInt(System.getenv("GAIDEN_WATCH_PORT") ?: "0")
 
     Path getApplicationInitialProjectTemplateDirectory() {
         applicationDirectory.resolve(PROJECT_TEMPLATE_DIRECTORY)
@@ -193,6 +192,9 @@ class GaidenConfig {
     }
 
     void setOutputDirectoryPath(String outputDirectoryPath) {
+        if (System.getenv("GAIDEN_OUTPUT_DIR")) {
+            return // just ignored
+        }
         outputDirectory = projectDirectory.resolve(outputDirectoryPath)
     }
 
@@ -210,6 +212,13 @@ class GaidenConfig {
         filters.putAll(new FilterBuilder().build(closure).collectEntries { Filter filter ->
             [(filter.name), filter]
         })
+    }
+
+    void setWatchPort(int watchPort) {
+        if (System.getenv("GAIDEN_WATCH_PORT")) {
+            return // just ignored
+        }
+        this.watchPort = watchPort
     }
 
     @PostConstruct
