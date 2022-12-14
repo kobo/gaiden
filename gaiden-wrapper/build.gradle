@@ -23,7 +23,7 @@ jar.archiveName = "gaiden-wrapper.jar"
 startScripts {
     doLast {
         unixScript.text = unixScript.text
-            .replace('"`dirname \\"$PRG\\"`/.."', '"`dirname \\"$PRG\\"`"')
+            .replace('"${APP_HOME:-./}.."', '"${APP_HOME:-./}"')
             .replace('$APP_HOME/lib', '$APP_HOME/wrapper')
             .replace('$GAIDENW_OPTS', '$GAIDENW_OPTS -Dapp.home=$APP_HOME')
         windowsScript.text = windowsScript.text
