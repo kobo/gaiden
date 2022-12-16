@@ -47,5 +47,5 @@ apply from: "gradle/doc.gradle"
 task buildDockerImage(type: Exec) {
     group "build"
     description "Build docker image."
-    commandLine "docker build -t kobo/gaiden:latest -t kobo/gaiden:${project.version} .".split(' ')
+    commandLine "docker build -t koboproject/gaiden:latest -t koboproject/gaiden:${project.version} .".split(' ')
 }
